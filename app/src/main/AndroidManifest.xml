@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.alks_ander.higister" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:name="com.alks_ander.higister.Application"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.alks_ander.higister.ui.main.MainActivity"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name="com.alks_ander.higister.ui.search.SearchActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service android:name="com.alks_ander.higister.data.SyncService"/>
+
+        <receiver
+            android:name="com.alks_ander.higister.data.SyncService$SyncOnConnectionAvailable"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>
