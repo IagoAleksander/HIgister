@@ -4,16 +4,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextClock;
+import android.widget.TextView;
 
+import com.sdsmdg.harjot.rotatingtext.RotatingTextWrapper;
+import com.sdsmdg.harjot.rotatingtext.models.Rotatable;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.yalantis.flipviewpager.utils.FlipSettings;
@@ -57,6 +65,15 @@ public class SearchActivity extends BaseActivity implements SearchMvpView {
     @BindView(R.id.button)
     Button button;
 
+    @BindView(R.id.switcher_layout)
+    LinearLayout rotatingTextLayout;
+
+    @BindView(R.id.switcher_header)
+    TextView rotatingTextHeader;
+
+    @BindView(R.id.custom_switcher)
+    RotatingTextWrapper rotatingTextWrapper;
+
     ResultsAdapter mResultsAdapter;
 
     int counter, i = 0;
@@ -97,6 +114,30 @@ public class SearchActivity extends BaseActivity implements SearchMvpView {
             add("comics");
             add("person");
         }};
+
+
+
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/Reckoner_Bold.ttf");
+
+        rotatingTextHeader.setTypeface(typeface);
+
+        final Rotatable rotatable = new Rotatable(getResources().getColor(R.color.accent_dark), 2000, "","your movies", "your books", "your musics", "YOU...", "", "");
+        rotatable.setSize(35);
+        rotatable.setAnimationDuration(500);
+        rotatable.setTypeface(typeface);
+        rotatable.setCenter(true);
+
+        rotatingTextWrapper.setSize(35);
+        rotatingTextWrapper.setContent("?", rotatable);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                rotatingTextWrapper.pause(0);
+//                rotatingTextLayout.setVisibility(View.GONE);
+            }
+        }, 9500);   //1.5 seconds
+
 
         final ArrayAdapter<String> typeAdapter = new ArrayAdapter<String>(
                 this, R.layout.support_simple_spinner_dropdown_item, types) {
