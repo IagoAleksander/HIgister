@@ -182,6 +182,7 @@ dependencies {
 
     compile "com.andkulikov:transitionseverywhere:1.7.9"
     compile 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.1.0'
+    compile 'de.hdodenhof:circleimageview:2.2.0'
 
     compile project(path: ':flipviewpager')
 }
