@@ -53,26 +53,26 @@ public class SearchActivity extends BaseActivity implements SearchMvpView {
     @Inject
     SearchPresenter mSearchPresenter;
 
-    @BindView(R.id.recycler_view)
-    RecyclerView mRecyclerView;
-
-    @BindView(R.id.search_bar)
-    EditText searchText;
-
-    @BindView(R.id.type_spinner)
-    Spinner typeSpinner;
-
-    @BindView(R.id.button)
-    Button button;
-
-    @BindView(R.id.switcher_layout)
-    LinearLayout rotatingTextLayout;
-
-    @BindView(R.id.switcher_header)
-    TextView rotatingTextHeader;
-
-    @BindView(R.id.custom_switcher)
-    RotatingTextWrapper rotatingTextWrapper;
+//    @BindView(R.id.recycler_view)
+//    RecyclerView mRecyclerView;
+//
+//    @BindView(R.id.search_bar)
+//    EditText searchText;
+//
+//    @BindView(R.id.type_spinner)
+//    Spinner typeSpinner;
+//
+//    @BindView(R.id.button)
+//    Button button;
+//
+//    @BindView(R.id.switcher_layout)
+//    LinearLayout rotatingTextLayout;
+//
+//    @BindView(R.id.switcher_header)
+//    TextView rotatingTextHeader;
+//
+//    @BindView(R.id.custom_switcher)
+//    RotatingTextWrapper rotatingTextWrapper;
 
     ResultsAdapter mResultsAdapter;
 
@@ -117,59 +117,59 @@ public class SearchActivity extends BaseActivity implements SearchMvpView {
 
 
 
-        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/Reckoner_Bold.ttf");
-
-        rotatingTextHeader.setTypeface(typeface);
-
-        final Rotatable rotatable = new Rotatable(getResources().getColor(R.color.accent_dark), 2000, "","your movies", "your books", "your musics", "YOU...", "", "");
-        rotatable.setSize(35);
-        rotatable.setAnimationDuration(500);
-        rotatable.setTypeface(typeface);
-        rotatable.setCenter(true);
-
-        rotatingTextWrapper.setSize(35);
-        rotatingTextWrapper.setContent("?", rotatable);
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                rotatingTextWrapper.pause(0);
-//                rotatingTextLayout.setVisibility(View.GONE);
-            }
-        }, 9500);   //1.5 seconds
-
-
-        final ArrayAdapter<String> typeAdapter = new ArrayAdapter<String>(
-                this, R.layout.support_simple_spinner_dropdown_item, types) {
-        };
-
-        typeSpinner.setAdapter(typeAdapter);
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                String type = typeSpinner.getSelectedItem().toString();
-
-                if (type.equals("person")) {
-                    FlipSettings settings = new FlipSettings.Builder().defaultPage(1).build();
-                    mRecyclerView.setAdapter(new FriendsAdapter(SearchActivity.this, Utils.friends, settings));
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
-                }
-                else {
-
-                    FlipSettings settings = new FlipSettings.Builder().defaultPage(1).build();
-
-                    if (mResultsAdapter == null) {
-                        mResultsAdapter = new ResultsAdapter(SearchActivity.this, new ArrayList<BaseItem>(), settings);
-                        mRecyclerView.setAdapter(mResultsAdapter);
-                        mRecyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
-                    }
-                }
-
-                mSearchPresenter.loadResults(type, searchText.getText().toString());
-            }
-        });
+//        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/Reckoner_Bold.ttf");
+//
+//        rotatingTextHeader.setTypeface(typeface);
+//
+//        final Rotatable rotatable = new Rotatable(getResources().getColor(R.color.accent_dark), 2000, "","your movies", "your books", "your musics", "YOU...", "", "");
+//        rotatable.setSize(35);
+//        rotatable.setAnimationDuration(500);
+//        rotatable.setTypeface(typeface);
+//        rotatable.setCenter(true);
+//
+//        rotatingTextWrapper.setSize(35);
+//        rotatingTextWrapper.setContent("?", rotatable);
+//
+//        Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            public void run() {
+//                rotatingTextWrapper.pause(0);
+////                rotatingTextLayout.setVisibility(View.GONE);
+//            }
+//        }, 9500);   //1.5 seconds
+//
+//
+//        final ArrayAdapter<String> typeAdapter = new ArrayAdapter<String>(
+//                this, R.layout.support_simple_spinner_dropdown_item, types) {
+//        };
+//
+//        typeSpinner.setAdapter(typeAdapter);
+//
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                String type = typeSpinner.getSelectedItem().toString();
+//
+//                if (type.equals("person")) {
+//                    FlipSettings settings = new FlipSettings.Builder().defaultPage(1).build();
+//                    mRecyclerView.setAdapter(new FriendsAdapter(SearchActivity.this, Utils.friends, settings));
+//                    mRecyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
+//                }
+//                else {
+//
+//                    FlipSettings settings = new FlipSettings.Builder().defaultPage(1).build();
+//
+//                    if (mResultsAdapter == null) {
+//                        mResultsAdapter = new ResultsAdapter(SearchActivity.this, new ArrayList<BaseItem>(), settings);
+//                        mRecyclerView.setAdapter(mResultsAdapter);
+//                        mRecyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
+//                    }
+//                }
+//
+//                mSearchPresenter.loadResults(type, searchText.getText().toString());
+//            }
+//        });
     }
 
     @Override

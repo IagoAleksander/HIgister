@@ -59,7 +59,7 @@ public abstract class AuthFragment extends Fragment {
             AuthActivity activity = (AuthActivity)getActivity();
             if (activity.pager.getCurrentItem() == 0 && caption.getText().equals(activity.getString(R.string.log_in_label))) {
                 //TODO login
-                Intent intent = new Intent(getContext(), ProfileActivity.class);
+                Intent intent = new Intent(getContext(), SearchActivity.class);
                 getActivity().startActivity(intent);
             }
             else if (activity.pager.getCurrentItem() == 1 && caption.getText().equals(activity.getString(R.string.sign_up_label))) {
