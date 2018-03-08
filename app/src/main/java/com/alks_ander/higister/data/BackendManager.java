@@ -19,6 +19,7 @@ import com.alks_ander.higister.data.remote.BooksService;
 import com.alks_ander.higister.data.remote.ComicsService;
 import com.alks_ander.higister.data.remote.MoviesService;
 import com.alks_ander.higister.data.remote.MusicsService;
+import com.alks_ander.higister.ui.search.RecyclerViewFragment2;
 import com.alks_ander.higister.ui.search.SearchActivity;
 
 /**
@@ -28,6 +29,33 @@ import com.alks_ander.higister.ui.search.SearchActivity;
 public class BackendManager {
 
     public void fetchMovies(final SearchActivity activity, String type, String text) {
+
+        MoviesService.Creator.newMoviesService().fetchMovies(type, text).enqueue(
+                new Callback<OmdbResponse>() {
+                    @Override
+                    public void onResponse(Call<OmdbResponse> call, Response<OmdbResponse> response) {
+
+                        ArrayList<BaseItem> results = new ArrayList<>() ;
+
+                        if (response.body().getSearch() != null) {
+                            Collections.addAll(results, response.body().getSearch());
+                            Timber.d("number of results: " +Integer.toString(response.body().getSearch().length));
+
+                        }
+
+                        activity.showItems(results);
+                    }
+
+                    @Override
+                    public void onFailure(Call<OmdbResponse> call, Throwable t) {
+                        Timber.d(t.toString());
+                    }
+                }
+
+        );
+    }
+
+    public void fetchMovies(final RecyclerViewFragment2 activity, String type, String text) {
 
         MoviesService.Creator.newMoviesService().fetchMovies(type, text).enqueue(
                 new Callback<OmdbResponse>() {

@@ -21,10 +21,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alks_ander.higister.R;
+import com.alks_ander.higister.data.model.BaseItem;
 import com.alks_ander.higister.ui.search.RecyclerViewFragment;
 import com.crashlytics.android.Crashlytics;
 import com.github.florent37.materialviewpager.MaterialViewPager;
 import com.github.florent37.materialviewpager.header.HeaderDesign;
+
+import java.util.ArrayList;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,9 +37,11 @@ import io.fabric.sdk.android.Fabric;
 
 public class SearchActivity2 extends AppCompatActivity {
 
+
+
+
     @BindView(R.id.materialViewPager)
     public MaterialViewPager mViewPager;
-
 
     @BindView(R.id.logo_text_view)
     public TextView textView;
@@ -43,10 +50,10 @@ public class SearchActivity2 extends AppCompatActivity {
     public LinearLayout textLayout;
 
     @BindView(R.id.search_bar)
-    EditText editText;
+    public EditText editText;
 
     @BindView(R.id.button)
-    Button button;
+    public Button button;
 
     public boolean canChange = true;
 
@@ -67,12 +74,12 @@ public class SearchActivity2 extends AppCompatActivity {
             @Override
             public Fragment getItem(int position) {
                 switch (position % 4) {
-                    //case 0:
-                    //    return RecyclerViewFragment.newInstance();
-                    //case 1:
-                    //    return RecyclerViewFragment.newInstance();
-                    //case 2:
-                    //    return WebViewFragment.newInstance();
+                    case 0:
+                        return RecyclerViewFragment2.newInstance();
+                    case 1:
+                        return RecyclerViewFragment.newInstance();
+                    case 2:
+                        return RecyclerViewFragment.newInstance();
                     default:
                         return RecyclerViewFragment.newInstance();
                 }
@@ -80,20 +87,28 @@ public class SearchActivity2 extends AppCompatActivity {
 
             @Override
             public int getCount() {
-                return 4;
+                return 8;
             }
 
             @Override
             public CharSequence getPageTitle(int position) {
-                switch (position % 4) {
+                switch (position % 8) {
                     case 0:
-                        return "Selection";
+                        return "Movies";
                     case 1:
-                        return "Actualités";
+                        return "Series";
                     case 2:
-                        return "Professionnel";
+                        return "Animes";
                     case 3:
-                        return "Divertissement";
+                        return "Mangas";
+                    case 4:
+                        return "Books";
+                    case 5:
+                        return "Musics";
+                    case 6:
+                        return "Comics";
+                    case 7:
+                        return "People";
                 }
                 return "";
             }
@@ -196,4 +211,6 @@ public class SearchActivity2 extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
+
+
 }

@@ -12,12 +12,15 @@ import com.alks_ander.higister.util.RxUtil;
 @ConfigPersistent
 public class SearchPresenter extends BasePresenter<SearchMvpView> {
 
-    private final DataManager mDataManager;
+//    private final DataManager mDataManager;
     private Disposable mDisposable;
 
     @Inject
     public SearchPresenter(DataManager dataManager) {
-        mDataManager = dataManager;
+//        mDataManager = dataManager;
+    }
+
+    public SearchPresenter() {
     }
 
     @Override
@@ -38,7 +41,7 @@ public class SearchPresenter extends BasePresenter<SearchMvpView> {
 
 
         if (type.equals("movie") || type.equals("series"))
-            backendManager.fetchMovies((SearchActivity) getMvpView(), type, text);
+            backendManager.fetchMovies((RecyclerViewFragment2) getMvpView(), type, text);
         else if (type.equals("book"))
             backendManager.fetchBooks((SearchActivity) getMvpView(), text);
         else if (type.equals("anime") || type.equals("manga")) {
