@@ -99,6 +99,9 @@
         <item name="spinBars">true</item>
         <item name="color">@color/drawerArrowColor</item>
     </style>
+
+
+
 </resources>
 
 

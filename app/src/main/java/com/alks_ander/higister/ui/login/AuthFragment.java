@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.alks_ander.higister.R;
 import com.alks_ander.higister.ui.profile.ProfileActivity;
 import com.alks_ander.higister.ui.search.SearchActivity;
+import com.alks_ander.higister.ui.search.SearchActivity2;
 import com.alks_ander.higister.util.Rotate;
 import com.alks_ander.higister.util.TextSizeTransition;
 import com.alks_ander.higister.util.VerticalTextView;
@@ -59,7 +60,7 @@ public abstract class AuthFragment extends Fragment {
             AuthActivity activity = (AuthActivity)getActivity();
             if (activity.pager.getCurrentItem() == 0 && caption.getText().equals(activity.getString(R.string.log_in_label))) {
                 //TODO login
-                Intent intent = new Intent(getContext(), SearchActivity.class);
+                Intent intent = new Intent(getContext(), SearchActivity2.class);
                 getActivity().startActivity(intent);
             }
             else if (activity.pager.getCurrentItem() == 1 && caption.getText().equals(activity.getString(R.string.sign_up_label))) {
