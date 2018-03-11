@@ -1,8 +1,11 @@
 package com.alks_ander.higister.data.model.LastFM;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.alks_ander.higister.data.model.BaseItem;
 
-public class Track extends BaseItem
+public class Track extends BaseItem implements Parcelable
 {
 //    private String listeners;
 
@@ -93,4 +96,38 @@ public class Track extends BaseItem
 //    {
 //        return "ClassPojo [listeners = "+listeners+", mbid = "+mbid+", name = "+name+", image = , streamable = "+streamable+", artist = "+artist+", url = "+url+"]";
 //    }
+
+    protected Track(Parcel in) {
+        super(in);
+        mbid = in.readString();
+        name = in.readString();
+        artist = in.readString();
+        url = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mbid);
+        dest.writeString(name);
+        dest.writeString(artist);
+        dest.writeString(url);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Track> CREATOR = new Parcelable.Creator<Track>() {
+        @Override
+        public Track createFromParcel(Parcel in) {
+            return new Track(in);
+        }
+
+        @Override
+        public Track[] newArray(int size) {
+            return new Track[size];
+        }
+    };
 }

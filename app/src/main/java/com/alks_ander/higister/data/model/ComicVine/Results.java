@@ -1,8 +1,11 @@
 package com.alks_ander.higister.data.model.ComicVine;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.alks_ander.higister.data.model.BaseItem;
 
-public class Results extends BaseItem
+public class Results extends BaseItem implements Parcelable
 {
     private Image image;
 
@@ -201,4 +204,44 @@ public class Results extends BaseItem
 //    {
 //        return "ClassPojo [image = "+image+", date_last_updated = "+date_last_updated+", aliases = , store_date = "+store_date+", id = "+id+", api_detail_url = "+api_detail_url+", site_detail_url = "+site_detail_url+", has_staff_review = "+has_staff_review+", cover_date = "+cover_date+", date_added = "+date_added+", description = "+description+", resource_type = "+resource_type+", name = "+name+", volume = "+volume+", issue_number = "+issue_number+", deck = ]";
 //    }
+
+    protected Results(Parcel in) {
+        super(in);
+        image = (Image) in.readValue(Image.class.getClassLoader());
+        api_detail_url = in.readString();
+        site_detail_url = in.readString();
+        description = in.readString();
+        name = in.readString();
+        volume = (Volume) in.readValue(Volume.class.getClassLoader());
+        issue_number = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(image);
+        dest.writeString(api_detail_url);
+        dest.writeString(site_detail_url);
+        dest.writeString(description);
+        dest.writeString(name);
+        dest.writeValue(volume);
+        dest.writeString(issue_number);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Results> CREATOR = new Parcelable.Creator<Results>() {
+        @Override
+        public Results createFromParcel(Parcel in) {
+            return new Results(in);
+        }
+
+        @Override
+        public Results[] newArray(int size) {
+            return new Results[size];
+        }
+    };
 }

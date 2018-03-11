@@ -44,9 +44,12 @@ public class ResultsAdapter extends BaseFlipAdapter {
             convertView = activity.getLayoutInflater().inflate(R.layout.friends_merge_page, parent, false);
             holder.leftAvatar = (ImageView) convertView.findViewById(R.id.first);
             holder.rightAvatar = (ImageView) convertView.findViewById(R.id.second);
+            holder.titleLeft = (TextView) convertView.findViewById(R.id.titleLeft);
+            holder.titleRight = (TextView) convertView.findViewById(R.id.titleRight);
             holder.infoPage = activity.getLayoutInflater().inflate(R.layout.friends_info, parent, false);
-            holder.nickName = (TextView) holder.infoPage.findViewById(R.id.nickname);
-            holder.emailTextView = (TextView) holder.infoPage.findViewById(R.id.text_email);
+            holder.nickName = (TextView) holder.infoPage.findViewById(R.id.item_title);
+            holder.emailTextView = (TextView) holder.infoPage.findViewById(R.id.item_description);
+//            holder.image = (ImageView) holder.infoPage.findViewById(R.id.item_image);
 
 //            for (int id : IDS_INTEREST)
 //                holder.interests.add((TextView) holder.infoPage.findViewById(id));
@@ -60,8 +63,11 @@ public class ResultsAdapter extends BaseFlipAdapter {
             // Merged page with 2 friends
             case 1:
                 holder.leftAvatar.setImageBitmap(((BaseItem) result1).getBit());
-                if (result2 != null)
+                setTitle(holder, (BaseItem) result1, 0);
+                if (result2 != null) {
                     holder.rightAvatar.setImageBitmap(((BaseItem) result2).getBit());
+                    setTitle(holder, (BaseItem) result2, 1);
+                }
                 break;
             default:
                 fillHolder(holder, position == 0 ? (BaseItem) result1 : (BaseItem) result2);
@@ -78,15 +84,54 @@ public class ResultsAdapter extends BaseFlipAdapter {
         return PAGES;
     }
 
+    private void setTitle (MoviesViewHolder holder, BaseItem item, int position) {
+        if (item == null)
+            return;
+
+        if (item instanceof Result) {
+            Result result = (Result) item;
+
+            if (position == 0)
+                holder.titleLeft.setText(result.getTitle());
+            else
+                holder.titleRight.setText(result.getTitle());
+        }
+        else if (item instanceof Results) {
+            Results result = (Results) item;
+
+            if (position == 0)
+                holder.titleLeft.setText(result.getName());
+            else
+                holder.titleRight.setText(result.getName());
+        }
+        else if (item instanceof BestBook) {
+            BestBook result = (BestBook) item;
+
+            if (position == 0)
+                holder.titleLeft.setText(result.getTitle());
+            else
+                holder.titleRight.setText(result.getTitle());
+        }
+        else if (item instanceof Search) {
+            Search result = (Search) item;
+
+            if (position == 0)
+                holder.titleLeft.setText(result.getTitle());
+            else
+                holder.titleRight.setText(result.getTitle());
+        }
+        else if (item instanceof Track) {
+            Track result = (Track) item;
+
+            if (position == 0)
+                holder.titleLeft.setText(result.getName());
+            else
+                holder.titleRight.setText(result.getName());
+        }
+    }
     private void fillHolder(MoviesViewHolder holder, BaseItem item) {
         if (item == null)
             return;
-//        Iterator<TextView> iViews = holder.interests.iterator();
-//        Iterator<String> iInterests = friend.getInterests().iterator();
-//        while (iViews.hasNext() && iInterests.hasNext())
-//            iViews.next().setText(iInterests.next());
-
-        holder.infoPage.setBackgroundColor(item.getBackgroundColor());
 
         if (item instanceof Result) {
             Result result = (Result) item;
@@ -127,11 +172,14 @@ public class ResultsAdapter extends BaseFlipAdapter {
         ImageView rightAvatar;
         View infoPage;
         ImageView hexColorView;
+        TextView titleLeft;
+        TextView titleRight;
 
         TextView nameTextView;
 
         TextView emailTextView;
         List<TextView> interests = new ArrayList<>();
         TextView nickName;
+//        ImageView image;
     }
 }

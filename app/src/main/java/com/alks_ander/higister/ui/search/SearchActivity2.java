@@ -22,14 +22,11 @@ import android.widget.Toast;
 
 import com.alks_ander.higister.R;
 import com.alks_ander.higister.data.model.BaseItem;
-import com.alks_ander.higister.ui.search.RecyclerViewFragment;
 import com.crashlytics.android.Crashlytics;
 import com.github.florent37.materialviewpager.MaterialViewPager;
 import com.github.florent37.materialviewpager.header.HeaderDesign;
 
 import java.util.ArrayList;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,11 +34,9 @@ import io.fabric.sdk.android.Fabric;
 
 public class SearchActivity2 extends AppCompatActivity {
 
-
-
-
     @BindView(R.id.materialViewPager)
     public MaterialViewPager mViewPager;
+
 
     @BindView(R.id.logo_text_view)
     public TextView textView;
@@ -50,10 +45,14 @@ public class SearchActivity2 extends AppCompatActivity {
     public LinearLayout textLayout;
 
     @BindView(R.id.search_bar)
-    public EditText editText;
+    EditText editText;
 
     @BindView(R.id.button)
-    public Button button;
+    Button button;
+
+    public String searchedItem = "";
+
+    public ArrayList<BaseItem> itens = new ArrayList<>();
 
     public boolean canChange = true;
 
@@ -73,16 +72,16 @@ public class SearchActivity2 extends AppCompatActivity {
 
             @Override
             public Fragment getItem(int position) {
-                switch (position % 4) {
-                    case 0:
-                        return RecyclerViewFragment2.newInstance();
-                    case 1:
-                        return RecyclerViewFragment.newInstance();
-                    case 2:
-                        return RecyclerViewFragment.newInstance();
-                    default:
-                        return RecyclerViewFragment.newInstance();
-                }
+//                switch (position % 4) {
+                    //case 0:
+                    //    return RecyclerViewFragment.newInstance();
+                    //case 1:
+                    //    return RecyclerViewFragment.newInstance();
+                    //case 2:
+                    //    return WebViewFragment.newInstance();
+//                    default:
+                        return RecyclerViewFragment2.newInstance(itens);
+//                }
             }
 
             @Override
@@ -117,11 +116,11 @@ public class SearchActivity2 extends AppCompatActivity {
         mViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
             @Override
             public HeaderDesign getHeaderDesign(int page) {
-                switch (page) {
+                switch (page % 4) {
                     case 0:
-                        return HeaderDesign.fromColorResAndUrl(
-                                R.color.green,
-                                "http://phandroid.s3.amazonaws.com/wp-content/uploads/2014/06/android_google_moutain_google_now_1920x1080_wallpaper_Wallpaper-HD_2560x1600_www.paperhi.com_-640x400.jpg");
+                        return HeaderDesign.fromColorResAndDrawable(
+                                R.color.red,
+                                getDrawable(R.drawable.movie));
                     case 1:
                         return HeaderDesign.fromColorResAndUrl(
                                 R.color.blue,
@@ -142,8 +141,11 @@ public class SearchActivity2 extends AppCompatActivity {
             }
         });
 
+        mViewPager.getPagerTitleStrip().setTabPaddingLeftRight(0);
+        mViewPager.getPagerTitleStrip().setDividerPadding(20);
         mViewPager.getViewPager().setOffscreenPageLimit(mViewPager.getViewPager().getAdapter().getCount());
         mViewPager.getPagerTitleStrip().setViewPager(mViewPager.getViewPager());
+
 
 //        final View logo = findViewById(R.id.logo_white);
 //        if (logo != null) {
@@ -211,6 +213,4 @@ public class SearchActivity2 extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
-
-
 }

@@ -43,15 +43,15 @@ public class SearchPresenter extends BasePresenter<SearchMvpView> {
         if (type.equals("movie") || type.equals("series"))
             backendManager.fetchMovies((RecyclerViewFragment2) getMvpView(), type, text);
         else if (type.equals("book"))
-            backendManager.fetchBooks((SearchActivity) getMvpView(), text);
+            backendManager.fetchBooks((RecyclerViewFragment2) getMvpView(), text);
         else if (type.equals("anime") || type.equals("manga")) {
-            backendManager.fetchAnimes((SearchActivity) getMvpView(), type, text);
+            backendManager.fetchAnimes((RecyclerViewFragment2) getMvpView(), type, text);
         }
         else if (type.equals("music")){
-            backendManager.fetchMusics((SearchActivity) getMvpView(), text);
+            backendManager.fetchMusics((RecyclerViewFragment2) getMvpView(), text);
         }
         else if (type.equals("comics")){
-            backendManager.fetchComics((SearchActivity) getMvpView(), text);
+            backendManager.fetchComics((RecyclerViewFragment2) getMvpView(), text);
         }
     }
 

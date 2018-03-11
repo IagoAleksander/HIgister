@@ -1,12 +1,16 @@
 package com.alks_ander.higister.data.model.GoodReads;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.alks_ander.higister.data.model.BaseItem;
+import com.alks_ander.higister.data.model.LastFM.Track;
 
 /**
  * Created by alksander on 02/03/2018.
  */
 
-public class BestBook extends BaseItem{
+public class BestBook extends BaseItem implements  Parcelable{
 
 //    private Id id;
 //
@@ -39,6 +43,10 @@ public class BestBook extends BaseItem{
 //    {
 //        this.author = author;
 //    }
+
+    private BestBook () {
+
+    }
 
     public String getTitle ()
     {
@@ -85,5 +93,38 @@ public class BestBook extends BaseItem{
     {
         return "ClassPojo [id = , author = , title = "+title+", image_url = "+image_url+", type = "+type+", small_image_url = "+small_image_url+"]";
     }
+
+    protected BestBook(Parcel in) {
+        title = in.readString();
+        image_url = in.readString();
+        type = in.readString();
+        small_image_url = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(image_url);
+        dest.writeString(type);
+        dest.writeString(small_image_url);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<BestBook> CREATOR = new Parcelable.Creator<BestBook>() {
+        @Override
+        public BestBook createFromParcel(Parcel in) {
+            return new BestBook(in);
+        }
+
+        @Override
+        public BestBook[] newArray(int size) {
+            return new BestBook[size];
+        }
+    };
 }
 

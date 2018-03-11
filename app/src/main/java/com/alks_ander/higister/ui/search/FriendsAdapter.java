@@ -36,7 +36,7 @@ public class FriendsAdapter extends BaseFlipAdapter {
                 holder.leftAvatar = (ImageView) convertView.findViewById(R.id.first);
                 holder.rightAvatar = (ImageView) convertView.findViewById(R.id.second);
                 holder.infoPage = activity.getLayoutInflater().inflate(R.layout.friends_info, parent, false);
-                holder.nickName = (TextView) holder.infoPage.findViewById(R.id.nickname);
+                holder.nickName = (TextView) holder.infoPage.findViewById(R.id.item_title);
 
                 for (int id : IDS_INTEREST)
                     holder.interests.add((TextView) holder.infoPage.findViewById(id));

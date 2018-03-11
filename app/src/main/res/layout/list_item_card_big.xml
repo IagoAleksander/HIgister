@@ -18,6 +18,22 @@
         app:cardPreventCornerOverlap="false"
         app:contentPadding="0dp">
 
+        <TextView
+            android:id="@+id/item_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="60dp"
+            android:text="placeholder name"/>
+
+        <TextView
+            android:id="@+id/item_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="100dp"
+            android:text="placeholder description"/>
+
     </android.support.v7.widget.CardView>
 
 </FrameLayout>

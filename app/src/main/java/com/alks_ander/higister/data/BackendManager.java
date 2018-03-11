@@ -63,6 +63,8 @@ public class BackendManager {
                     public void onResponse(Call<OmdbResponse> call, Response<OmdbResponse> response) {
 
                         ArrayList<BaseItem> results = new ArrayList<>() ;
+                        for (BaseItem baseItem : response.body().getSearch())
+                            baseItem.setMyType(type);
 
                         if (response.body().getSearch() != null) {
                             Collections.addAll(results, response.body().getSearch());
@@ -75,6 +77,32 @@ public class BackendManager {
 
                     @Override
                     public void onFailure(Call<OmdbResponse> call, Throwable t) {
+                        Timber.d(t.toString());
+                    }
+                }
+
+        );
+    }
+
+    public void fetchAnimes(final RecyclerViewFragment2 activity, String type, String text) {
+
+        AnimesService.Creator.newAnimesService().fetchAnimes(type, text).enqueue(
+                new Callback<MyAnimeListResponse>() {
+                    @Override
+                    public void onResponse(Call<MyAnimeListResponse> call, Response<MyAnimeListResponse> response) {
+
+                        ArrayList<BaseItem> results = new ArrayList<>() ;
+
+                        for (BaseItem baseItem : response.body().getResult())
+                            baseItem.setMyType(type);
+
+                        results.addAll(response.body().getResult().subList(0, 10));
+
+                        activity.showItems(results);
+                    }
+
+                    @Override
+                    public void onFailure(Call<MyAnimeListResponse> call, Throwable t) {
                         Timber.d(t.toString());
                     }
                 }
@@ -129,6 +157,32 @@ public class BackendManager {
         );
     }
 
+    public void fetchBooks(final RecyclerViewFragment2 activity, String text) {
+
+        BooksService.Creator.newBooksService().fetchBooks(text).enqueue(
+                new Callback<GoodreadsResponse>() {
+                    @Override
+                    public void onResponse(Call<GoodreadsResponse> call, Response<GoodreadsResponse> response) {
+
+                        ArrayList<BaseItem> results = new ArrayList<>() ;
+
+                        for (Work work : response.body().getSearch().getResults().getWork().subList(0, 10))
+                            results.add(work.getBest_book());
+
+                        for (BaseItem baseItem : results)
+                            baseItem.setMyType("book");
+                        activity.showItems(results);
+                    }
+
+                    @Override
+                    public void onFailure(Call<GoodreadsResponse> call, Throwable t) {
+                        Timber.d(t.toString());
+                    }
+                }
+
+        );
+    }
+
     public void fetchMusics(final SearchActivity activity, String text) {
 
         MusicsService.Creator.newMusicsService().fetchMusics(text).enqueue(
@@ -152,6 +206,31 @@ public class BackendManager {
         );
     }
 
+    public void fetchMusics(final RecyclerViewFragment2 activity, String text) {
+
+        MusicsService.Creator.newMusicsService().fetchMusics(text).enqueue(
+                new Callback<LastFmResponse>() {
+                    @Override
+                    public void onResponse(Call<LastFmResponse> call, Response<LastFmResponse> response) {
+
+                        ArrayList<BaseItem> results = new ArrayList<>() ;
+
+                        results.addAll(response.body().getResults().getTrackmatches().getTrack().subList(0, 10));
+                        for (BaseItem baseItem : results)
+                            baseItem.setMyType("music");
+
+                        activity.showItems(results);
+                    }
+
+                    @Override
+                    public void onFailure(Call<LastFmResponse> call, Throwable t) {
+                        Timber.d(t.toString());
+                    }
+                }
+
+        );
+    }
+
     public void fetchComics(final SearchActivity activity, String text) {
 
         ComicsService.Creator.newComicsService().fetchComics(text).enqueue(
@@ -162,6 +241,31 @@ public class BackendManager {
                         ArrayList<BaseItem> results = new ArrayList<>() ;
 
                         results.addAll(response.body().getResults().subList(0, 10));
+
+                        activity.showItems(results);
+                    }
+
+                    @Override
+                    public void onFailure(Call<ComicVineResponse> call, Throwable t) {
+                        Timber.d(t.toString());
+                    }
+                }
+
+        );
+    }
+
+    public void fetchComics(final RecyclerViewFragment2 activity, String text) {
+
+        ComicsService.Creator.newComicsService().fetchComics(text).enqueue(
+                new Callback<ComicVineResponse>() {
+                    @Override
+                    public void onResponse(Call<ComicVineResponse> call, Response<ComicVineResponse> response) {
+
+                        ArrayList<BaseItem> results = new ArrayList<>() ;
+
+                        results.addAll(response.body().getResults().subList(0, 10));
+                        for (BaseItem baseItem : results)
+                            baseItem.setMyType("comics");
 
                         activity.showItems(results);
                     }

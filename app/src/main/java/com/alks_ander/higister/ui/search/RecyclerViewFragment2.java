@@ -1,33 +1,61 @@
 package com.alks_ander.higister.ui.search;
 
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebViewFragment;
 
 import com.alks_ander.higister.R;
 import com.alks_ander.higister.data.model.BaseItem;
+import com.alks_ander.higister.data.model.ComicVine.Results;
+import com.alks_ander.higister.data.model.GoodReads.BestBook;
+import com.alks_ander.higister.data.model.LastFM.Track;
+import com.alks_ander.higister.data.model.MyAnimeList.Result;
+import com.alks_ander.higister.data.model.Omdb.Search;
+import com.alks_ander.higister.ui.login.AuthAdapter;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.ImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.yalantis.flipviewpager.utils.FlipSettings;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * Created by florentchampigny on 24/04/15.
  */
-public class RecyclerViewFragment2 extends Fragment implements SearchMvpView{
+public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
 
     private static final boolean GRID_LAYOUT = false;
     private static final int ITEM_COUNT = 100;
@@ -37,15 +65,23 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView{
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
-    ResultsAdapter mResultsAdapter;
     SearchActivity2 activity;
 
-    List<Object> items = new ArrayList<>();
-    TestRecyclerViewAdapter adapter;
+    ResultsAdapter adapter;
+    ArrayList<BaseItem> items = new ArrayList<>();
+    HashMap<String, ArrayList<BaseItem>> itemsCollection = new HashMap<>();
+    HashMap<String, Integer> counterList = new HashMap<>();
 
-    public static RecyclerViewFragment2 newInstance() {
-        return new RecyclerViewFragment2();
+    public static RecyclerViewFragment2 newInstance(ArrayList<BaseItem> items) {
+
+        RecyclerViewFragment2 f = new RecyclerViewFragment2();
+        Bundle args = new Bundle();
+        args.putParcelableArrayList("searchData", items);
+        f.setArguments(args);
+        return f;
     }
+
+    int counter, i = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -56,38 +92,26 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-
-//        final List<Object> items = new ArrayList<>();
 //
-        for (int i = 0; i < 1; ++i) {
-            items.add(new Object());
+        activity = (SearchActivity2) getActivity();
+        Bundle args = getArguments();
+        if (args != null && args.getParcelableArrayList("searchData") != null) {
+            items = args.getParcelableArrayList("searchData");
         }
 
         float logicalDensity = Resources.getSystem().getDisplayMetrics().density;
         mSearchPresenter.attachView(this);
-        //setup materialviewpager
 
-//        if (GRID_LAYOUT) {
-//            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-//        } else {
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-//        }
-        mRecyclerView.setHasFixedSize(false);
 
         FlipSettings settings = new FlipSettings.Builder().defaultPage(1).build();
 
-//        if (mResultsAdapter == null) {
-//            mResultsAdapter = new ResultsAdapter(getActivity(), new ArrayList<BaseItem>(), settings);
-//            mRecyclerView.setAdapter(mResultsAdapter);
-//
-//        }
 
-        adapter = new TestRecyclerViewAdapter(items);
+        adapter = new ResultsAdapter(getActivity(), items, settings);
         //Use this now
         mRecyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
         mRecyclerView.setAdapter(adapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        activity = (SearchActivity2) getActivity();
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -95,11 +119,10 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView{
                 super.onScrolled(recyclerView, dx, dy);
 
 
-
 //                Log.d ("height", ""+dx);
 //                if (activity.textLayout.getVisibility() == View.VISIBLE) {
-                    activity.textLayout.setVisibility(View.GONE);
-                    activity.textView.setVisibility(View.VISIBLE);
+                activity.textLayout.setVisibility(View.GONE);
+                activity.textView.setVisibility(View.VISIBLE);
 
 //                    activity.canChange = false;
 //                }
@@ -112,9 +135,17 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView{
         activity.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                counterList.clear();
+                i = 0;
+                counter = 0;
+                itemsCollection.clear();
                 mSearchPresenter.loadResults("movie", activity.editText.getText().toString());
-//                activity.mSearchPresenter.loadResults(activity.mViewPager.getViewPager().getCurrentItem(), activity.editText.getText().toString());
+                mSearchPresenter.loadResults("series", activity.editText.getText().toString());
+                mSearchPresenter.loadResults("anime", activity.editText.getText().toString());
+                mSearchPresenter.loadResults("manga", activity.editText.getText().toString());
+                mSearchPresenter.loadResults("book", activity.editText.getText().toString());
+                mSearchPresenter.loadResults("music", activity.editText.getText().toString());
+                mSearchPresenter.loadResults("comics", activity.editText.getText().toString());
             }
         });
 
@@ -132,94 +163,153 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView{
     @Override
     public void showItems(final ArrayList<BaseItem> itens) {
 
-//        counter = 0;
-//        i = 0;
-//        targets.clear();
-//
-//        for (final BaseItem item : itens) {
-//
-//
-//            Timber.d("counter: " +Integer.toString(counter));
-//            targets.add (new Target() {
-//                @Override
-//                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-////                    Log.i(TAG, "The image was obtained correctly, now you can do your canvas operation!");
-//                    counter++;
-//                    Timber.d("counter: " +Integer.toString(counter));
-//
-//                    item.setBit(bitmap);
-//
-//                    if (counter == itens.size()) {
-//                        Timber.d("sucesso");
-//                        mResultsAdapter.setRibots(itens);
-//                        mResultsAdapter.notifyDataSetChanged();
-//                    }
-//                }
-//
-//                @Override
-//                public void onBitmapFailed(Drawable errorDrawable) {
-////                    Log.e(TAG, "The image was not obtained");
-//                    counter++;
-//                    Timber.d("counter: " +Integer.toString(counter));
-//
-//                    InputStream is = getResources().openRawResource(R.drawable.large_movie_poster);
-//                    Bitmap pisc = BitmapFactory.decodeStream(new BufferedInputStream(is));
-//
-//                    item.setBit(pisc);
-//
-//                    if (counter == itens.size()) {
-//                        Timber.d("sucesso");
-//                        mResultsAdapter.setRibots(itens);
-//                        mResultsAdapter.notifyDataSetChanged();
-//                    }
-//                }
-//
-//                @Override
-//                public void onPrepareLoad(Drawable placeHolderDrawable) {
-////                    Log.(TAG, "Getting ready to get the image");
-//                    //Here you should place a loading gif in the ImageView to
-//                    //while image is being obtained.
-//                }
-//            });
-//
-//            item.setBackgroundColor(getBackgroundColor(i));
-//
-//            if (item instanceof Result) {
-//                Picasso.with(this).load(((Result) item).getImage_url()).into(targets.get(i++));
-//            }
-//            else if (item instanceof Results) {
-//                Picasso.with(this).load(((Results) item).getImage().getSmall_url()).into(targets.get(i++));
-//            }
-//            else if (item instanceof BestBook) {
-//                Picasso.with(this).load(((BestBook) item).getSmall_image_url()).into(targets.get(i++));
-//            }
-//            else if (item instanceof Search) {
-//                Picasso.with(this).load(((Search) item).getPoster()).into(targets.get(i++));
-//            }
-//            else if (item instanceof Track) {
+        final int counter = this.counter++;
 
-        for (int i = 0; i < itens.size(); ++i) {
-            items.add(new Object());
+        if (itens != null && !itens.isEmpty()) {
+            counterList.put(itens.get(0).getMyType(), 0);
+        } else {
+            this.counter--;
         }
 
-        adapter.notifyDataSetChanged();
-        activity.mViewPager.refreshDrawableState();
+        for (final BaseItem item : itens) {
 
-        synchronized (activity.mViewPager) {
-            activity.mViewPager.notifyAll();
+            String bitmapAddress = "";
+            if (item instanceof Result) {
+                bitmapAddress = ((Result) item).getImage_url();
+            } else if (item instanceof Results) {
+                bitmapAddress = ((Results) item).getImage().getSmall_url();
+            } else if (item instanceof BestBook) {
+                bitmapAddress = ((BestBook) item).getSmall_image_url();
+            } else if (item instanceof Search) {
+                bitmapAddress = ((Search) item).getPoster();
+            } else if (item instanceof Track) {
+                itemsCollection.put(item.getMyType(), itens);
+                preupdateAdapter();
+                break;
+            }
+
+            RequestOptions myOptions = new RequestOptions()
+                    .override(200, 300)
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
+
+            Glide.with(this)
+                    .asBitmap()
+                    .load(bitmapAddress)
+                    .apply(myOptions)
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                            counterList.put(item.getMyType(), counterList.get(item.getMyType()) + 1);
+//
+                            item.setBit(resource);
+                            if (item.getMyType().equals("book")) {
+                                Timber.d("sucesso");
+                            }
+                            if (counterList.get(item.getMyType()) == itens.size()) {
+                                if (item.getMyType().equals("book")) {
+                                    Timber.d("sucesso");
+                                }
+                                Timber.d("sucesso");
+                                itemsCollection.put(item.getMyType(), itens);
+                                preupdateAdapter();
+                            }
+                        }
+                        @Override
+                        public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                            counterList.put(item.getMyType(), counterList.get(item.getMyType()) + 1);
+
+                            InputStream is = getResources().openRawResource(R.drawable.large_movie_poster);
+                            Bitmap pisc = BitmapFactory.decodeStream(new BufferedInputStream(is));
+
+                            item.setBit(pisc);
+
+                            if (item.getMyType().equals("book")) {
+                                Timber.d("sucesso");
+                            }
+
+                            if (counterList.get(item.getMyType()) == itens.size()) {
+
+                                if (item.getMyType().equals("book")) {
+                                    Timber.d("sucesso");
+                                }
+                                itemsCollection.put(item.getMyType(), itens);
+                                preupdateAdapter();
+                            }
+                        }
+                    });
+
         }
+    }
 
-        synchronized (activity.mViewPager.getViewPager()) {
-            activity.mViewPager.getViewPager().notifyAll();
+    public void preupdateAdapter() {
+
+        if (counterList.size() == 7
+                && itemsCollection.containsKey("movie")
+                && itemsCollection.containsKey("series")
+                && itemsCollection.containsKey("anime")
+                && itemsCollection.containsKey("manga")
+                && itemsCollection.containsKey("book")
+                && itemsCollection.containsKey("music")
+                && itemsCollection.containsKey("comics")) {
+            updateAdapter();
         }
+    }
 
+    public void updateAdapter() {
 
-//        mResultsAdapter.setRibots(itens);
-//        mResultsAdapter.notifyDataSetChanged();
-//        getActivity().
-//                break;
-//            }
+        activity.mViewPager.getViewPager().setAdapter(new FragmentStatePagerAdapter(activity.getSupportFragmentManager()) {
 
+            @Override
+            public Fragment getItem(int position) {
+                switch (position % 8) {
+                    case 0:
+                        return RecyclerViewFragment2.newInstance(itemsCollection.get("movie"));
+                    case 1:
+                        return RecyclerViewFragment2.newInstance(itemsCollection.get("series"));
+                    case 2:
+                        return RecyclerViewFragment2.newInstance(itemsCollection.get("anime"));
+                    case 3:
+                        return RecyclerViewFragment2.newInstance(itemsCollection.get("manga"));
+                    case 4:
+                        return RecyclerViewFragment2.newInstance(itemsCollection.get("book"));
+                    case 5:
+                        return RecyclerViewFragment2.newInstance(itemsCollection.get("music"));
+                    case 6:
+                        return RecyclerViewFragment2.newInstance(itemsCollection.get("comics"));
+                    default:
+                        return RecyclerViewFragment2.newInstance(itemsCollection.get("movie"));
+                }
+            }
+
+            @Override
+            public int getCount() {
+                return 8;
+            }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                switch (position % 8) {
+                    case 0:
+                        return "Movies";
+                    case 1:
+                        return "Series";
+                    case 2:
+                        return "Animes";
+                    case 3:
+                        return "Mangas";
+                    case 4:
+                        return "Books";
+                    case 5:
+                        return "Musics";
+                    case 6:
+                        return "Comics";
+                    case 7:
+                        return "People";
+                }
+                return "";
+            }
+        });
+        activity.mViewPager.getViewPager().getAdapter().notifyDataSetChanged();
     }
 
 

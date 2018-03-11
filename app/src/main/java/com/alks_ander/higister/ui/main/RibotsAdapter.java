@@ -55,7 +55,7 @@ public class RibotsAdapter extends RecyclerView.Adapter<RibotsAdapter.RibotViewH
 
         @BindView(R.id.view_hex_color) View hexColorView;
         @BindView(R.id.text_name) TextView nameTextView;
-        @BindView(R.id.text_email) TextView emailTextView;
+        @BindView(R.id.item_description) TextView emailTextView;
 
         public RibotViewHolder(View itemView) {
             super(itemView);

@@ -1,8 +1,11 @@
 package com.alks_ander.higister.data.model.Omdb;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.alks_ander.higister.data.model.BaseItem;
 
-public class Search extends BaseItem
+public class Search extends BaseItem implements Parcelable
 {
     private String Year;
 
@@ -69,4 +72,40 @@ public class Search extends BaseItem
     {
         return "ClassPojo [Year = "+Year+", Type = "+Type+", Poster = "+Poster+", imdbID = "+imdbID+", Title = "+Title+"]";
     }
+
+    protected Search(Parcel in) {
+        super(in);
+        Year = in.readString();
+        Type = in.readString();
+        Poster = in.readString();
+        imdbID = in.readString();
+        Title = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(Year);
+        dest.writeString(Type);
+        dest.writeString(Poster);
+        dest.writeString(imdbID);
+        dest.writeString(Title);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Search> CREATOR = new Parcelable.Creator<Search>() {
+        @Override
+        public Search createFromParcel(Parcel in) {
+            return new Search(in);
+        }
+
+        @Override
+        public Search[] newArray(int size) {
+            return new Search[size];
+        }
+    };
 }
