@@ -96,7 +96,10 @@ public class BackendManager {
                         for (BaseItem baseItem : response.body().getResult())
                             baseItem.setMyType(type);
 
-                        results.addAll(response.body().getResult().subList(0, 10));
+                        if (response.body().getResult().size() > 10)
+                            results.addAll(response.body().getResult().subList(0, 10));
+                        else
+                            results.addAll(response.body().getResult());
 
                         activity.showItems(results);
                     }
@@ -166,8 +169,16 @@ public class BackendManager {
 
                         ArrayList<BaseItem> results = new ArrayList<>() ;
 
-                        for (Work work : response.body().getSearch().getResults().getWork().subList(0, 10))
-                            results.add(work.getBest_book());
+                        if (response.body().getSearch().getResults().getWork().size() > 10) {
+                            for (Work work : response.body().getSearch().getResults().getWork().subList(0, 10))
+                                results.add(work.getBest_book());
+                        }
+                        else {
+                            for (Work work : response.body().getSearch().getResults().getWork())
+                                results.add(work.getBest_book());
+                        }
+
+
 
                         for (BaseItem baseItem : results)
                             baseItem.setMyType("book");
@@ -215,7 +226,11 @@ public class BackendManager {
 
                         ArrayList<BaseItem> results = new ArrayList<>() ;
 
-                        results.addAll(response.body().getResults().getTrackmatches().getTrack().subList(0, 10));
+                        if (response.body().getResults().getTrackmatches().getTrack().size() > 10)
+                            results.addAll(response.body().getResults().getTrackmatches().getTrack().subList(0, 10));
+                        else
+                            results.addAll(response.body().getResults().getTrackmatches().getTrack());
+
                         for (BaseItem baseItem : results)
                             baseItem.setMyType("music");
 
@@ -263,7 +278,11 @@ public class BackendManager {
 
                         ArrayList<BaseItem> results = new ArrayList<>() ;
 
-                        results.addAll(response.body().getResults().subList(0, 10));
+                        if (response.body().getResults().size() > 10)
+                            results.addAll(response.body().getResults().subList(0, 10));
+                        else
+                            results.addAll(response.body().getResults());
+
                         for (BaseItem baseItem : results)
                             baseItem.setMyType("comics");
 

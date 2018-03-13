@@ -7,7 +7,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.alks_ander.higister.ui.login.LogInFragment;
 import com.alks_ander.higister.ui.login.SignUpFragment;
+import com.alks_ander.higister.ui.profile.ListsFragment;
 import com.alks_ander.higister.ui.profile.ProfileFragment;
+import com.alks_ander.higister.ui.search.RecyclerViewFragment2;
 
 
 /**
@@ -30,7 +32,13 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return new ProfileFragment();
             case 1:
-                return new ProfileFragment();
+                return new ListsFragment();
+            case 2:
+                return new ListsFragment();
+            case 3:
+                return new ListsFragment();
+            case 4:
+                return new ListsFragment();
             default:
                 return null;
         }
@@ -40,6 +48,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 5;
     }
 }

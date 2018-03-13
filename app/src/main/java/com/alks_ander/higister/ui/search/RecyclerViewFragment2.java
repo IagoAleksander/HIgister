@@ -7,7 +7,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +23,7 @@ import android.webkit.WebViewFragment;
 import com.alks_ander.higister.R;
 import com.alks_ander.higister.data.model.BaseItem;
 import com.alks_ander.higister.data.model.ComicVine.Results;
+import com.alks_ander.higister.data.model.Friend;
 import com.alks_ander.higister.data.model.GoodReads.BestBook;
 import com.alks_ander.higister.data.model.LastFM.Track;
 import com.alks_ander.higister.data.model.MyAnimeList.Result;
@@ -71,6 +75,8 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
     ArrayList<BaseItem> items = new ArrayList<>();
     HashMap<String, ArrayList<BaseItem>> itemsCollection = new HashMap<>();
     HashMap<String, Integer> counterList = new HashMap<>();
+
+    Fragment frag;
 
     public static RecyclerViewFragment2 newInstance(ArrayList<BaseItem> items) {
 
@@ -257,6 +263,15 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
 
     public void updateAdapter() {
 
+        for (Fragment frag : activity.getSupportFragmentManager().getFragments()) {
+            if (frag instanceof RecyclerViewFragment2) {
+                activity.getSupportFragmentManager().beginTransaction().remove(frag).commit();
+            }
+        }
+
+        Runtime.getRuntime().gc();
+        List<Fragment> frags = activity.getSupportFragmentManager().getFragments();
+
         activity.mViewPager.getViewPager().setAdapter(new FragmentStatePagerAdapter(activity.getSupportFragmentManager()) {
 
             @Override
@@ -308,8 +323,14 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
                 }
                 return "";
             }
+
+            @Override
+            public int getItemPosition(Object object){
+                return PagerAdapter.POSITION_NONE;
+            }
         });
         activity.mViewPager.getViewPager().getAdapter().notifyDataSetChanged();
+        activity.mViewPager.getPagerTitleStrip().setViewPager(activity.mViewPager.getViewPager());
     }
 
 

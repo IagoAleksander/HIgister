@@ -1,277 +1,241 @@
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/root"
-    tools:background="@color/color_sign_up"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <android.support.v4.widget.NestedScrollView
-    android:id="@+id/scroll_view"
+    android:id="@+id/profile_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-    <android.support.constraint.ConstraintLayout
-    android:id="@+id/constraint_layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingBottom="96dp">
+    android:padding="20dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:background="@color/color_sign_up">
 
     <LinearLayout
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_margin="16dp"
-    android:orientation="vertical"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    <android.support.design.widget.TextInputLayout
-    android:id="@+id/text_input_page_name"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="64dp">
+        <LinearLayout
+            android:id="@+id/user_view_profile_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <EditText
-    android:id="@+id/edit_text_page_name"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:imeOptions="actionNext"
-    android:inputType="textCapSentences"
-    android:textColor="@color/white"
-    android:maxLength="50"
-    android:textSize="16sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-    </android.support.design.widget.TextInputLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Description: "
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
 
-    <android.support.design.widget.TextInputLayout
-    android:id="@+id/text_input_page_desc"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="16dp">
+                <TextView
+                    android:id="@+id/user_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+            </LinearLayout>
 
-    <EditText
-    android:id="@+id/edit_text_page_desc"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:imeOptions="actionNext"
-    android:inputType="textCapSentences"
-    android:maxLength="500"
-    android:maxLines="5"
-    android:textSize="16sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-    </android.support.design.widget.TextInputLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20sp"
+                    android:text="Age: "
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
 
-    <android.support.design.widget.TextInputLayout
-    android:id="@+id/text_input_area"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="24dp"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toRightOf="parent">
-
-    <TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="4dp"
-    android:layout_marginStart="4dp"
-    android:textSize="12sp" />
-
-    <Spinner
-    android:id="@+id/auto_complete_page_area"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />
-
-    <View
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:layout_marginEnd="4dp"
-    android:layout_marginStart="4dp" />
-
-    <TextView
-    android:id="@+id/text_view_area_error"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="4dp"
-    android:layout_marginTop="4dp"
-    android:textSize="12sp"/>
-
-    </android.support.design.widget.TextInputLayout>
-
-    <RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="24dp">
-
-    <TextView
-    android:id="@+id/uniqueid_header"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
-    android:paddingTop="6dp" />
-
-    <android.support.design.widget.TextInputLayout
-    android:id="@+id/text_input_page_uniqueid"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_toEndOf="@+id/uniqueid_header">
-
-    <EditText
-    android:id="@+id/edit_text_page_uniqueid"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:imeOptions="actionNext"
-    android:inputType="textFilter"
-    android:maxLength="21"
-    android:textSize="16sp" />
-
-    <TextView
-    android:id="@+id/uniqueid_helper"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:textSize="12sp" />
-
-    </android.support.design.widget.TextInputLayout>
-
-    </RelativeLayout>
-
-    <TextView
-    android:id="@+id/obligatory_fields_header"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:textSize="14sp" />
-
-    <RelativeLayout
-    android:id="@+id/activity_create_page_add_more_header"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="24dp">
-
-    <TextView
-    android:id="@+id/activity_create_page_add_more_title"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="36dp"
-    android:fontFamily="sans-serif-medium"
-    android:paddingBottom="8dp"
-    android:paddingTop="8dp"
-    android:textSize="14sp" />
-
-    <ImageView
-    android:id="@+id/activity_create_page_add_more_icon"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentEnd="true"
-    android:layout_centerVertical="true"
-    android:alpha="0.54"
-    android:paddingBottom="8dp"
-    android:paddingTop="8dp" />
-
-    <View
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:layout_below="@id/activity_create_page_add_more_title"
-    android:alpha="0.12" />
-
-    </RelativeLayout>
-
-    <!-- Add more info fields -->
-
-    <LinearLayout
-    android:id="@+id/activity_create_page_add_more"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <android.support.design.widget.TextInputLayout
-    android:id="@+id/text_input_page_email"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="16dp">
-
-    <EditText
-    android:id="@+id/edit_text_page_email"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:fontFamily="sans-serif"
-    android:imeOptions="actionNext"
-    android:inputType="textEmailAddress"
-    android:textSize="16sp" />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-    android:id="@+id/text_input_page_phone"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="16dp">
-
-    <EditText
-    android:id="@+id/edit_text_page_phone"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:fontFamily="sans-serif"
-    android:imeOptions="actionNext"
-    android:inputType="phone"
-    android:textSize="16sp" />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-    android:id="@+id/text_input_page_web_address"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="16dp">
-
-    <EditText
-    android:id="@+id/edit_text_page_web_address"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:fontFamily="sans-serif"
-    android:imeOptions="actionNext"
-    android:inputType="text"
-    android:textSize="16sp" />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <TextView
-    android:id="@+id/recycler_gallery_photos_title"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
-    android:fontFamily="sans-serif-medium"
-    android:textAllCaps="true"
-    android:textColor="@color/accent"
-    android:textSize="12sp" />
-
-    <android.support.v7.widget.RecyclerView
-    android:id="@+id/recycler_gallery"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="8dp" />
-
-    <Button
-    android:id="@+id/button_add_photo"
-    style="@style/Widget.AppCompat.Button.Colored"
-    android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:layout_marginTop="8dp"
-    android:fontFamily="sans-serif-medium"
-    android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/user_age"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20sp"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
 
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20sp"
+                    android:text="Interests: "
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/user_interests"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20sp"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/interestsPrimary"
+                style="@style/LinearLayout.Interests">
+
+                <TextView
+                    android:id="@+id/interest_1"
+                    style="@style/TextView.Interest"
+                    android:text="Movies" />
+
+                <TextView
+                    android:id="@+id/interest_2"
+                    style="@style/TextView.Interest"
+                    android:text="TV series" />
+
+                <TextView
+                    android:id="@+id/interest_3"
+                    style="@style/TextView.Interest"
+                    android:text="Books" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/interestsSecondary"
+                style="@style/LinearLayout.Interests"
+                android:layout_marginTop="5dp">
+
+                <TextView
+                    android:id="@+id/interest_4"
+                    style="@style/TextView.Interest"
+                    android:text="Animes" />
+
+                <TextView
+                    android:id="@+id/interest_5"
+                    style="@style/TextView.Interest"
+                    android:text="Mangas" />
+
+                <TextView
+                    android:id="@+id/interest_6"
+                    style="@style/TextView.Interest"
+                    android:text="Comics" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20sp"
+                    android:text="Social Media: "
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/user_contact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20sp"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/user_edit_profile_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/accent">
+
+                <EditText
+                    android:id="@+id/edit_text_user_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Name"
+                    android:imeOptions="actionNext"
+                    android:inputType="textCapSentences"
+                    android:maxLength="50"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/accent"
+                    android:textSize="16sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_user_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:textColorHint="@color/accent">
+
+                <EditText
+                    android:id="@+id/edit_text_user_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Description"
+                    android:imeOptions="actionNext"
+                    android:inputType="textCapSentences"
+                    android:maxLength="50"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/accent"
+                    android:textSize="16sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_user_age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:textColorHint="@color/accent">
+
+                <EditText
+                    android:id="@+id/edit_text_user_age"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Age"
+                    android:imeOptions="actionNext"
+                    android:inputType="textCapSentences"
+                    android:maxLength="50"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/accent"
+                    android:textSize="16sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_user_interests"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="64dp">
+
+                <EditText
+                    android:id="@+id/edit_text_user_interests"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="textCapSentences"
+                    android:maxLength="50"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
     </LinearLayout>
-
-
-
-    </LinearLayout>
-
-    </android.support.constraint.ConstraintLayout>
-
-    </android.support.v4.widget.NestedScrollView>
-</android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.NestedScrollView>
