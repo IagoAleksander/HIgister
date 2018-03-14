@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:background="@color/primary">
 
     <android.support.design.widget.AppBarLayout
@@ -24,16 +23,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <!--<de.hdodenhof.circleimageview.CircleImageView-->
-                <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-                <!--android:id="@+id/profile_image"-->
-                <!--android:layout_width="96dp"-->
-                <!--android:layout_height="96dp"-->
-                <!--android:src="@drawable/anastasia"-->
-                <!--app:civ_border_width="2dp"-->
-                <!--app:civ_border_color="#FF000000"-->
-                <!--android:layout_gravity="center"/>-->
 
                 <ImageView
                     android:id="@+id/activity_create_page_banner"

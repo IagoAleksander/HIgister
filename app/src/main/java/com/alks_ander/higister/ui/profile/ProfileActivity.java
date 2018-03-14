@@ -1,5 +1,6 @@
 package com.alks_ander.higister.ui.profile;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -24,6 +25,7 @@ import android.widget.LinearLayout;
 
 import com.alks_ander.higister.R;
 import com.alks_ander.higister.ui.base.BaseActivity;
+import com.alks_ander.higister.ui.createList.CreateListActivity;
 import com.alks_ander.higister.util.AppBarStateChangeListener;
 import com.alks_ander.higister.util.SectionsPagerAdapter;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
@@ -116,6 +118,13 @@ public class ProfileActivity extends BaseActivity implements
                 } else if (position == LISTS_TAB_INDEX) {
                     fab.setVisibility(View.VISIBLE);
                     fab.setImageDrawable(VectorDrawableCompat.create(getResources(), R.drawable.ic_add, null));
+                    fab.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(ProfileActivity.this, CreateListActivity.class);
+                            ProfileActivity.this.startActivity(intent);
+                        }
+                    });
                 } else if (position == FAVOURITES_TAB_INDEX) {
                     fab.setVisibility(View.GONE);
                 } else if (position == SEARCH_TAB_INDEX) {

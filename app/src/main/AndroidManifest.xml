@@ -4,6 +4,14 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:name="com.alks_ander.higister.Application"
@@ -27,6 +35,16 @@
 
         <activity
             android:name="com.alks_ander.higister.ui.search.SearchActivity2"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name="com.alks_ander.higister.ui.createList.CreateListActivity"
+            android:label="@string/app_name" >
+        </activity>
+
+        <activity
+            android:name="com.alks_ander.higister.ui.viewList.ViewListActivity"
             android:label="@string/app_name" >
         </activity>
 

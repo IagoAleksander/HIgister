@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alks_ander.higister.R;
+import com.alks_ander.higister.ui.viewList.ListItemAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,6 +23,9 @@ import butterknife.ButterKnife;
  */
 
 public class ListsFragment extends Fragment {
+
+    @BindView(R.id.recyclerView)
+    RecyclerView mRecyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -33,5 +39,11 @@ public class ListsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        ListItemAdapter mListItemAdapter = new ListItemAdapter(getActivity());
+
+        mRecyclerView.setAdapter(mListItemAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
     }
 }

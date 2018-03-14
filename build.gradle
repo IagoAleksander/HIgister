@@ -17,6 +17,7 @@ allprojects {
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
         google()
+        maven { url 'https://jitpack.io' }
     }
 }
 

@@ -12,4 +12,11 @@ public class Constants {
     public static final int SEARCH_TAB_INDEX = 3;
     public static final int PEOPLE_TAB_INDEX = 4;
 
+    public static final int PERMISSION_WRITE_EXTERNAL = 1594;
+
+    public static final int SELECT_PICTURE = 1593;
+    public static final int REQUEST_IMAGE_CAPTURE = 1595;
+    public static final int REQUEST_IMAGE_CAPTURE_BANNER = 1598;
+    public static final int SELECT_PICTURE_BANNER = 1599;
+
 }
