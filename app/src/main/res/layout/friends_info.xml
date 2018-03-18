@@ -17,7 +17,7 @@
         android:orientation="vertical">
 
 
-        <com.alks_ander.higister.data.model.FontTextView
+        <com.iaz.higister.data.model.FontTextView
             android:id="@+id/item_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -62,15 +62,15 @@
             android:layout_below="@+id/item_title"
             android:visibility="gone">
 
-            <com.alks_ander.higister.data.model.FontTextView
+            <com.iaz.higister.data.model.FontTextView
                 android:id="@+id/interest_1"
                 style="@style/TextView.Interest" />
 
-            <com.alks_ander.higister.data.model.FontTextView
+            <com.iaz.higister.data.model.FontTextView
                 android:id="@+id/interest_2"
                 style="@style/TextView.Interest" />
 
-            <com.alks_ander.higister.data.model.FontTextView
+            <com.iaz.higister.data.model.FontTextView
                 android:id="@+id/interest_3"
                 style="@style/TextView.Interest" />
         </LinearLayout>
@@ -83,11 +83,11 @@
             android:layout_marginTop="5dp"
             android:visibility="gone">
 
-            <com.alks_ander.higister.data.model.FontTextView
+            <com.iaz.higister.data.model.FontTextView
                 android:id="@+id/interest_4"
                 style="@style/TextView.Interest" />
 
-            <com.alks_ander.higister.data.model.FontTextView
+            <com.iaz.higister.data.model.FontTextView
                 android:id="@+id/interest_5"
                 style="@style/TextView.Interest" />
         </LinearLayout>

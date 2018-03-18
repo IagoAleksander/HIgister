@@ -59,9 +59,10 @@
                         android:paddingBottom="8dp">
 
                         <TextView
+                            android:id="@+id/user_followers_number"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="200"
+                            android:text="---"
                             android:textColor="@color/white"
                             android:textSize="20sp" />
 
@@ -88,9 +89,10 @@
                         android:paddingBottom="8dp">
 
                         <TextView
+                            android:id="@+id/user_created_lists_number"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="17"
+                            android:text="--"
                             android:textColor="@color/white"
                             android:textSize="20sp" />
 
@@ -117,9 +119,10 @@
                         android:paddingBottom="8dp">
 
                         <TextView
+                            android:id="@+id/user_favorited_lists_number"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="25"
+                            android:text="--"
                             android:textColor="@color/white"
                             android:textSize="20sp" />
 

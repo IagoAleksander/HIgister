@@ -17,7 +17,7 @@
 
     <style name="TextView.Interest" parent="TextView">
         <item name="android:background">@drawable/round_textview</item>
-        <item name="android:layout_margin">3dp</item>
+        <item name="android:layout_margin">8dp</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
     </style>

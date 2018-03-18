@@ -75,19 +75,12 @@
                     android:text="Interests: "
                     android:textColor="@color/white"
                     android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/user_interests"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20sp"
-                    android:textColor="@color/white"
-                    android:textSize="20sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/interestsPrimary"
-                style="@style/LinearLayout.Interests">
+                style="@style/LinearLayout.Interests"
+                android:gravity="center">
 
                 <TextView
                     android:id="@+id/interest_1"
@@ -108,7 +101,8 @@
             <LinearLayout
                 android:id="@+id/interestsSecondary"
                 style="@style/LinearLayout.Interests"
-                android:layout_marginTop="5dp">
+                android:layout_marginTop="5dp"
+                android:gravity="center">
 
                 <TextView
                     android:id="@+id/interest_4"
@@ -124,6 +118,18 @@
                     android:id="@+id/interest_6"
                     style="@style/TextView.Interest"
                     android:text="Comics" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/interestsTerciary"
+                style="@style/LinearLayout.Interests"
+                android:layout_marginTop="5dp"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/interest_7"
+                    style="@style/TextView.Interest"
+                    android:text="Musics" />
             </LinearLayout>
 
             <LinearLayout
@@ -211,7 +217,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Age"
                     android:imeOptions="actionNext"
-                    android:inputType="textCapSentences"
+                    android:inputType="number"
                     android:maxLength="50"
                     android:textColor="@color/white"
                     android:textColorHint="@color/accent"
@@ -219,23 +225,89 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/text_input_user_interests"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Interests: "
+                android:textColor="@color/accent"
+                android:textSize="20sp" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="64dp">
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginTop="16dp">
 
-                <EditText
-                    android:id="@+id/edit_text_user_interests"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:imeOptions="actionNext"
-                    android:inputType="textCapSentences"
-                    android:maxLength="50"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:orientation="vertical"
+                    android:layout_weight="1">
 
-            </android.support.design.widget.TextInputLayout>
+                    <CheckBox
+                        android:id="@+id/checkbox_movies"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Movies"
+                        android:textColor="@color/white" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_series"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="TV series"
+                        android:textColor="@color/white" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_books"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Books"
+                        android:textColor="@color/white" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_music"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Music"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+
+                    <CheckBox
+                        android:id="@+id/checkbox_animes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Animes"
+                        android:textColor="@color/white" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_mangas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Mangas"
+                        android:textColor="@color/white" />
+
+                    <CheckBox
+                        android:id="@+id/checkbox_comics"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Comics"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

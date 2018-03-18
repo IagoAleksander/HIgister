@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.alks_ander.higister" >
+    package="com.iaz.higister" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,17 +14,17 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
-        android:name="com.alks_ander.higister.Application"
+        android:name="com.iaz.higister.Application"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.alks_ander.higister.ui.main.MainActivity"
+            android:name="com.iaz.higister.ui.main.MainActivity"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name="com.alks_ander.higister.ui.search.SearchActivity"
+            android:name="com.iaz.higister.ui.search.SearchActivity"
             android:label="@string/app_name" >
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
@@ -34,22 +34,28 @@
         </activity>
 
         <activity
-            android:name="com.alks_ander.higister.ui.search.SearchActivity2"
+            android:name="com.iaz.higister.ui.search.SearchActivity2"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name="com.alks_ander.higister.ui.createList.CreateListActivity"
+            android:name="com.iaz.higister.ui.createList.CreateListActivity"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name="com.alks_ander.higister.ui.viewList.ViewListActivity"
+            android:name="com.iaz.higister.ui.viewList.ViewListActivity"
             android:label="@string/app_name" >
         </activity>
 
         <activity
-            android:name="com.alks_ander.higister.ui.profile.ProfileActivity"
+            android:name="com.iaz.higister.ui.profile.ProfileActivity"
+            android:label="@string/app_name" >
+
+        </activity>
+
+        <activity
+            android:name="com.iaz.higister.ui.login.AuthActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -58,16 +64,10 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="com.alks_ander.higister.ui.login.AuthActivity"
-            android:label="@string/app_name" >
-
-        </activity>
-
-        <service android:name="com.alks_ander.higister.data.SyncService"/>
+        <service android:name="com.iaz.higister.data.SyncService"/>
 
         <receiver
-            android:name="com.alks_ander.higister.data.SyncService$SyncOnConnectionAvailable"
+            android:name="com.iaz.higister.data.SyncService$SyncOnConnectionAvailable"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />

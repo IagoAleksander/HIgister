@@ -68,7 +68,7 @@
         app:layout_constraintRight_toRightOf="parent"/>
 
 
-    <com.alks_ander.higister.util.VerticalTextView
+    <com.iaz.higister.util.VerticalTextView
         android:id="@+id/caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

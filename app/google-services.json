@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "296082065120",
+    "firebase_url": "https://higister-1ef34.firebaseio.com",
+    "project_id": "higister-1ef34",
+    "storage_bucket": "higister-1ef34.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:296082065120:android:c506b627e575ac92",
+        "android_client_info": {
+          "package_name": "com.iaz.higister"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "296082065120-j3hdnho4bvkflcva9qb3stfac9jaehj1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBk4TMeLHQjpazyHzBmR7vC4TR3ANMnUv0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

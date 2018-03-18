@@ -194,9 +194,19 @@ dependencies {
     compile 'com.github.jkwiecien:EasyImage:2.0.2'
 
     compile project(path: ':flipviewpager')
+
+    compile 'com.google.firebase:firebase-core:11.8.0'
+    compile 'com.google.firebase:firebase-auth:11.8.0'
+
+    compile 'com.google.firebase:firebase-firestore:11.8.0'
+
+    // Required only if Facebook login support is required
+//    compile('com.facebook.android:facebook-android-sdk:4.27.0')
 }
 
 // Log out test results to console
 tasks.matching {it instanceof Test}.all {
     testLogging.events = ["failed", "passed", "skipped"]
 }
+
+apply plugin: 'com.google.gms.google-services'
