@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.iaz.higister.ui.profile.ListsFragment;
+import com.iaz.higister.ui.profile.MyListsFragment;
 import com.iaz.higister.ui.profile.ProfileFragment;
 
 
@@ -29,7 +30,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return new ProfileFragment();
             case 1:
-                return new ListsFragment();
+                return new MyListsFragment();
             case 2:
                 return new ListsFragment();
             case 3:

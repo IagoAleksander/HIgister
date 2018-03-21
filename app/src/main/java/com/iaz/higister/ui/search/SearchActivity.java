@@ -1,283 +1,213 @@
 package com.iaz.higister.ui.search;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.sdsmdg.harjot.rotatingtext.RotatingTextWrapper;
-import com.sdsmdg.harjot.rotatingtext.models.Rotatable;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-import com.yalantis.flipviewpager.utils.FlipSettings;
+import com.iaz.higister.R;
+import com.iaz.higister.data.model.BaseItem;
+import com.github.florent37.materialviewpager.MaterialViewPager;
+import com.github.florent37.materialviewpager.header.HeaderDesign;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
-import com.iaz.higister.R;
-import com.iaz.higister.data.SyncService;
-import com.iaz.higister.data.model.BaseItem;
-import com.iaz.higister.data.model.ComicVine.Results;
-import com.iaz.higister.data.model.GoodReads.BestBook;
-import com.iaz.higister.data.model.LastFM.Track;
-import com.iaz.higister.data.model.MyAnimeList.Result;
-import com.iaz.higister.data.model.Omdb.Search;
-import com.iaz.higister.ui.base.BaseActivity;
 
-public class SearchActivity extends BaseActivity implements SearchMvpView {
+public class SearchActivity extends AppCompatActivity {
 
-    private static final String EXTRA_TRIGGER_SYNC_FLAG =
-            "uk.co.ribot.androidboilerplate.ui.main.MainActivity.EXTRA_TRIGGER_SYNC_FLAG";
+    @BindView(R.id.materialViewPager)
+    public MaterialViewPager mViewPager;
 
-    @Inject
-    SearchPresenter mSearchPresenter;
 
-    @BindView(R.id.recycler_view)
-    RecyclerView mRecyclerView;
+    @BindView(R.id.logo_text_view)
+    public TextView textView;
+
+    @BindView(R.id.logo_text_layout)
+    public LinearLayout textLayout;
 
     @BindView(R.id.search_bar)
-    EditText searchText;
-
-    @BindView(R.id.type_spinner)
-    Spinner typeSpinner;
+    EditText editText;
 
     @BindView(R.id.button)
     Button button;
 
-    @BindView(R.id.switcher_layout)
-    LinearLayout rotatingTextLayout;
+    public String searchedItem = "";
 
-    @BindView(R.id.switcher_header)
-    TextView rotatingTextHeader;
+    public ArrayList<BaseItem> itens = new ArrayList<>();
 
-    @BindView(R.id.custom_switcher)
-    RotatingTextWrapper rotatingTextWrapper;
-
-    ResultsAdapter mResultsAdapter;
-
-    int counter, i = 0;
-    private ArrayList<Target> targets = new ArrayList<>();
-
-    /**
-     * Return an Intent to start this Activity.
-     * triggerDataSyncOnCreate allows disabling the background sync service onCreate. Should
-     * only be set to false during testing.
-     */
-    public static Intent getStartIntent(Context context, boolean triggerDataSyncOnCreate) {
-        Intent intent = new Intent(context, SearchActivity.class);
-        intent.putExtra(EXTRA_TRIGGER_SYNC_FLAG, triggerDataSyncOnCreate);
-        return intent;
-    }
+    public boolean canChange = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activityComponent().inject(this);
-        setContentView(R.layout.activity_search2);
+        setContentView(R.layout.activity_search);
+        setTitle("");
         ButterKnife.bind(this);
 
-        mSearchPresenter.attachView(this);
-
-
-        if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
-            startService(SyncService.getStartIntent(this));
+        final Toolbar toolbar = mViewPager.getToolbar();
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
         }
 
-        ArrayList<String> types = new ArrayList<String>() {{
-            add("movie");
-            add("series");
-            add("anime");
-            add("manga");
-            add("book");
-            add("music");
-            add("comics");
-            add("person");
-        }};
+        mViewPager.getViewPager().setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
 
-
-
-        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/Reckoner_Bold.ttf");
-
-        rotatingTextHeader.setTypeface(typeface);
-
-        final Rotatable rotatable = new Rotatable(getResources().getColor(R.color.accent_dark), 2000, "","your movies", "your books", "your musics", "YOU...", "", "");
-        rotatable.setSize(35);
-        rotatable.setAnimationDuration(500);
-        rotatable.setTypeface(typeface);
-        rotatable.setCenter(true);
-
-        rotatingTextWrapper.setSize(35);
-        rotatingTextWrapper.setContent("?", rotatable);
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                rotatingTextWrapper.pause(0);
-//                rotatingTextLayout.setVisibility(View.GONE);
-            }
-        }, 9500);   //1.5 seconds
-
-
-        final ArrayAdapter<String> typeAdapter = new ArrayAdapter<String>(
-                this, R.layout.support_simple_spinner_dropdown_item, types) {
-        };
-
-        typeSpinner.setAdapter(typeAdapter);
-
-        button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public Fragment getItem(int position) {
+//                switch (position % 4) {
+                    //case 0:
+                    //    return RecyclerViewFragment.newInstance();
+                    //case 1:
+                    //    return RecyclerViewFragment.newInstance();
+                    //case 2:
+                    //    return WebViewFragment.newInstance();
+//                    default:
+                        return RecyclerViewFragment2.newInstance(itens);
+//                }
+            }
 
-                String type = typeSpinner.getSelectedItem().toString();
+            @Override
+            public int getCount() {
+                return 8;
+            }
 
-                if (type.equals("person")) {
-                    FlipSettings settings = new FlipSettings.Builder().defaultPage(1).build();
-                    mRecyclerView.setAdapter(new FriendsAdapter(SearchActivity.this, Utils.friends, settings));
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
+            @Override
+            public CharSequence getPageTitle(int position) {
+                switch (position % 8) {
+                    case 0:
+                        return "Movies";
+                    case 1:
+                        return "Series";
+                    case 2:
+                        return "Animes";
+                    case 3:
+                        return "Mangas";
+                    case 4:
+                        return "Books";
+                    case 5:
+                        return "Musics";
+                    case 6:
+                        return "Comics";
+                    case 7:
+                        return "People";
                 }
-                else {
-
-                    FlipSettings settings = new FlipSettings.Builder().defaultPage(1).build();
-
-                    if (mResultsAdapter == null) {
-                        mResultsAdapter = new ResultsAdapter(SearchActivity.this, new ArrayList<BaseItem>(), settings);
-                        mRecyclerView.setAdapter(mResultsAdapter);
-                        mRecyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
-                    }
-                }
-
-                mSearchPresenter.loadResults(type, searchText.getText().toString());
+                return "";
             }
         });
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        mSearchPresenter.detachView();
-    }
-
-    /***** MVP View methods implementation *****/
-
-    public void logThis() {
-        Timber.d("sucesso");
-    }
-
-    @Override
-    public void showItems(final ArrayList<BaseItem> itens) {
-
-        counter = 0;
-        i = 0;
-        targets.clear();
-
-        for (final BaseItem item : itens) {
-
-
-            Timber.d("counter: " +Integer.toString(counter));
-            targets.add (new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-//                    Log.i(TAG, "The image was obtained correctly, now you can do your canvas operation!");
-                    counter++;
-                    Timber.d("counter: " +Integer.toString(counter));
-
-                    item.setBit(bitmap);
-
-                    if (counter == itens.size()) {
-                        Timber.d("sucesso");
-                        mResultsAdapter.setRibots(itens);
-                        mResultsAdapter.notifyDataSetChanged();
-                    }
+        mViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
+            @Override
+            public HeaderDesign getHeaderDesign(int page) {
+                switch (page % 4) {
+                    case 0:
+                        return HeaderDesign.fromColorResAndDrawable(
+                                R.color.red,
+                                getDrawable(R.drawable.movie));
+                    case 1:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.blue,
+                                "http://www.hdiphonewallpapers.us/phone-wallpapers/540x960-1/540x960-mobile-wallpapers-hd-2218x5ox3.jpg");
+                    case 2:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.cyan,
+                                "http://www.droid-life.com/wp-content/uploads/2014/10/lollipop-wallpapers10.jpg");
+                    case 3:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.red,
+                                "http://www.tothemobile.com/wp-content/uploads/2014/07/original.jpg");
                 }
 
+                //execute others actions if needed (ex : modify your header logo)
+
+                return null;
+            }
+        });
+
+        mViewPager.getPagerTitleStrip().setTabPaddingLeftRight(0);
+        mViewPager.getPagerTitleStrip().setDividerPadding(20);
+        mViewPager.getViewPager().setOffscreenPageLimit(mViewPager.getViewPager().getAdapter().getCount());
+        mViewPager.getPagerTitleStrip().setViewPager(mViewPager.getViewPager());
+
+
+//        final View logo = findViewById(R.id.logo_white);
+//        if (logo != null) {
+//            logo.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    mViewPager.notifyHeaderChanged();
+//                    Toast.makeText(getApplicationContext(), "Yes, the title is clickable", Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//        }
+
+
+
+        if (textView != null && textLayout != null) {
+            textView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-//                    Log.e(TAG, "The image was not obtained");
-                    counter++;
-                    Timber.d("counter: " +Integer.toString(counter));
-
-                    InputStream is = getResources().openRawResource(R.drawable.large_movie_poster);
-                    Bitmap pisc = BitmapFactory.decodeStream(new BufferedInputStream(is));
-
-                    item.setBit(pisc);
-
-                    if (counter == itens.size()) {
-                        Timber.d("sucesso");
-                        mResultsAdapter.setRibots(itens);
-                        mResultsAdapter.notifyDataSetChanged();
+                public void onClick(View v) {
+                    if (canChange) {
+                        textView.setVisibility(View.GONE);
+                        textLayout.setVisibility(View.VISIBLE);
                     }
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-//                    Log.(TAG, "Getting ready to get the image");
-                    //Here you should place a loading gif in the ImageView to
-                    //while image is being obtained.
                 }
             });
-
-            item.setBackgroundColor(getBackgroundColor(i));
-
-            if (item instanceof Result) {
-                Picasso.with(this).load(((Result) item).getImage_url()).into(targets.get(i++));
-            }
-            else if (item instanceof Results) {
-                Picasso.with(this).load(((Results) item).getImage().getSmall_url()).into(targets.get(i++));
-            }
-            else if (item instanceof BestBook) {
-                Picasso.with(this).load(((BestBook) item).getSmall_image_url()).into(targets.get(i++));
-            }
-            else if (item instanceof Search) {
-                Picasso.with(this).load(((Search) item).getPoster()).into(targets.get(i++));
-            }
-            else if (item instanceof Track) {
-                mResultsAdapter.setRibots(itens);
-                mResultsAdapter.notifyDataSetChanged();
-                break;
-            }
-
         }
 
+        if (button != null && editText != null) {
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (editText.getText().length() > 3) {
+                        textLayout.setVisibility(View.GONE);
+                        textView.setText(editText.getText());
+                        textView.setVisibility(View.VISIBLE);
+                    }
+
+                }
+            });
+        }
     }
 
-    public int getBackgroundColor (int position) {
-        switch (position) {
-            case 0:
-            case 1:
-                return getResources().getColor(R.color.sienna);
-            case 2:
-            case 3:
-                return getResources().getColor(R.color.green);
-            case 4:
-            case 5:
-                return getResources().getColor(R.color.orange);
-            case 6:
-            case 7:
-                return getResources().getColor(R.color.purple);
-            default:
-                return getResources().getColor(R.color.saffron);
+    @Override
+    protected void onStart() {
+        super.onStart();
 
+
+
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setDisplayUseLogoEnabled(false);
+            actionBar.setHomeButtonEnabled(true);
         }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+            finish();
 
     }
 

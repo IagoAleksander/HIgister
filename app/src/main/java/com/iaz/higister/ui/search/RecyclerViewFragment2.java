@@ -53,7 +53,7 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
-    SearchActivity2 activity;
+    SearchActivity activity;
 
     ResultsAdapter adapter;
     ArrayList<BaseItem> items = new ArrayList<>();
@@ -83,7 +83,7 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 //
-        activity = (SearchActivity2) getActivity();
+        activity = (SearchActivity) getActivity();
         Bundle args = getArguments();
         if (args != null && args.getParcelableArrayList("searchData") != null) {
             items = args.getParcelableArrayList("searchData");

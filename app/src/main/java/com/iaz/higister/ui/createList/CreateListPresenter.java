@@ -5,16 +5,31 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.iaz.higister.data.DataManager;
+import com.iaz.higister.data.model.User;
+import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.injection.ConfigPersistent;
 import com.iaz.higister.ui.base.BasePresenter;
+import com.iaz.higister.ui.viewList.ViewListActivity;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
@@ -31,6 +46,8 @@ public class CreateListPresenter extends BasePresenter<CreateListMvpView> {
     private final DataManager mDataManager;
     private Disposable mDisposable;
     private CreateListActivity activity;
+
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Inject
     public CreateListPresenter(DataManager dataManager) {
@@ -113,6 +130,29 @@ public class CreateListPresenter extends BasePresenter<CreateListMvpView> {
                 }
             }
         }
+    }
+
+    public void saveList(UserList list) {
+        // Add a new document with a generated ID
+
+        db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .collection("createdLists").add(list)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("updateProfile", "DocumentSnapshot successfully written!");
+                        Intent intent = new Intent(getMvpView().getActivity(), ViewListActivity.class);
+                        intent.putExtra("ListID", documentReference.getId());
+                        getMvpView().getActivity().startActivity(intent);
+                    }
+
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@android.support.annotation.NonNull Exception e) {
+                        Log.w("updateProfile", "Error writing document", e);
+                    }
+                });
     }
 
 }

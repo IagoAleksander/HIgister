@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
@@ -21,7 +22,9 @@ import android.widget.Toast;
 
 
 import com.iaz.higister.R;
+import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.ui.base.BaseActivity;
+import com.iaz.higister.ui.splash.SplashActivity;
 import com.iaz.higister.ui.viewList.ViewListActivity;
 import com.iaz.higister.util.AppBarStateChangeListener;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
@@ -56,6 +59,10 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
     LinearLayout addBannerLayout;
     @BindView(R.id.list_banner)
     ImageView listBannerImage;
+    @BindView(R.id.text_input_list_name)
+    TextInputLayout listNameLayout;
+    @BindView(R.id.text_input_list_desc)
+    TextInputLayout listDescriptionLayout;
     @BindView(R.id.activity_create_list_next_button)
     TextView nextButton;
 
@@ -79,7 +86,7 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        getSupportActionBar().setTitle("Create List");
+        getSupportActionBar().setTitle("Create UserList");
 
         appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
             @Override
@@ -158,8 +165,13 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
-                CreateListActivity.this.startActivity(intent);
+//                Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
+//                CreateListActivity.this.startActivity(intent);
+
+                UserList list = new UserList();
+                list.name = listNameLayout.getEditText().getText().toString();
+                list.description = listDescriptionLayout.getEditText().getText().toString();
+                mCreateListPresenter.saveList(list);
             }
         });
 
@@ -230,6 +242,11 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
     public void dismissDialog() {
         if (photoDialog != null)
             photoDialog.cancel();
+    }
+
+    @Override
+    public CreateListActivity getActivity() {
+        return this;
     }
 
 }

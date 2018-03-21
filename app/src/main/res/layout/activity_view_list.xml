@@ -171,6 +171,19 @@
 
     </RelativeLayout>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="80dp"
+        android:layout_marginEnd="20dp"
+        android:tint="@color/white"
+        app:backgroundTint="@color/accent"
+        app:fabSize="normal"
+        android:layout_gravity="end|bottom"
+        android:visibility="gone"/>
+
 </android.support.design.widget.CoordinatorLayout>
 
 

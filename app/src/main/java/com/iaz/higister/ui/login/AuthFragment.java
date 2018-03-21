@@ -1,6 +1,5 @@
 package com.iaz.higister.ui.login;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -14,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.iaz.higister.R;
-import com.iaz.higister.ui.search.SearchActivity2;
 import com.iaz.higister.util.Rotate;
 import com.iaz.higister.util.TextSizeTransition;
 import com.iaz.higister.util.VerticalTextView;

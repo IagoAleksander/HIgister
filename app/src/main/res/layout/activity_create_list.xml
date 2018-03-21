@@ -134,14 +134,14 @@
                 app:layout_constraintStart_toStartOf="parent">
 
                 <android.support.design.widget.TextInputLayout
-                    android:id="@+id/text_input_page_name"
+                    android:id="@+id/text_input_list_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="64dp"
                     android:textColorHint="@color/accent">
 
                     <EditText
-                        android:id="@+id/edit_text_page_name"
+                        android:id="@+id/edit_text_list_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="List Name"
@@ -155,14 +155,14 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
-                    android:id="@+id/text_input_page_desc"
+                    android:id="@+id/text_input_list_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:textColorHint="@color/accent">
 
                     <EditText
-                        android:id="@+id/edit_text_page_desc"
+                        android:id="@+id/edit_text_ist_desc"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="List Description"
@@ -177,6 +177,7 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <CheckBox
+                    android:id="@+id/checkbox_list_isVisible"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -184,6 +185,7 @@
                     android:textColor="@color/white"/>
 
                 <CheckBox
+                    android:id="@+id/checkbox_list_commentsEnabled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"

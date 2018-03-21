@@ -21,11 +21,19 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.RibotV
 
     private List<Ribot> mRibots;
     private Activity activity;
+    private int counter;
 
     @Inject
     public ListItemAdapter(Activity activity) {
         mRibots = new ArrayList<>();
         this.activity = activity;
+        counter = 6;
+    }
+
+    public ListItemAdapter(Activity activity, int counter) {
+        mRibots = new ArrayList<>();
+        this.activity = activity;
+        this.counter = counter;
     }
 
     public void setListItem(List<Ribot> ribots) {
@@ -51,7 +59,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.RibotV
 
     @Override
     public int getItemCount() {
-        return 6;
+        return counter;
     }
 
     class RibotViewHolder extends RecyclerView.ViewHolder {

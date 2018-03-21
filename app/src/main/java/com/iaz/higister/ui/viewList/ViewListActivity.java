@@ -1,22 +1,36 @@
 package com.iaz.higister.ui.viewList;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.iaz.higister.R;
+import com.iaz.higister.data.model.User;
+import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.ui.base.BaseActivity;
+import com.iaz.higister.ui.search.SearchActivity;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.annotations.NonNull;
 
 /**
  * Created by Iago Aleksander on 06/03/18.
@@ -36,6 +50,10 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     @BindView(R.id.list_item_recycler)
     RecyclerView mRecyclerView;
 
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+
+    String listID;
 
     private CustomPhotoPickerDialog photoDialog;
 
@@ -56,13 +74,15 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        getSupportActionBar().setTitle("Test List");
+        getSupportActionBar().setTitle("Test UserList");
 
-        ListItemAdapter mListItemAdapter = new ListItemAdapter(this);
+        if (getIntent() != null)
+            listID = getIntent().getExtras().getString("ListID");
 
-        mRecyclerView.setAdapter(mListItemAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mViewListPresenter.attachView(this);
+        if (listID != null)
+            mViewListPresenter.getList(listID);
+
+
 //        mViewListPresenter.loadRibots();
 
     }
@@ -84,6 +104,26 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void updateData(UserList list) {
+        ListItemAdapter mListItemAdapter = new ListItemAdapter(this, list.name.length());
+
+        mRecyclerView.setAdapter(mListItemAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mViewListPresenter.attachView(this);
+
+        fab.setVisibility(View.VISIBLE);
+        fab.setImageResource(R.drawable.ic_add);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ViewListActivity.this, SearchActivity.class);
+                ViewListActivity.this.startActivity(intent);
+            }
+        });
     }
 
 }

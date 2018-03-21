@@ -190,7 +190,7 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
                     }
                     mViewProfileLayout.setVisibility(View.GONE);
                     mEditProfileLayout.setVisibility(View.VISIBLE);
-                    activity.fab.setImageDrawable(VectorDrawableCompat.create(getResources(), R.drawable.ic_save, null));
+                    activity.fab.setImageResource(R.drawable.ic_save);
                 } else {
 
                     ArrayList<String> interests = new ArrayList<>();
@@ -238,7 +238,7 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
 
         mEditProfileLayout.setVisibility(View.GONE);
         mViewProfileLayout.setVisibility(View.VISIBLE);
-        activity.fab.setImageDrawable(VectorDrawableCompat.create(getResources(), R.drawable.ic_edit, null));
+        activity.fab.setImageResource(R.drawable.ic_edit);
 
         interestsLayout1.setVisibility(View.GONE);
         interestsLayout2.setVisibility(View.GONE);

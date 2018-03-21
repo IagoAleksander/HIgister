@@ -115,7 +115,7 @@ public class ProfileActivity extends BaseActivity implements SmartTabLayout.TabP
         viewPagerTab.setViewPager(mViewPager);
 
 
-        fab.setImageDrawable(VectorDrawableCompat.create(getResources(), R.drawable.ic_edit, null));
+        fab.setImageResource(R.drawable.ic_edit);
         viewPagerTab.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -126,15 +126,15 @@ public class ProfileActivity extends BaseActivity implements SmartTabLayout.TabP
 
                 if (position == PROFILE_TAB_INDEX) {
                     fab.setVisibility(View.VISIBLE);
-                    fab.setImageDrawable(VectorDrawableCompat.create(getResources(), R.drawable.ic_edit, null));
+                    fab.setImageResource(R.drawable.ic_edit);
                 } else if (position == LISTS_TAB_INDEX) {
                     fab.setVisibility(View.VISIBLE);
-                    fab.setImageDrawable(VectorDrawableCompat.create(getResources(), R.drawable.ic_add, null));
+                    fab.setImageResource(R.drawable.ic_add);
                 } else if (position == FAVOURITES_TAB_INDEX) {
                     fab.setVisibility(View.GONE);
                 } else if (position == SEARCH_TAB_INDEX) {
                     fab.setVisibility(View.VISIBLE);
-                    fab.setImageDrawable(VectorDrawableCompat.create(getResources(), R.drawable.ic_search_white_24dp, null));
+                    fab.setImageResource(R.drawable.ic_search_white_24dp);
                 } else if (position == PEOPLE_TAB_INDEX) {
                     fab.setVisibility(View.GONE);
                 }
@@ -160,19 +160,19 @@ public class ProfileActivity extends BaseActivity implements SmartTabLayout.TabP
         ImageView icon = (ImageView) tab.findViewById(R.id.custom_tab_icon);
         switch (position) {
             case PROFILE_TAB_INDEX:
-                icon.setImageDrawable(res.getDrawable(R.drawable.ic_home_white_24dp));
+                icon.setImageResource(R.drawable.ic_home_white_24dp);
                 break;
             case LISTS_TAB_INDEX:
-                icon.setImageDrawable(res.getDrawable(R.drawable.ic_list));
+                icon.setImageResource(R.drawable.ic_list);
                 break;
             case FAVOURITES_TAB_INDEX:
-                icon.setImageDrawable(res.getDrawable(R.drawable.ic_action_star_10));
+                icon.setImageResource(R.drawable.ic_action_star_10);
                 break;
             case SEARCH_TAB_INDEX:
-                icon.setImageDrawable(res.getDrawable(R.drawable.ic_search_white_24dp));
+                icon.setImageResource(R.drawable.ic_search_white_24dp);
                 break;
             case PEOPLE_TAB_INDEX:
-                icon.setImageDrawable(res.getDrawable(R.drawable.ic_person_white_24dp));
+                icon.setImageResource(R.drawable.ic_person_white_24dp);
                 break;
             default:
                 throw new IllegalStateException("Invalid position: " + position);
