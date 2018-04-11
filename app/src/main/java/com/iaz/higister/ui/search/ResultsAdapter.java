@@ -1,28 +1,29 @@
 package com.iaz.higister.ui.search;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Parcelable;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.iaz.higister.ui.createItem.CreateItemActivity;
 import com.yalantis.flipviewpager.adapter.BaseFlipAdapter;
 import com.yalantis.flipviewpager.utils.FlipSettings;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.BaseItem;
-import com.iaz.higister.data.model.ComicVine.Results;
-import com.iaz.higister.data.model.GoodReads.BestBook;
-import com.iaz.higister.data.model.LastFM.Track;
-import com.iaz.higister.data.model.MyAnimeList.Result;
-import com.iaz.higister.data.model.Omdb.Search;
 
 public class ResultsAdapter extends BaseFlipAdapter {
 
     private final int PAGES = 3;
-//    private int[] IDS_INTEREST = {R.id.interest_1, R.id.interest_2, R.id.interest_3, R.id.interest_4, R.id.interest_5};
+    //    private int[] IDS_INTEREST = {R.id.interest_1, R.id.interest_2, R.id.interest_3, R.id.interest_4, R.id.interest_5};
     Activity activity;
 
     public ResultsAdapter(Activity activity, List items, FlipSettings settings) {
@@ -53,6 +54,7 @@ public class ResultsAdapter extends BaseFlipAdapter {
 
 //            for (int id : IDS_INTEREST)
 //                holder.interests.add((TextView) holder.infoPage.findViewById(id));
+            holder.choose = (Button) holder.infoPage.findViewById(R.id.item_buttom);
 
             convertView.setTag(holder);
         } else {
@@ -75,7 +77,7 @@ public class ResultsAdapter extends BaseFlipAdapter {
                 return holder.infoPage;
         }
 
-        convertView.setBackgroundColor(((BaseItem) result1).getBackgroundColor());
+        convertView.setBackgroundColor(ContextCompat.getColor(activity.getApplicationContext(), android.R.color.transparent));
         return convertView;
     }
 
@@ -84,88 +86,28 @@ public class ResultsAdapter extends BaseFlipAdapter {
         return PAGES;
     }
 
-    private void setTitle (MoviesViewHolder holder, BaseItem item, int position) {
+    private void setTitle(MoviesViewHolder holder, BaseItem item, int position) {
         if (item == null)
             return;
 
-        if (item instanceof Result) {
-            Result result = (Result) item;
-
-            if (position == 0)
-                holder.titleLeft.setText(result.getTitle());
-            else
-                holder.titleRight.setText(result.getTitle());
-        }
-        else if (item instanceof Results) {
-            Results result = (Results) item;
-
-            if (position == 0)
-                holder.titleLeft.setText(result.getName());
-            else
-                holder.titleRight.setText(result.getName());
-        }
-        else if (item instanceof BestBook) {
-            BestBook result = (BestBook) item;
-
-            if (position == 0)
-                holder.titleLeft.setText(result.getTitle());
-            else
-                holder.titleRight.setText(result.getTitle());
-        }
-        else if (item instanceof Search) {
-            Search result = (Search) item;
-
-            if (position == 0)
-                holder.titleLeft.setText(result.getTitle());
-            else
-                holder.titleRight.setText(result.getTitle());
-        }
-        else if (item instanceof Track) {
-            Track result = (Track) item;
-
-            if (position == 0)
-                holder.titleLeft.setText(result.getName());
-            else
-                holder.titleRight.setText(result.getName());
-        }
+        if (position == 0)
+            holder.titleLeft.setText(item.title);
+        else
+            holder.titleRight.setText(item.title);
     }
+
     private void fillHolder(MoviesViewHolder holder, BaseItem item) {
         if (item == null)
             return;
 
-        if (item instanceof Result) {
-            Result result = (Result) item;
+        setClick(holder, item);
 
-            holder.nickName.setText(result.getTitle());
-            holder.emailTextView.setText(result.getDescription());
-        }
-        else if (item instanceof Results) {
-            Results result = (Results) item;
+        holder.nickName.setText(item.title);
+        holder.emailTextView.setText(item.description);
 
-            holder.nickName.setText(result.getName());
-            holder.emailTextView.setText(result.getDescription());
-        }
-        else if (item instanceof BestBook) {
-            BestBook result = (BestBook) item;
-
-            holder.nickName.setText(result.getTitle());
-            holder.emailTextView.setText(result.getType());
-        }
-        else if (item instanceof Search) {
-            Search result = (Search) item;
-
-            holder.nickName.setText(result.getTitle());
-            holder.emailTextView.setText(result.getType());
-        }
-        else if (item instanceof Track) {
-            Track result = (Track) item;
-
-            holder.nickName.setText(result.getName());
-            holder.emailTextView.setText(result.getArtist());
-        }
     }
 
-    class MoviesViewHolder  {
+    class MoviesViewHolder {
 
 
         ImageView leftAvatar;
@@ -180,6 +122,18 @@ public class ResultsAdapter extends BaseFlipAdapter {
         TextView emailTextView;
         List<TextView> interests = new ArrayList<>();
         TextView nickName;
-//        ImageView image;
+        //        ImageView image;
+        Button choose;
+    }
+
+    public void setClick(MoviesViewHolder holder, BaseItem item) {
+        holder.choose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, CreateItemActivity.class);
+                intent.putExtra("item", (Parcelable) item);
+                activity.startActivity(intent);
+            }
+        });
     }
 }

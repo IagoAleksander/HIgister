@@ -71,7 +71,7 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
         return f;
     }
 
-    int counter, i = 0;
+    int i = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -127,7 +127,7 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
             public void onClick(View view) {
                 counterList.clear();
                 i = 0;
-                counter = 0;
+//                counter = 0;
                 itemsCollection.clear();
                 mSearchPresenter.loadResults("movie", activity.editText.getText().toString());
                 mSearchPresenter.loadResults("series", activity.editText.getText().toString());
@@ -153,30 +153,23 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
     @Override
     public void showItems(final ArrayList<BaseItem> itens) {
 
-        final int counter = this.counter++;
+//        final int counter = this.counter++;
 
         if (itens != null && !itens.isEmpty()) {
             counterList.put(itens.get(0).getMyType(), 0);
-        } else {
-            this.counter--;
+//        } else {
+//            this.counter--;
         }
 
         for (final BaseItem item : itens) {
 
-            String bitmapAddress = "";
-            if (item instanceof Result) {
-                bitmapAddress = ((Result) item).getImage_url();
-            } else if (item instanceof Results) {
-                bitmapAddress = ((Results) item).getImage().getSmall_url();
-            } else if (item instanceof BestBook) {
-                bitmapAddress = ((BestBook) item).getSmall_image_url();
-            } else if (item instanceof Search) {
-                bitmapAddress = ((Search) item).getPoster();
-            } else if (item instanceof Track) {
+            if (item.getMyType().equals("music")) {
                 itemsCollection.put(item.getMyType(), itens);
                 preupdateAdapter();
                 break;
             }
+
+            String bitmapAddress = item.imageUrl;
 
             RequestOptions myOptions = new RequestOptions()
                     .override(200, 300)
@@ -204,6 +197,7 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
                                 preupdateAdapter();
                             }
                         }
+
                         @Override
                         public void onLoadFailed(@Nullable Drawable errorDrawable) {
                             counterList.put(item.getMyType(), counterList.get(item.getMyType()) + 1);
@@ -309,7 +303,7 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
             }
 
             @Override
-            public int getItemPosition(Object object){
+            public int getItemPosition(Object object) {
                 return PagerAdapter.POSITION_NONE;
             }
         });

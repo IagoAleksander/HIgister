@@ -1,11 +1,14 @@
 package com.iaz.higister.ui.search;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.iaz.higister.ui.createItem.CreateItemActivity;
 import com.yalantis.flipviewpager.adapter.BaseFlipAdapter;
 import com.yalantis.flipviewpager.utils.FlipSettings;
 
@@ -38,6 +41,7 @@ public class FriendsAdapter extends BaseFlipAdapter {
                 holder.infoPage = activity.getLayoutInflater().inflate(R.layout.friends_info, parent, false);
                 holder.nickName = (TextView) holder.infoPage.findViewById(R.id.item_title);
 
+
                 for (int id : IDS_INTEREST)
                     holder.interests.add((TextView) holder.infoPage.findViewById(id));
 
@@ -45,6 +49,8 @@ public class FriendsAdapter extends BaseFlipAdapter {
             } else {
                 holder = (FriendsHolder) convertView.getTag();
             }
+
+
 
             switch (position) {
                 // Merged page with 2 friends
@@ -84,5 +90,6 @@ public class FriendsAdapter extends BaseFlipAdapter {
 
             List<TextView> interests = new ArrayList<>();
             TextView nickName;
+
         }
     }

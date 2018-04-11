@@ -14,7 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/primary_light"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal">
 
 
         <com.iaz.higister.data.model.FontTextView
@@ -27,11 +28,22 @@
             android:layout_centerHorizontal="true"
             android:textColor="@color/white"/>
 
+        <Button
+            android:id="@+id/item_buttom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="choose"
+            android:textColor="@color/blue"
+            android:layout_below="@id/item_title"
+            android:clickable="true"
+            android:focusable="true"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
-            android:layout_below="@id/item_title"
+            android:layout_below="@id/item_buttom"
             android:orientation="horizontal">
 
         <!--<ImageView-->

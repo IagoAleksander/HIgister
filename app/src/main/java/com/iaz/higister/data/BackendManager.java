@@ -7,13 +7,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
+
 import com.iaz.higister.data.model.BaseItem;
 import com.iaz.higister.data.model.ComicVine.ComicVineResponse;
+import com.iaz.higister.data.model.ComicVine.Results;
 import com.iaz.higister.data.model.GoodReads.GoodreadsResponse;
 import com.iaz.higister.data.model.GoodReads.Work;
 import com.iaz.higister.data.model.LastFM.LastFmResponse;
+import com.iaz.higister.data.model.LastFM.Track;
 import com.iaz.higister.data.model.MyAnimeList.MyAnimeListResponse;
+import com.iaz.higister.data.model.MyAnimeList.Result;
 import com.iaz.higister.data.model.Omdb.OmdbResponse;
+import com.iaz.higister.data.model.Omdb.Search;
 import com.iaz.higister.data.remote.AnimesService;
 import com.iaz.higister.data.remote.BooksService;
 import com.iaz.higister.data.remote.ComicsService;
@@ -35,14 +40,12 @@ public class BackendManager {
                     @Override
                     public void onResponse(Call<OmdbResponse> call, Response<OmdbResponse> response) {
 
-                        ArrayList<BaseItem> results = new ArrayList<>() ;
-                        for (BaseItem baseItem : response.body().getSearch())
-                            baseItem.setMyType(type);
+                        ArrayList<BaseItem> results = new ArrayList<>();
 
                         if (response.body().getSearch() != null) {
-                            Collections.addAll(results, response.body().getSearch());
-                            Timber.d("number of results: " +Integer.toString(response.body().getSearch().length));
 
+                            for (Search search : response.body().getSearch())
+                                results.add(new BaseItem(search, type));
                         }
 
                         activity.showItems(results);
@@ -64,15 +67,14 @@ public class BackendManager {
                     @Override
                     public void onResponse(Call<MyAnimeListResponse> call, Response<MyAnimeListResponse> response) {
 
-                        ArrayList<BaseItem> results = new ArrayList<>() ;
-
-                        for (BaseItem baseItem : response.body().getResult())
-                            baseItem.setMyType(type);
+                        ArrayList<BaseItem> results = new ArrayList<>();
 
                         if (response.body().getResult().size() > 10)
-                            results.addAll(response.body().getResult().subList(0, 10));
+                            for (Result result : response.body().getResult().subList(0, 10))
+                                results.add(new BaseItem(result, type));
                         else
-                            results.addAll(response.body().getResult());
+                            for (Result result : response.body().getResult())
+                                results.add(new BaseItem(result, type));
 
                         activity.showItems(results);
                     }
@@ -93,21 +95,16 @@ public class BackendManager {
                     @Override
                     public void onResponse(Call<GoodreadsResponse> call, Response<GoodreadsResponse> response) {
 
-                        ArrayList<BaseItem> results = new ArrayList<>() ;
+                        ArrayList<BaseItem> results = new ArrayList<>();
 
                         if (response.body().getSearch().getResults().getWork().size() > 10) {
                             for (Work work : response.body().getSearch().getResults().getWork().subList(0, 10))
-                                results.add(work.getBest_book());
-                        }
-                        else {
+                                results.add(new BaseItem(work.getBest_book()));
+                        } else {
                             for (Work work : response.body().getSearch().getResults().getWork())
-                                results.add(work.getBest_book());
+                                results.add(new BaseItem(work.getBest_book()));
                         }
 
-
-
-                        for (BaseItem baseItem : results)
-                            baseItem.setMyType("book");
                         activity.showItems(results);
                     }
 
@@ -127,15 +124,15 @@ public class BackendManager {
                     @Override
                     public void onResponse(Call<LastFmResponse> call, Response<LastFmResponse> response) {
 
-                        ArrayList<BaseItem> results = new ArrayList<>() ;
+                        ArrayList<BaseItem> results = new ArrayList<>();
 
-                        if (response.body().getResults().getTrackmatches().getTrack().size() > 10)
-                            results.addAll(response.body().getResults().getTrackmatches().getTrack().subList(0, 10));
-                        else
-                            results.addAll(response.body().getResults().getTrackmatches().getTrack());
-
-                        for (BaseItem baseItem : results)
-                            baseItem.setMyType("music");
+                        if (response.body().getResults().getTrackmatches().getTrack().size() > 10) {
+                            for (Track track : response.body().getResults().getTrackmatches().getTrack().subList(0, 10))
+                                results.add(new BaseItem(track));
+                        } else {
+                            for (Track track : response.body().getResults().getTrackmatches().getTrack())
+                                results.add(new BaseItem(track));
+                        }
 
                         activity.showItems(results);
                     }
@@ -156,15 +153,15 @@ public class BackendManager {
                     @Override
                     public void onResponse(Call<ComicVineResponse> call, Response<ComicVineResponse> response) {
 
-                        ArrayList<BaseItem> results = new ArrayList<>() ;
+                        ArrayList<BaseItem> results = new ArrayList<>();
 
-                        if (response.body().getResults().size() > 10)
-                            results.addAll(response.body().getResults().subList(0, 10));
-                        else
-                            results.addAll(response.body().getResults());
-
-                        for (BaseItem baseItem : results)
-                            baseItem.setMyType("comics");
+                        if (response.body().getResults().size() > 10) {
+                            for (Results result : response.body().getResults().subList(0, 10))
+                                results.add(new BaseItem(result));
+                        } else {
+                            for (Results result : response.body().getResults())
+                                results.add(new BaseItem(result));
+                        }
 
                         activity.showItems(results);
                     }

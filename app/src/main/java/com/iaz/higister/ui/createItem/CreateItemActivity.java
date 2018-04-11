@@ -1,11 +1,15 @@
-package com.iaz.higister.ui.createList;
+package com.iaz.higister.ui.createItem;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
@@ -20,20 +24,29 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.iaz.higister.R;
+import com.iaz.higister.data.model.BaseItem;
+import com.iaz.higister.data.model.ComicVine.Results;
+import com.iaz.higister.data.model.GoodReads.BestBook;
+import com.iaz.higister.data.model.LastFM.Track;
+import com.iaz.higister.data.model.MyAnimeList.Result;
+import com.iaz.higister.data.model.Omdb.Search;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.ui.base.BaseActivity;
-import com.iaz.higister.ui.splash.SplashActivity;
-import com.iaz.higister.ui.viewList.ViewListActivity;
 import com.iaz.higister.util.AppBarStateChangeListener;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
-import com.bumptech.glide.Glide;
+
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 import static com.iaz.higister.util.Constants.PERMISSION_WRITE_EXTERNAL;
 
@@ -41,30 +54,31 @@ import static com.iaz.higister.util.Constants.PERMISSION_WRITE_EXTERNAL;
  * Created by Iago Aleksander on 06/03/18.
  */
 
-public class CreateListActivity extends BaseActivity implements CreateListMvpView{
+public class CreateItemActivity extends BaseActivity implements CreateItemMvpView {
 
-    @Inject CreateListPresenter mCreateListPresenter;
+    @Inject
+    CreateItemPresenter mCreateItemPresenter;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.appbar)
-    AppBarLayout appBarLayout;
+    @BindView(R.id.item_title)
+    TextView itemTitle;
+    @BindView(R.id.item_description)
+    TextView itemDescription;
     @BindView(R.id.listLogoImageLayout)
     RelativeLayout listLogoImageLayout;
     @BindView(R.id.listLogoImageView)
     ImageView listLogoImage;
     @BindView(R.id.logo_placeholder)
     LinearLayout listLogoImagePlaceholder;
-    @BindView(R.id.activity_create_page_add_banner)
-    LinearLayout addBannerLayout;
-    @BindView(R.id.list_banner)
-    ImageView listBannerImage;
     @BindView(R.id.text_input_list_name)
     TextInputLayout listNameLayout;
     @BindView(R.id.text_input_list_desc)
     TextInputLayout listDescriptionLayout;
     @BindView(R.id.activity_create_list_next_button)
     TextView nextButton;
+
+    BaseItem item;
 
 
     private CustomPhotoPickerDialog photoDialog;
@@ -74,92 +88,58 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityComponent().inject(this);
-        mCreateListPresenter.setActivity(this);
+        mCreateItemPresenter.setActivity(this);
 
-        setContentView(R.layout.activity_create_list);
+        setContentView(R.layout.activity_create_item);
         ButterKnife.bind(this);
 
-        mCreateListPresenter.attachView(this);
+        if (getIntent() != null)
+            item = getIntent().getExtras().getParcelable("item");
+
+        mCreateItemPresenter.attachView(this);
         setSupportActionBar(mToolbar);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        getSupportActionBar().setTitle("Create UserList");
+        getSupportActionBar().setTitle("Create List Item");
 
-        appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
-            @Override
-            public void onStateChanged(AppBarLayout appBarLayout, State state, int i) {
+        if (item != null) {
+            Glide.with(this)
+                    .load(item.imageUrl)
+                    .into(listLogoImage);
 
-                float fraction = i / 400.0f;
-                listLogoImageLayout.setAlpha(1.0f + fraction);
-                addBannerLayout.setAlpha(1.0f + fraction);
-
-                if (state == State.COLLAPSED) {
-                    listLogoImageLayout.setVisibility(View.GONE);
-                    addBannerLayout.setVisibility(View.GONE);
-                } else {
-                    listLogoImageLayout.setVisibility(View.VISIBLE);
-                    addBannerLayout.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+            itemTitle.setText(item.title);
+            itemDescription.setText(item.description);
+        }
 
         listLogoImageLayout.setOnClickListener(v -> {
-            photoDialog = new CustomPhotoPickerDialog(CreateListActivity.this, new CustomPhotoPickerDialog
+            photoDialog = new CustomPhotoPickerDialog(CreateItemActivity.this, new CustomPhotoPickerDialog
                     .OnOptionPhotoSelected() {
                 @Override
                 public void onGallery() {
-                    mCreateListPresenter.openDialogWindow();
+                    mCreateItemPresenter.openDialogWindow();
                     photoDialog.dismiss();
                 }
 
                 @Override
                 public void onCamera() {
                     // Here, thisActivity is the current activity
-                    if (ContextCompat.checkSelfPermission(CreateListActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                            || ContextCompat.checkSelfPermission(CreateListActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(CreateItemActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                            || ContextCompat.checkSelfPermission(CreateItemActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
                         photoDialog.dismiss();
-                        ActivityCompat.requestPermissions(CreateListActivity.this,
+                        ActivityCompat.requestPermissions(CreateItemActivity.this,
                                 new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL);
                     } else {
-                        mCreateListPresenter.getPhoto();
+                        mCreateItemPresenter.getPhoto();
                         photoDialog.dismiss();
                     }
                 }
             });
             photoDialog.show();
 
-        });
-
-        addBannerLayout.setOnClickListener(view -> {
-
-            photoDialog = new CustomPhotoPickerDialog(CreateListActivity.this, new CustomPhotoPickerDialog
-                    .OnOptionPhotoSelected() {
-                @Override
-                public void onGallery() {
-                    mCreateListPresenter.openDialogWindowBanner();
-                    photoDialog.dismiss();
-                }
-
-                @Override
-                public void onCamera() {
-                    // Here, thisActivity is the current activity
-                    if (ContextCompat.checkSelfPermission(CreateListActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                            || ContextCompat.checkSelfPermission(CreateListActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-                        photoDialog.dismiss();
-                        ActivityCompat.requestPermissions(CreateListActivity.this,
-                                new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL);
-                    } else {
-                        mCreateListPresenter.getPhotoBanner();
-                        photoDialog.dismiss();
-                    }
-                }
-            });
-            photoDialog.show();
         });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
@@ -171,7 +151,7 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
                 UserList list = new UserList();
                 list.name = listNameLayout.getEditText().getText().toString();
                 list.description = listDescriptionLayout.getEditText().getText().toString();
-                mCreateListPresenter.saveList(list);
+                mCreateItemPresenter.saveList(list);
             }
         });
 
@@ -200,12 +180,12 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        mCreateListPresenter.requestPermissionResult(requestCode, permissions, grantResults);
+        mCreateItemPresenter.requestPermissionResult(requestCode, permissions, grantResults);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mCreateListPresenter.activityResult(requestCode, resultCode, data);
+        mCreateItemPresenter.activityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -214,20 +194,9 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
             listLogoImagePlaceholder.setVisibility(View.GONE);
         }
         try {
-            Glide.with(CreateListActivity.this)
+            Glide.with(CreateItemActivity.this)
                     .load(uri)
                     .into(listLogoImage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void callGlideBanner(Uri uri) {
-        try {
-            Glide.with(CreateListActivity.this)
-                    .load(uri)
-                    .into(listBannerImage);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -245,7 +214,7 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
     }
 
     @Override
-    public CreateListActivity getActivity() {
+    public CreateItemActivity getActivity() {
         return this;
     }
 

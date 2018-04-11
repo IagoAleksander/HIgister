@@ -3,6 +3,7 @@ package com.iaz.higister.injection.component;
 import dagger.Subcomponent;
 import com.iaz.higister.injection.PerActivity;
 import com.iaz.higister.injection.module.ActivityModule;
+import com.iaz.higister.ui.createItem.CreateItemActivity;
 import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.ui.login.AuthActivity;
 import com.iaz.higister.ui.main.MainActivity;
@@ -32,5 +33,7 @@ public interface ActivityComponent {
     void inject(CreateListActivity createListActivity);
 
     void inject(ViewListActivity viewListActivity);
+
+    void inject(CreateItemActivity createItemActivity);
 
 }

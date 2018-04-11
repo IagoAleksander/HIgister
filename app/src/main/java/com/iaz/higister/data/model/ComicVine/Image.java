@@ -1,5 +1,8 @@
 package com.iaz.higister.data.model.ComicVine;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 public class Image
 {
     private String medium_url;
@@ -127,4 +130,37 @@ public class Image
 //    {
 //        return "ClassPojo [medium_url = "+medium_url+", original_url = "+original_url+", image_tags = "+image_tags+", screen_url = "+screen_url+", screen_large_url = "+screen_large_url+", super_url = "+super_url+", small_url = "+small_url+", thumb_url = "+thumb_url+", icon_url = "+icon_url+", tiny_url = "+tiny_url+"]";
 //    }
+
+//    protected Image(Parcel in) {
+//        medium_url = in.readString();
+//        original_url = in.readString();
+//        small_url = in.readString();
+//        thumb_url = in.readString();
+//    }
+//
+//    @Override
+//    public int describeContents() {
+//        return 0;
+//    }
+//
+//    @Override
+//    public void writeToParcel(Parcel dest, int flags) {
+//        dest.writeString(medium_url);
+//        dest.writeString(original_url);
+//        dest.writeString(small_url);
+//        dest.writeString(thumb_url);
+//    }
+//
+//    @SuppressWarnings("unused")
+//    public static final Parcelable.Creator<Results> CREATOR = new Parcelable.Creator<Results>() {
+//        @Override
+//        public Results createFromParcel(Parcel in) {
+//            return new Results(in);
+//        }
+//
+//        @Override
+//        public Results[] newArray(int size) {
+//            return new Results[size];
+//        }
+//    };
 }

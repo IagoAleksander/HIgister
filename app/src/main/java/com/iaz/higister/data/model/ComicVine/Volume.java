@@ -1,5 +1,8 @@
 package com.iaz.higister.data.model.ComicVine;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 public class Volume
 {
     private String id;
@@ -55,4 +58,37 @@ public class Volume
     {
         return "ClassPojo [id = "+id+", api_detail_url = "+api_detail_url+", site_detail_url = "+site_detail_url+", name = "+name+"]";
     }
+//
+//    protected Volume(Parcel in) {
+//        id = in.readString();
+//        api_detail_url = in.readString();
+//        site_detail_url = in.readString();
+//        name = in.readString();
+//    }
+//
+//    @Override
+//    public int describeContents() {
+//        return 0;
+//    }
+//
+//    @Override
+//    public void writeToParcel(Parcel dest, int flags) {
+//        dest.writeString(id);
+//        dest.writeString(api_detail_url);
+//        dest.writeString(site_detail_url);
+//        dest.writeString(name);
+//    }
+//
+//    @SuppressWarnings("unused")
+//    public static final Parcelable.Creator<Results> CREATOR = new Parcelable.Creator<Results>() {
+//        @Override
+//        public Results createFromParcel(Parcel in) {
+//            return new Results(in);
+//        }
+//
+//        @Override
+//        public Results[] newArray(int size) {
+//            return new Results[size];
+//        }
+//    };
 }

@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import com.iaz.higister.data.model.BaseItem;
 
-public class Search extends BaseItem implements Parcelable
+public class Search implements Parcelable
 {
     private String Year;
 
@@ -74,7 +74,6 @@ public class Search extends BaseItem implements Parcelable
     }
 
     protected Search(Parcel in) {
-        super(in);
         Year = in.readString();
         Type = in.readString();
         Poster = in.readString();
