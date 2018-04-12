@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId 'com.iaz.higister'
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 25
         testInstrumentationRunner "${applicationId}.runner.RxAndroidJUnitRunner"
         versionCode 1000

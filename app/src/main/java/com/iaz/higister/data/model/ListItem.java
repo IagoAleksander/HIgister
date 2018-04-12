@@ -1,5 +1,6 @@
 package com.iaz.higister.data.model;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  * Created by alksander on 17/03/2018.
  */
 
-public class UserList implements Parcelable{
+public class ListItem implements Parcelable{
 
     @Exclude
     public String uid;
@@ -19,21 +20,17 @@ public class UserList implements Parcelable{
     public String name;
     public String description;
     public int type;
-    public boolean visibleForEveryone;
-    public boolean commentsEnabled;
+    public BaseItem baseItem;
+//    public Bitmap photo;
 
-    @Exclude
-    public ArrayList<ListItem> listItems = new ArrayList<>();
+    public ListItem() {}
 
-    public UserList() {}
-
-    protected UserList(Parcel in) {
+    protected ListItem(Parcel in) {
         uid = in.readString();
         name = in.readString();
         description = in.readString();
         type = in.readInt();
-        visibleForEveryone = in.readByte() != 0;
-        commentsEnabled = in.readByte() != 0;
+        baseItem = in.readTypedObject(BaseItem.CREATOR);
     }
 
     @Override
@@ -47,21 +44,20 @@ public class UserList implements Parcelable{
         dest.writeString(name);
         dest.writeString(description);
         dest.writeInt(type);
-        dest.writeByte(visibleForEveryone ? (byte) 1 : (byte) 0);
-        dest.writeByte(commentsEnabled ? (byte) 1 : (byte) 0);
+        dest.writeTypedObject(baseItem, PARCELABLE_WRITE_RETURN_VALUE);
 
     }
 
     @SuppressWarnings("unused")
-    public static final Parcelable.Creator<UserList> CREATOR = new Parcelable.Creator<UserList>() {
+    public static final Creator<ListItem> CREATOR = new Creator<ListItem>() {
         @Override
-        public UserList createFromParcel(Parcel in) {
-            return new UserList(in);
+        public ListItem createFromParcel(Parcel in) {
+            return new ListItem(in);
         }
 
         @Override
-        public UserList[] newArray(int size) {
-            return new UserList[size];
+        public ListItem[] newArray(int size) {
+            return new ListItem[size];
         }
     };
 

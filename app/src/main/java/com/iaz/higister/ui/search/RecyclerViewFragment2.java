@@ -96,7 +96,7 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
         FlipSettings settings = new FlipSettings.Builder().defaultPage(1).build();
 
 
-        adapter = new ResultsAdapter(getActivity(), items, settings);
+        adapter = new ResultsAdapter((SearchActivity) getActivity(), items, settings);
         //Use this now
         mRecyclerView.addItemDecoration(new MaterialViewPagerHeaderDecorator());
         mRecyclerView.setAdapter(adapter);

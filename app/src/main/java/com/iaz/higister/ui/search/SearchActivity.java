@@ -17,6 +17,7 @@ import com.iaz.higister.R;
 import com.iaz.higister.data.model.BaseItem;
 import com.github.florent37.materialviewpager.MaterialViewPager;
 import com.github.florent37.materialviewpager.header.HeaderDesign;
+import com.iaz.higister.data.model.UserList;
 
 import java.util.ArrayList;
 
@@ -47,6 +48,8 @@ public class SearchActivity extends AppCompatActivity {
 
     public boolean canChange = true;
 
+    public UserList list;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +61,9 @@ public class SearchActivity extends AppCompatActivity {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
+
+        if (getIntent() != null)
+            list = getIntent().getParcelableExtra("list");
 
         mViewPager.getViewPager().setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
 

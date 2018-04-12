@@ -24,9 +24,9 @@ public class ResultsAdapter extends BaseFlipAdapter {
 
     private final int PAGES = 3;
     //    private int[] IDS_INTEREST = {R.id.interest_1, R.id.interest_2, R.id.interest_3, R.id.interest_4, R.id.interest_5};
-    Activity activity;
+    SearchActivity activity;
 
-    public ResultsAdapter(Activity activity, List items, FlipSettings settings) {
+    public ResultsAdapter(SearchActivity activity, List items, FlipSettings settings) {
 
         super(activity.getApplicationContext(), items, settings);
         this.activity = activity;
@@ -131,7 +131,8 @@ public class ResultsAdapter extends BaseFlipAdapter {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(activity, CreateItemActivity.class);
-                intent.putExtra("item", (Parcelable) item);
+                intent.putExtra("list", activity.list);
+                intent.putExtra("item", item);
                 activity.startActivity(intent);
             }
         });

@@ -20,6 +20,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.iaz.higister.R;
+import com.iaz.higister.data.model.BaseItem;
 import com.iaz.higister.data.model.User;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.ui.base.BaseActivity;
@@ -53,7 +54,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     @BindView(R.id.fab)
     FloatingActionButton fab;
 
-    String listID;
+    UserList list;
 
     private CustomPhotoPickerDialog photoDialog;
 
@@ -77,13 +78,16 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
         getSupportActionBar().setTitle("Test UserList");
 
         if (getIntent() != null)
-            listID = getIntent().getExtras().getString("ListID");
+            list = getIntent().getExtras().getParcelable("list");
 
-        if (listID != null)
-            mViewListPresenter.getList(listID);
+        fab.setVisibility(View.VISIBLE);
+        fab.setImageResource(R.drawable.ic_add);
 
-
-//        mViewListPresenter.loadRibots();
+        fab.setOnClickListener(v -> {
+            Intent intent = new Intent(ViewListActivity.this, SearchActivity.class);
+            intent.putExtra("list", list);
+            startActivity(intent);
+        });
 
     }
 
@@ -113,17 +117,6 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
         mRecyclerView.setAdapter(mListItemAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mViewListPresenter.attachView(this);
-
-        fab.setVisibility(View.VISIBLE);
-        fab.setImageResource(R.drawable.ic_add);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ViewListActivity.this, SearchActivity.class);
-                ViewListActivity.this.startActivity(intent);
-            }
-        });
     }
 
 }

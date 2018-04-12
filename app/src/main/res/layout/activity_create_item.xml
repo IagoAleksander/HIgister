@@ -65,6 +65,15 @@
 
             </LinearLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/listLogoImageView"
+                android:text="Click to change"
+                android:textColor="@color/white"/>
+
         </RelativeLayout>
 
         <LinearLayout
@@ -77,14 +86,17 @@
                 android:id="@+id/item_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                android:maxLines="3"/>
 
             <TextView
                 android:id="@+id/item_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                android:maxLines="7"
+                android:ellipsize="end"/>
 
         </LinearLayout>
     </RelativeLayout>

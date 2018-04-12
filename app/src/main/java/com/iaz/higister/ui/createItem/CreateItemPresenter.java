@@ -13,12 +13,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.iaz.higister.data.DataManager;
+import com.iaz.higister.data.model.ListItem;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.injection.ConfigPersistent;
 import com.iaz.higister.ui.base.BasePresenter;
 import com.iaz.higister.ui.viewList.ViewListActivity;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -130,9 +132,8 @@ public class CreateItemPresenter extends BasePresenter<CreateItemMvpView> {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d("updateProfile", "DocumentSnapshot successfully written!");
-                        Intent intent = new Intent(getMvpView().getActivity(), ViewListActivity.class);
-                        intent.putExtra("ListID", documentReference.getId());
-                        getMvpView().getActivity().startActivity(intent);
+
+                        saveItens(list.listItems, documentReference.getId());
                     }
 
                 })
@@ -142,6 +143,30 @@ public class CreateItemPresenter extends BasePresenter<CreateItemMvpView> {
                         Log.w("updateProfile", "Error writing document", e);
                     }
                 });
+    }
+
+    public void saveItens(ArrayList<ListItem> listItems, String listUid) {
+
+        for (ListItem item : listItems) {
+            db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .collection("createdLists").document(listUid).collection("listItems").add(item)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            Log.d("updateProfile", "DocumentSnapshot successfully written!");
+                            Intent intent = new Intent(getMvpView().getActivity(), ViewListActivity.class);
+                            intent.putExtra("ListID", documentReference.getId());
+                            getMvpView().getActivity().startActivity(intent);
+                        }
+
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@android.support.annotation.NonNull Exception e) {
+                            Log.w("updateProfile", "Error writing document", e);
+                        }
+                    });
+        }
     }
 
 }

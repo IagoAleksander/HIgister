@@ -141,9 +141,7 @@ public class CreateListPresenter extends BasePresenter<CreateListMvpView> {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d("updateProfile", "DocumentSnapshot successfully written!");
-                        Intent intent = new Intent(getMvpView().getActivity(), ViewListActivity.class);
-                        intent.putExtra("ListID", documentReference.getId());
-                        getMvpView().getActivity().startActivity(intent);
+
                     }
 
                 })

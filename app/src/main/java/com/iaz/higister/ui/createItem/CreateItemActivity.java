@@ -25,13 +25,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.BaseItem;
 import com.iaz.higister.data.model.ComicVine.Results;
 import com.iaz.higister.data.model.GoodReads.BestBook;
 import com.iaz.higister.data.model.LastFM.Track;
+import com.iaz.higister.data.model.ListItem;
 import com.iaz.higister.data.model.MyAnimeList.Result;
 import com.iaz.higister.data.model.Omdb.Search;
 import com.iaz.higister.data.model.UserList;
@@ -79,7 +84,7 @@ public class CreateItemActivity extends BaseActivity implements CreateItemMvpVie
     TextView nextButton;
 
     BaseItem item;
-
+    UserList list;
 
     private CustomPhotoPickerDialog photoDialog;
 
@@ -93,8 +98,10 @@ public class CreateItemActivity extends BaseActivity implements CreateItemMvpVie
         setContentView(R.layout.activity_create_item);
         ButterKnife.bind(this);
 
-        if (getIntent() != null)
+        if (getIntent() != null) {
             item = getIntent().getExtras().getParcelable("item");
+            list = getIntent().getExtras().getParcelable("list");
+        }
 
         mCreateItemPresenter.attachView(this);
         setSupportActionBar(mToolbar);
@@ -108,6 +115,18 @@ public class CreateItemActivity extends BaseActivity implements CreateItemMvpVie
         if (item != null) {
             Glide.with(this)
                     .load(item.imageUrl)
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            listLogoImagePlaceholder.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
                     .into(listLogoImage);
 
             itemTitle.setText(item.title);
@@ -148,9 +167,12 @@ public class CreateItemActivity extends BaseActivity implements CreateItemMvpVie
 //                Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
 //                CreateItemActivity.this.startActivity(intent);
 
-                UserList list = new UserList();
-                list.name = listNameLayout.getEditText().getText().toString();
-                list.description = listDescriptionLayout.getEditText().getText().toString();
+                ListItem listItem = new ListItem();
+                listItem.name = listNameLayout.getEditText().getText().toString();
+                listItem.description = listDescriptionLayout.getEditText().getText().toString();
+                listItem.baseItem = item;
+
+                list.listItems.add(listItem);
                 mCreateItemPresenter.saveList(list);
             }
         });

@@ -171,7 +171,11 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
                 UserList list = new UserList();
                 list.name = listNameLayout.getEditText().getText().toString();
                 list.description = listDescriptionLayout.getEditText().getText().toString();
-                mCreateListPresenter.saveList(list);
+//                mCreateListPresenter.saveList(list);
+
+                Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
+                intent.putExtra("list", list);
+                startActivity(intent);
             }
         });
 
