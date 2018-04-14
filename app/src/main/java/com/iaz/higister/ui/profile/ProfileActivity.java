@@ -1,12 +1,13 @@
 package com.iaz.higister.ui.profile;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.graphics.drawable.VectorDrawableCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
@@ -79,6 +80,7 @@ public class ProfileActivity extends BaseActivity implements SmartTabLayout.TabP
 //    TabLayout mTabLayout;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
+    FragmentManager fm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,15 +109,17 @@ public class ProfileActivity extends BaseActivity implements SmartTabLayout.TabP
             }
         });
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), this);
+        fm = getSupportFragmentManager();
+
+        mSectionsPagerAdapter = new SectionsPagerAdapter(fm, this);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         final SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
         viewPagerTab.setCustomTabView(this);
         viewPagerTab.setViewPager(mViewPager);
 
+        setFab(PROFILE_TAB_INDEX);
 
-        fab.setImageResource(R.drawable.ic_edit);
         viewPagerTab.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -124,20 +128,7 @@ public class ProfileActivity extends BaseActivity implements SmartTabLayout.TabP
                 View mark = tab.findViewById(R.id.custom_tab_notification_mark);
                 mark.setVisibility(View.GONE);
 
-                if (position == PROFILE_TAB_INDEX) {
-                    fab.setVisibility(View.VISIBLE);
-                    fab.setImageResource(R.drawable.ic_edit);
-                } else if (position == LISTS_TAB_INDEX) {
-                    fab.setVisibility(View.VISIBLE);
-                    fab.setImageResource(R.drawable.ic_add);
-                } else if (position == FAVOURITES_TAB_INDEX) {
-                    fab.setVisibility(View.GONE);
-                } else if (position == SEARCH_TAB_INDEX) {
-                    fab.setVisibility(View.VISIBLE);
-                    fab.setImageResource(R.drawable.ic_search_white_24dp);
-                } else if (position == PEOPLE_TAB_INDEX) {
-                    fab.setVisibility(View.GONE);
-                }
+                setFab(position);
             }
         });
 
@@ -209,9 +200,38 @@ public class ProfileActivity extends BaseActivity implements SmartTabLayout.TabP
         return super.onOptionsItemSelected(item);
     }
 
-    public void updateUserInfo (User user) {
+    public void updateUserInfo(User user) {
         followersCounter.setText(Integer.toString(user.followersNumber));
         createdListsCounter.setText(Integer.toString(user.listsCreatedNumber));
         favoritedListsCounter.setText(Integer.toString(user.listsFavouritedNumber));
+    }
+
+    public void setFab (int position) {
+
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" +position);
+
+        if (position == PROFILE_TAB_INDEX) {
+            fab.setVisibility(View.VISIBLE);
+            fab.setImageResource(R.drawable.ic_edit);
+            fab.setOnClickListener(v -> {
+                if (fragment != null && fragment instanceof ProfileFragment) {
+                    ((ProfileFragment) fragment).swapBetweenDisplayAndEditProfileInfos();
+                }
+            });
+        } else if (position == LISTS_TAB_INDEX) {
+            fab.setVisibility(View.VISIBLE);
+            fab.setImageResource(R.drawable.ic_add);
+            fab.setOnClickListener(v -> {
+                Intent intent = new Intent(ProfileActivity.this, CreateListActivity.class);
+                ProfileActivity.this.startActivity(intent);
+            });
+        } else if (position == FAVOURITES_TAB_INDEX) {
+            fab.setVisibility(View.GONE);
+        } else if (position == SEARCH_TAB_INDEX) {
+            fab.setVisibility(View.VISIBLE);
+            fab.setImageResource(R.drawable.ic_search_white_24dp);
+        } else if (position == PEOPLE_TAB_INDEX) {
+            fab.setVisibility(View.GONE);
+        }
     }
 }

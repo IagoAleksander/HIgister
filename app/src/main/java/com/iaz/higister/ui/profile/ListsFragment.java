@@ -15,6 +15,8 @@ import com.iaz.higister.data.model.Profile;
 import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.ui.viewList.ListItemAdapter;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -44,7 +46,7 @@ public class ListsFragment extends Fragment {
 
         activity = (ProfileActivity) getActivity();
 
-        ListItemAdapter mListItemAdapter = new ListItemAdapter(getActivity());
+        ListItemAdapter mListItemAdapter = new ListItemAdapter(getActivity(), new ArrayList<>());
 
         mRecyclerView.setAdapter(mListItemAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -64,18 +66,5 @@ public class ListsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        if (!getUserVisibleHint())
-        {
-            return;
-        }
-
-        activity.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(activity, CreateListActivity.class);
-                activity.startActivity(intent);
-            }
-        });
     }
 }

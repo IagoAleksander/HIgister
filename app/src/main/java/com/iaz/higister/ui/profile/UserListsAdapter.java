@@ -45,21 +45,13 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
 
     @Override
     public void onBindViewHolder(final ListViewHolder holder, int position) {
-//        Ribot ribot = mRibots.get(position);
-//        holder.hexColorView.setBackgroundColor(Color.parseColor(ribot.profile().hexColor()));
-//        holder.nameTextView.setText(String.format("%s %s",
-//                ribot.profile().name().first(), ribot.profile().name().last()));
-//        holder.emailTextView.setText(ribot.profile().email());
         holder.listNameTextView.setText(mLists.get(position).name);
 
 
-        holder.image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(activity, ViewListActivity.class);
-                intent.putExtra("ListID", mLists.get(position).uid);
-                activity.startActivity(intent);
-            }
+        holder.image.setOnClickListener(v -> {
+            Intent intent = new Intent(activity, ViewListActivity.class);
+            intent.putExtra("list", mLists.get(position));
+            activity.startActivity(intent);
         });
     }
 

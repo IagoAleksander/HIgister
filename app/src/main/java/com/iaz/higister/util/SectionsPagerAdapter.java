@@ -4,9 +4,12 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 
+import com.iaz.higister.R;
 import com.iaz.higister.ui.profile.ListsFragment;
 import com.iaz.higister.ui.profile.MyListsFragment;
+import com.iaz.higister.ui.profile.ProfileActivity;
 import com.iaz.higister.ui.profile.ProfileFragment;
 
 
@@ -26,7 +29,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+
         switch (position) {
+
             case 0:
                 return new ProfileFragment();
             case 1:

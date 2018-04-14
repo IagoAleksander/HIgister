@@ -59,6 +59,8 @@ public class MyListsPresenter extends BasePresenter<MyListsMvpView> {
                 Log.d("receiveMyLists", "Error writing document");
                 UserList tempList;
 
+                list.clear();
+
                 for (DocumentSnapshot doc : documentSnapshots) {
                     tempList = doc.toObject(UserList.class);
                     tempList.uid = doc.getId();

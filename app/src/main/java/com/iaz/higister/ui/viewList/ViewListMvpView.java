@@ -1,9 +1,12 @@
 package com.iaz.higister.ui.viewList;
 
+import com.iaz.higister.data.model.ListItem;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.ui.base.MvpView;
 
+import java.util.ArrayList;
+
 public interface ViewListMvpView extends MvpView {
 
-    void updateData(UserList user);
+    void updateData(ArrayList<ListItem> listItems);
 }

@@ -145,80 +145,6 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
         {
             return;
         }
-
-        activity.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mViewProfileLayout.getVisibility() == View.VISIBLE) {
-                    mNameTextInput.getEditText().setText(activity.getSupportActionBar().getTitle());
-                    mDescriptionTextInput.getEditText().setText(user.description);
-                    mAgeTextInput.getEditText().setText(Integer.toString(user.age));
-
-
-                    mCheckBoxMovies.setChecked(false);
-                    mCheckBoxSeries.setChecked(false);
-                    mCheckBoxBooks.setChecked(false);
-                    mCheckBoxMusic.setChecked(false);
-                    mCheckBoxAnimes.setChecked(false);
-                    mCheckBoxMangas.setChecked(false);
-                    mCheckBoxComics.setChecked(false);
-
-                    for (String interest : user.interests) {
-                        switch (interest) {
-                            case "Movies":
-                                mCheckBoxMovies.setChecked(true);
-                                break;
-                            case "TV Series":
-                                mCheckBoxSeries.setChecked(true);
-                                break;
-                            case "Books":
-                                mCheckBoxBooks.setChecked(true);
-                                break;
-                            case "Music":
-                                mCheckBoxMusic.setChecked(true);
-                                break;
-                            case "Animes":
-                                mCheckBoxAnimes.setChecked(true);
-                                break;
-                            case "Mangas":
-                                mCheckBoxMangas.setChecked(true);
-                                break;
-                            case "Comics":
-                                mCheckBoxComics.setChecked(true);
-                                break;
-                        }
-                    }
-                    mViewProfileLayout.setVisibility(View.GONE);
-                    mEditProfileLayout.setVisibility(View.VISIBLE);
-                    activity.fab.setImageResource(R.drawable.ic_save);
-                } else {
-
-                    ArrayList<String> interests = new ArrayList<>();
-                    if (mCheckBoxMovies.isChecked())
-                        interests.add("Movies");
-                    if (mCheckBoxSeries.isChecked())
-                        interests.add("TV Series");
-                    if (mCheckBoxBooks.isChecked())
-                        interests.add("Books");
-                    if (mCheckBoxMusic.isChecked())
-                        interests.add("Music");
-                    if (mCheckBoxAnimes.isChecked())
-                        interests.add("Animes");
-                    if (mCheckBoxMangas.isChecked())
-                        interests.add("Mangas");
-                    if (mCheckBoxComics.isChecked())
-                        interests.add("Comics");
-
-                    mProfilePresenter.saveProfileInfo(
-                            mNameTextInput.getEditText().getText().toString(),
-                            mDescriptionTextInput.getEditText().getText().toString(),
-                            Integer.parseInt(mAgeTextInput.getEditText().getText().toString()),
-                            interests
-                    );
-
-                }
-            }
-        });
     }
 
     @Override
@@ -238,7 +164,6 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
 
         mEditProfileLayout.setVisibility(View.GONE);
         mViewProfileLayout.setVisibility(View.VISIBLE);
-        activity.fab.setImageResource(R.drawable.ic_edit);
 
         interestsLayout1.setVisibility(View.GONE);
         interestsLayout2.setVisibility(View.GONE);
@@ -292,7 +217,79 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
                 }
             }
         }
+    }
+
+    public void swapBetweenDisplayAndEditProfileInfos() {
+        if (mViewProfileLayout.getVisibility() == View.VISIBLE) {
+            mNameTextInput.getEditText().setText(activity.getSupportActionBar().getTitle());
+            mDescriptionTextInput.getEditText().setText(user.description);
+            mAgeTextInput.getEditText().setText(Integer.toString(user.age));
 
 
+            mCheckBoxMovies.setChecked(false);
+            mCheckBoxSeries.setChecked(false);
+            mCheckBoxBooks.setChecked(false);
+            mCheckBoxMusic.setChecked(false);
+            mCheckBoxAnimes.setChecked(false);
+            mCheckBoxMangas.setChecked(false);
+            mCheckBoxComics.setChecked(false);
+
+            for (String interest : user.interests) {
+                switch (interest) {
+                    case "Movies":
+                        mCheckBoxMovies.setChecked(true);
+                        break;
+                    case "TV Series":
+                        mCheckBoxSeries.setChecked(true);
+                        break;
+                    case "Books":
+                        mCheckBoxBooks.setChecked(true);
+                        break;
+                    case "Music":
+                        mCheckBoxMusic.setChecked(true);
+                        break;
+                    case "Animes":
+                        mCheckBoxAnimes.setChecked(true);
+                        break;
+                    case "Mangas":
+                        mCheckBoxMangas.setChecked(true);
+                        break;
+                    case "Comics":
+                        mCheckBoxComics.setChecked(true);
+                        break;
+                }
+            }
+            mViewProfileLayout.setVisibility(View.GONE);
+            mEditProfileLayout.setVisibility(View.VISIBLE);
+            activity.fab.setImageResource(R.drawable.ic_save);
+        } else {
+
+            ArrayList<String> interests = new ArrayList<>();
+            if (mCheckBoxMovies.isChecked())
+                interests.add("Movies");
+            if (mCheckBoxSeries.isChecked())
+                interests.add("TV Series");
+            if (mCheckBoxBooks.isChecked())
+                interests.add("Books");
+            if (mCheckBoxMusic.isChecked())
+                interests.add("Music");
+            if (mCheckBoxAnimes.isChecked())
+                interests.add("Animes");
+            if (mCheckBoxMangas.isChecked())
+                interests.add("Mangas");
+            if (mCheckBoxComics.isChecked())
+                interests.add("Comics");
+
+            mProfilePresenter.saveProfileInfo(
+                    mNameTextInput.getEditText().getText().toString(),
+                    mDescriptionTextInput.getEditText().getText().toString(),
+                    Integer.parseInt(mAgeTextInput.getEditText().getText().toString()),
+                    interests
+            );
+
+
+            activity.fab.setImageResource(R.drawable.ic_edit);
+
+        }
     }
 }

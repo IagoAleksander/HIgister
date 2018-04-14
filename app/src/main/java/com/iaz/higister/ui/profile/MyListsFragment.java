@@ -41,6 +41,8 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
     ArrayList<UserList> lists;
     ProfileActivity activity;
 
+    UserListsAdapter mListAdapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -69,7 +71,14 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
     @Override
     public void updateData(ArrayList<UserList> lists) {
-        UserListsAdapter mListAdapter = new UserListsAdapter(getActivity(), lists);
+
+        if (mListAdapter == null) {
+            mListAdapter = new UserListsAdapter(getActivity(), lists);
+        }
+        else {
+            mListAdapter.setLists(lists);
+            mListAdapter.notifyDataSetChanged();
+        }
 
         mRecyclerView.setAdapter(mListAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
