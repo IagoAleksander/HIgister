@@ -80,7 +80,8 @@
             <LinearLayout
                 android:id="@+id/interestsPrimary"
                 style="@style/LinearLayout.Interests"
-                android:gravity="center">
+                android:gravity="center"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/interest_1"
@@ -102,7 +103,8 @@
                 android:id="@+id/interestsSecondary"
                 style="@style/LinearLayout.Interests"
                 android:layout_marginTop="5dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/interest_4"
@@ -124,7 +126,8 @@
                 android:id="@+id/interestsTerciary"
                 style="@style/LinearLayout.Interests"
                 android:layout_marginTop="5dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/interest_7"

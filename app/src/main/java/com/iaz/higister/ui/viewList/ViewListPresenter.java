@@ -1,5 +1,6 @@
 package com.iaz.higister.ui.viewList;
 
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -54,7 +55,7 @@ public class ViewListPresenter extends BasePresenter<ViewListMvpView> {
         this.activity = activity;
     }
 
-    public void getListItems (String listID) {
+    public void getListItems(String listID) {
 
 
         CollectionReference colRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -67,6 +68,7 @@ public class ViewListPresenter extends BasePresenter<ViewListMvpView> {
 
                 for (DocumentSnapshot document : task.getResult()) {
                     ListItem listItem = document.toObject(ListItem.class);
+                    listItem.uid = document.getId();
                     listItems.add(listItem);
                 }
                 getMvpView().updateData(listItems);
@@ -74,6 +76,24 @@ public class ViewListPresenter extends BasePresenter<ViewListMvpView> {
                 Log.w("get list items", "Error receiving document", task.getException());
             }
         });
+    }
+
+    public void removeListItem(UserList list, int position, OnListItemRemoved onListItemRemoved) {
+
+        DocumentReference docRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .collection("createdLists").document(list.uid).collection("listItems").document(list.listItems.get(position).uid);
+
+        docRef.delete()
+                .addOnSuccessListener(documentReference -> onListItemRemoved.onSuccess())
+                .addOnFailureListener(onListItemRemoved::onFailed);
+
+
+    }
+
+    interface OnListItemRemoved {
+        void onSuccess();
+
+        void onFailed(Exception exception);
     }
 
 }

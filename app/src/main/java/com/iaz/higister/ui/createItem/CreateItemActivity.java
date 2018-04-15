@@ -164,8 +164,8 @@ public class CreateItemActivity extends BaseActivity implements CreateItemMvpVie
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
-//                CreateItemActivity.this.startActivity(intent);
+//                Intent intent = new Intent(ViewItemFragment.this, ViewListActivity.class);
+//                ViewItemFragment.this.startActivity(intent);
 
                 ListItem listItem = new ListItem();
                 listItem.name = listNameLayout.getEditText().getText().toString();
@@ -173,7 +173,7 @@ public class CreateItemActivity extends BaseActivity implements CreateItemMvpVie
                 listItem.baseItem = item;
 
                 list.listItems.add(listItem);
-                mCreateItemPresenter.saveList(list);
+                mCreateItemPresenter.checkIfExists(list);
             }
         });
 

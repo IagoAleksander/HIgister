@@ -6,6 +6,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,10 +39,9 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
-    ArrayList<UserList> lists;
     ProfileActivity activity;
 
-    UserListsAdapter mListAdapter;
+    public UserListsAdapter mListAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,7 +61,17 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
         mListsPresenter.attachView(this);
 
-        mListsPresenter.receiveLists();
+        mListsPresenter.receiveLists(new MyListsPresenter.OnUpdateLists() {
+            @Override
+            public void onSuccess(ArrayList<UserList> userLists) {
+                updateData(userLists);
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                Log.e("receiveMyLists: ", "failed", e);
+            }
+        });
     }
 
     @Override
@@ -73,7 +83,7 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
     public void updateData(ArrayList<UserList> lists) {
 
         if (mListAdapter == null) {
-            mListAdapter = new UserListsAdapter(getActivity(), lists);
+            mListAdapter = new UserListsAdapter(this, lists);
         }
         else {
             mListAdapter.setLists(lists);

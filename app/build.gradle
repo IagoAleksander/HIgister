@@ -201,6 +201,8 @@ dependencies {
 
     compile 'com.google.firebase:firebase-firestore:11.8.0'
 
+    compile 'me.relex:circleindicator:1.2.2@aar'
+
     // Required only if Facebook login support is required
 //    compile('com.facebook.android:facebook-android-sdk:4.27.0')
 }

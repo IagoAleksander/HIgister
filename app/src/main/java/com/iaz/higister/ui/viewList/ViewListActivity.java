@@ -43,8 +43,8 @@ import io.reactivex.annotations.NonNull;
 
 public class ViewListActivity extends BaseActivity implements ViewListMvpView {
 
-    @Inject ViewListPresenter mViewListPresenter;
-//    @Inject ListItemAdapter mListItemAdapter;
+    @Inject
+    public ViewListPresenter mViewListPresenter;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -65,6 +65,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     UserList list;
 
     private CustomPhotoPickerDialog photoDialog;
+
     ListItemAdapter mListItemAdapter;
 
 
@@ -129,8 +130,10 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     @Override
     public void updateData(ArrayList<ListItem> listItems) {
 
+        list.listItems = listItems;
+
         if (mListItemAdapter == null) {
-            mListItemAdapter = new ListItemAdapter(this, listItems);
+            mListItemAdapter = new ListItemAdapter(this, list);
         }
         else {
             mListItemAdapter.setListItem(listItems);

@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.createItem;
+package com.iaz.higister.ui.viewItem;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -7,12 +7,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.iaz.higister.data.DataManager;
@@ -23,7 +18,6 @@ import com.iaz.higister.ui.base.BasePresenter;
 import com.iaz.higister.ui.viewList.ViewListActivity;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -39,21 +33,21 @@ import static com.iaz.higister.util.Constants.SELECT_PICTURE;
 import static com.iaz.higister.util.Constants.SELECT_PICTURE_BANNER;
 
 @ConfigPersistent
-public class CreateItemPresenter extends BasePresenter<CreateItemMvpView> {
+public class ViewItemPresenter extends BasePresenter<ViewItemMvpView> {
 
     private final DataManager mDataManager;
     private Disposable mDisposable;
-    private CreateItemActivity activity;
+    private ViewItemActivity activity;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Inject
-    public CreateItemPresenter(DataManager dataManager) {
+    public ViewItemPresenter(DataManager dataManager) {
         mDataManager = dataManager;
     }
 
     @Override
-    public void attachView(CreateItemMvpView mvpView) {
+    public void attachView(ViewItemMvpView mvpView) {
         super.attachView(mvpView);
     }
 
@@ -63,7 +57,7 @@ public class CreateItemPresenter extends BasePresenter<CreateItemMvpView> {
         if (mDisposable != null) mDisposable.dispose();
     }
 
-    public void setActivity(CreateItemActivity activity) {
+    public void setActivity(ViewItemActivity activity) {
         this.activity = activity;
     }
 
@@ -169,9 +163,9 @@ public class CreateItemPresenter extends BasePresenter<CreateItemMvpView> {
                     .collection("createdLists").document(listUid).collection("listItems").add(item)
                     .addOnSuccessListener(documentReference -> {
                         Log.d("updateProfile", "DocumentSnapshot successfully written!");
-                        Intent intent = new Intent(getMvpView().getActivity(), ViewListActivity.class);
+                        Intent intent = new Intent(getMvpView().getActivityFromView(), ViewListActivity.class);
                         intent.putExtra("list", list);
-                        getMvpView().getActivity().startActivity(intent);
+                        getMvpView().getActivityFromView().startActivity(intent);
                     })
                     .addOnFailureListener(e ->
                             Log.w("updateProfile", "Error writing document", e));

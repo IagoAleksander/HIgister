@@ -16,6 +16,7 @@ import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.injection.ConfigPersistent;
 import com.iaz.higister.ui.base.BasePresenter;
 
+import java.security.acl.Group;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -33,7 +34,7 @@ public class MyListsPresenter extends BasePresenter<MyListsMvpView> {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Inject
-    public MyListsPresenter(DataManager dataManager) {
+    MyListsPresenter(DataManager dataManager) {
         mDataManager = dataManager;
     }
 
@@ -48,33 +49,47 @@ public class MyListsPresenter extends BasePresenter<MyListsMvpView> {
         if (mDisposable != null) mDisposable.dispose();
     }
 
-    public void receiveLists() {
+    void receiveLists(OnUpdateLists onUpdateLists) {
 
         CollectionReference colRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .collection("createdLists");
 
-        colRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot documentSnapshots) {
-                Log.d("receiveMyLists", "Error writing document");
-                UserList tempList;
+        colRef.get()
+                .addOnSuccessListener(documentSnapshots -> {
+                    Log.d("receiveMyLists: ", "success");
+                    UserList tempList;
 
-                list.clear();
+                    list.clear();
 
-                for (DocumentSnapshot doc : documentSnapshots) {
-                    tempList = doc.toObject(UserList.class);
-                    tempList.uid = doc.getId();
-                    list.add(tempList);
-                }
+                    for (DocumentSnapshot doc : documentSnapshots) {
+                        tempList = doc.toObject(UserList.class);
+                        tempList.uid = doc.getId();
+                        list.add(tempList);
+                    }
 
-                getMvpView().updateData(list);
-            }
-        })
-        .addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("receiveMyLists", "Error writing document", e);
-            }
-        });
+                    onUpdateLists.onSuccess(list);
+                })
+                .addOnFailureListener(onUpdateLists::onFailed);
+    }
+
+    void removeList(UserList userList, OnListRemoved onListRemoved) {
+        DocumentReference docRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .collection("createdLists").document(userList.uid);
+
+        docRef.delete()
+                .addOnSuccessListener(aVoid -> onListRemoved.onSuccess())
+                .addOnFailureListener(e -> onListRemoved.onFailed(e.toString()));
+    }
+
+    interface OnUpdateLists {
+        void onSuccess(ArrayList<UserList> userLists);
+
+        void onFailed(Exception e);
+    }
+
+    interface OnListRemoved {
+        void onSuccess();
+
+        void onFailed(String exception);
     }
 }

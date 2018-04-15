@@ -3,11 +3,14 @@ package com.iaz.higister.ui.profile;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.Ribot;
@@ -25,11 +28,11 @@ import butterknife.ButterKnife;
 public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.ListViewHolder> {
 
     private ArrayList<UserList> mLists;
-    private Activity activity;
+    private MyListsFragment fragment;
 
-    public UserListsAdapter(Activity activity, ArrayList<UserList> lists) {
+    public UserListsAdapter(MyListsFragment fragment, ArrayList<UserList> lists) {
         mLists = lists;
-        this.activity = activity;
+        this.fragment = fragment;
     }
 
     public void setLists(ArrayList<UserList> lists) {
@@ -49,10 +52,24 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
 
 
         holder.image.setOnClickListener(v -> {
-            Intent intent = new Intent(activity, ViewListActivity.class);
+            Intent intent = new Intent(fragment.getActivity(), ViewListActivity.class);
             intent.putExtra("list", mLists.get(position));
-            activity.startActivity(intent);
+            fragment.getActivity().startActivity(intent);
         });
+
+        holder.removeButton.setOnClickListener(v ->
+                fragment.mListsPresenter.removeList(mLists.get(position), new MyListsPresenter.OnListRemoved() {
+            @Override
+            public void onSuccess() {
+                mLists.remove(position);
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailed(String exception) {
+                Log.d("onRemoveList", exception);
+            }
+        }));
     }
 
     @Override
@@ -69,6 +86,9 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
 
         @BindView(R.id.item_image)
         ImageView image;
+
+        @BindView(R.id.remove_button)
+        Button removeButton;
 
         public ListViewHolder(View itemView) {
             super(itemView);

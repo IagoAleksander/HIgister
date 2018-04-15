@@ -165,8 +165,8 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
-//                CreateItemActivity.this.startActivity(intent);
+//                Intent intent = new Intent(ViewItemFragment.this, ViewListActivity.class);
+//                ViewItemFragment.this.startActivity(intent);
 
                 UserList list = new UserList();
                 list.name = listNameLayout.getEditText().getText().toString();

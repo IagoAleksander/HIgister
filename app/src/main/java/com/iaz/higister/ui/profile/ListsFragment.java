@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.Profile;
+import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.ui.viewList.ListItemAdapter;
 
@@ -46,7 +47,7 @@ public class ListsFragment extends Fragment {
 
         activity = (ProfileActivity) getActivity();
 
-        ListItemAdapter mListItemAdapter = new ListItemAdapter(getActivity(), new ArrayList<>());
+        ListItemAdapter mListItemAdapter = new ListItemAdapter(getActivity(), new UserList());
 
         mRecyclerView.setAdapter(mListItemAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

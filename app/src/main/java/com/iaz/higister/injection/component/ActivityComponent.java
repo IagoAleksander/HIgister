@@ -9,8 +9,9 @@ import com.iaz.higister.ui.login.AuthActivity;
 import com.iaz.higister.ui.main.MainActivity;
 import com.iaz.higister.ui.profile.MyListsFragment;
 import com.iaz.higister.ui.profile.ProfileFragment;
-import com.iaz.higister.ui.search.SearchActivity;
 import com.iaz.higister.ui.splash.SplashActivity;
+import com.iaz.higister.ui.viewItem.ViewItemActivity;
+import com.iaz.higister.ui.viewItem.ViewItemFragment;
 import com.iaz.higister.ui.viewList.ViewListActivity;
 
 /**
@@ -35,5 +36,7 @@ public interface ActivityComponent {
     void inject(ViewListActivity viewListActivity);
 
     void inject(CreateItemActivity createItemActivity);
+
+    void inject(ViewItemActivity viewItemActivity);
 
 }
