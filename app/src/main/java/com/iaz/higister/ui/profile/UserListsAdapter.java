@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.Ribot;
 import com.iaz.higister.data.model.UserList;
+import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.ui.viewList.ViewListActivity;
 
 import java.util.ArrayList;
@@ -57,19 +58,25 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
             fragment.getActivity().startActivity(intent);
         });
 
+        holder.editButton.setOnClickListener(v -> {
+            Intent intent = new Intent(fragment.getActivity(), CreateListActivity.class);
+            intent.putExtra("list", mLists.get(position));
+            fragment.getActivity().startActivity(intent);
+        });
+
         holder.removeButton.setOnClickListener(v ->
                 fragment.mListsPresenter.removeList(mLists.get(position), new MyListsPresenter.OnListRemoved() {
-            @Override
-            public void onSuccess() {
-                mLists.remove(position);
-                notifyDataSetChanged();
-            }
+                    @Override
+                    public void onSuccess() {
+                        mLists.remove(position);
+                        notifyDataSetChanged();
+                    }
 
-            @Override
-            public void onFailed(String exception) {
-                Log.d("onRemoveList", exception);
-            }
-        }));
+                    @Override
+                    public void onFailed(String exception) {
+                        Log.d("onRemoveList", exception);
+                    }
+                }));
     }
 
     @Override
@@ -79,13 +86,16 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
 
     class ListViewHolder extends RecyclerView.ViewHolder {
 
-//        @BindView(R.id.view_hex_color) View hexColorView;
+        //        @BindView(R.id.view_hex_color) View hexColorView;
         @BindView(R.id.list_name)
         TextView listNameTextView;
 //        @BindView(R.id.item_description) TextView emailTextView;
 
         @BindView(R.id.item_image)
         ImageView image;
+
+        @BindView(R.id.edit_button)
+        Button editButton;
 
         @BindView(R.id.remove_button)
         Button removeButton;

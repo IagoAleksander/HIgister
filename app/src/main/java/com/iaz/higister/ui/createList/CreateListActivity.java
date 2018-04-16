@@ -11,6 +11,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -68,6 +69,7 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
 
 
     private CustomPhotoPickerDialog photoDialog;
+    UserList list;
 
 
     @Override
@@ -86,7 +88,21 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        getSupportActionBar().setTitle("Create UserList");
+        if (getIntent() != null && getIntent().getExtras() != null)
+            list = getIntent().getExtras().getParcelable("list");
+
+        if (list != null) {
+            listNameLayout.getEditText().setText(list.name);
+            listDescriptionLayout.getEditText().setText(list.description);
+
+//            Glide.with(this)
+//                    .load(list)
+//                    .into(holder.image);
+            getSupportActionBar().setTitle("Edit UserList");
+        }
+        else {
+            getSupportActionBar().setTitle("Create UserList");
+        }
 
         appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
             @Override
@@ -168,14 +184,33 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
 //                Intent intent = new Intent(ViewItemFragment.this, ViewListActivity.class);
 //                ViewItemFragment.this.startActivity(intent);
 
-                UserList list = new UserList();
+                if (list == null)
+                    list = new UserList();
+
                 list.name = listNameLayout.getEditText().getText().toString();
                 list.description = listDescriptionLayout.getEditText().getText().toString();
 //                mCreateListPresenter.saveList(list);
 
-                Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
-                intent.putExtra("list", list);
-                startActivity(intent);
+                if (list.uid == null) {
+                    Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
+                    intent.putExtra("list", list);
+                    startActivity(intent);
+                }
+                else {
+                    mCreateListPresenter.updateList(list, new CreateListPresenter.OnListUpdated() {
+                        @Override
+                        public void onSuccess() {
+                            Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
+                            intent.putExtra("list", list);
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onFailed(Exception e) {
+                            Log.w("updateList: ", "failed", e);
+                        }
+                    });
+                }
             }
         });
 

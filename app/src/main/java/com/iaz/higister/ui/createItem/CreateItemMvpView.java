@@ -10,5 +10,5 @@ public interface CreateItemMvpView extends MvpView {
     void dismissDialog();
     void showSnackBar(String msg);
 
-    CreateItemActivity getActivity();
+    CreateItemActivity getActivityFromView();
 }

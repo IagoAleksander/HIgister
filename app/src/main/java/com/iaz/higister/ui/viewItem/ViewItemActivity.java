@@ -94,9 +94,13 @@ public class ViewItemActivity extends BaseActivity {
             viewPager.setCurrentItem(position);
         });
 
+        previousButton.setVisibility(View.VISIBLE);
+        nextButton.setVisibility(View.VISIBLE);
+
         if (position == 0) {
             previousButton.setVisibility(View.GONE);
-        } else if (position == listItems.size() - 1) {
+        }
+        if (position == listItems.size() - 1) {
             nextButton.setVisibility(View.GONE);
         }
 
@@ -108,17 +112,18 @@ public class ViewItemActivity extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
-                if (position == listItems.size() - 1) {
-                    nextButton.setVisibility(View.GONE);
-                } else {
-                    nextButton.setVisibility(View.VISIBLE);
-                }
+
+                previousButton.setVisibility(View.VISIBLE);
+                nextButton.setVisibility(View.VISIBLE);
 
                 if (position == 0) {
                     previousButton.setVisibility(View.GONE);
-                } else {
-                    previousButton.setVisibility(View.VISIBLE);
                 }
+                if (position == listItems.size() - 1) {
+                    nextButton.setVisibility(View.GONE);
+                }
+
+
 
             }
 
@@ -162,7 +167,6 @@ public class ViewItemActivity extends BaseActivity {
     }
 
     public static class MyPagerAdapter extends FragmentPagerAdapter {
-        private static int NUM_ITEMS = 3;
 
         ArrayList<ListItem> listItems = new ArrayList<>();
 
@@ -174,7 +178,7 @@ public class ViewItemActivity extends BaseActivity {
         // Returns total number of pages
         @Override
         public int getCount() {
-            return NUM_ITEMS;
+            return listItems.size();
         }
 
         // Returns the fragment to display for that page

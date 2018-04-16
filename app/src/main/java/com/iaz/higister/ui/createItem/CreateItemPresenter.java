@@ -126,56 +126,51 @@ public class CreateItemPresenter extends BasePresenter<CreateItemMvpView> {
         }
     }
 
-    public void checkIfExists(UserList list) {
-        // Add a new document with a generated ID
-        if (list.uid == null) {
-            saveList(list);
-        }
-        else {
-
-            db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .collection("createdLists").document(list.uid).get().addOnCompleteListener(task -> {
-                        DocumentSnapshot documentSnapshot = task.getResult();
-                        if (documentSnapshot.exists()){
-                            Log.e("listExists: ", "true");
-                            saveItens(list, list.uid);
-
-                        }else{
-                            Log.e("listExists: ","false");
-                            saveList(list);
-                        }
-                    });
-
-
-        }
-    }
-
     public void saveList(UserList list) {
         db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .collection("createdLists").add(list)
                 .addOnSuccessListener(documentReference -> {
                     Log.d("updateProfile", "DocumentSnapshot successfully written!");
-
-                    saveItens(list, documentReference.getId());
+                    list.uid = documentReference.getId();
+                    saveItem(list, 0);
                 })
                 .addOnFailureListener(e ->
                         Log.w("updateProfile", "Error writing document", e));
     }
 
-    public void saveItens(UserList list, String listUid) {
+    public void saveItem(UserList list, int position) {
 
-        for (ListItem item : list.listItems) {
-            db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .collection("createdLists").document(listUid).collection("listItems").add(item)
-                    .addOnSuccessListener(documentReference -> {
-                        Log.d("updateProfile", "DocumentSnapshot successfully written!");
-                        Intent intent = new Intent(getMvpView().getActivity(), ViewListActivity.class);
-                        intent.putExtra("list", list);
-                        getMvpView().getActivity().startActivity(intent);
-                    })
-                    .addOnFailureListener(e ->
-                            Log.w("updateProfile", "Error writing document", e));
-        }
+
+        db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .collection("createdLists").document(list.uid).collection("listItems").add(list.listItems.get(position))
+                .addOnSuccessListener(documentReference -> {
+                    Log.d("updateProfile", "DocumentSnapshot successfully written!");
+                    Intent intent = new Intent(activity, ViewListActivity.class);
+                    intent.putExtra("list", list);
+                    activity.startActivity(intent);
+                })
+                .addOnFailureListener(e ->
+                        Log.w("updateProfile", "Error writing document", e));
+
+    }
+
+    public void updateItem(UserList list, int position) {
+
+        DocumentReference docRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .collection("createdLists").document(list.uid).collection("listItems")
+                .document(list.listItems.get(position).uid);
+
+        docRef.set(list.listItems.get(position))
+                .addOnSuccessListener(documentReference -> {
+                    Log.d("updateProfile", "DocumentSnapshot successfully written!");
+                    Intent intent = new Intent(activity, ViewListActivity.class);
+                    intent.putExtra("list", list);
+                    activity.startActivity(intent);
+                })
+                .addOnFailureListener(e ->
+                        Log.w("updateProfile", "Error writing document", e));
+
+
     }
 
 }

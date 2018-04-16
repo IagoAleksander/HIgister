@@ -59,14 +59,28 @@
                         android:textColor="@color/white"
                         android:textSize="22sp" />
 
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="30dp">
+                    <Button
+                        android:id="@+id/edit_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@color/accent_dark"
+                        android:text="edit"/>
+
                     <Button
                         android:id="@+id/remove_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="30dp"
+                        android:layout_marginStart="20dp"
                         android:background="@color/red"
                         android:text="remove"/>
+                    </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>
 

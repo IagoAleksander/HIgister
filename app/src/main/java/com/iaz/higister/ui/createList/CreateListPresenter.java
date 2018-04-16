@@ -132,25 +132,20 @@ public class CreateListPresenter extends BasePresenter<CreateListMvpView> {
         }
     }
 
-    public void saveList(UserList list) {
-        // Add a new document with a generated ID
-
+    public void updateList(UserList list, OnListUpdated onListUpdated) {
         db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .collection("createdLists").add(list)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("updateProfile", "DocumentSnapshot successfully written!");
-
-                    }
-
+                .collection("createdLists").document(list.uid).set(list)
+                .addOnSuccessListener(documentReference -> {
+                    Log.d("updateList: ", "success");
+                    onListUpdated.onSuccess();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@android.support.annotation.NonNull Exception e) {
-                        Log.w("updateProfile", "Error writing document", e);
-                    }
-                });
+                .addOnFailureListener(onListUpdated::onFailed);
+    }
+
+    interface OnListUpdated {
+        void onSuccess();
+
+        void onFailed(Exception exception);
     }
 
 }

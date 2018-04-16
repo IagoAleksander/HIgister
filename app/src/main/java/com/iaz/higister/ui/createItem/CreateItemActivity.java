@@ -1,23 +1,23 @@
 package com.iaz.higister.ui.createItem;
 
 import android.Manifest;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -28,30 +28,18 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.transition.Transition;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.BaseItem;
-import com.iaz.higister.data.model.ComicVine.Results;
-import com.iaz.higister.data.model.GoodReads.BestBook;
-import com.iaz.higister.data.model.LastFM.Track;
 import com.iaz.higister.data.model.ListItem;
-import com.iaz.higister.data.model.MyAnimeList.Result;
-import com.iaz.higister.data.model.Omdb.Search;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.ui.base.BaseActivity;
-import com.iaz.higister.util.AppBarStateChangeListener;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
-
-import java.io.BufferedInputStream;
-import java.io.InputStream;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 import static com.iaz.higister.util.Constants.PERMISSION_WRITE_EXTERNAL;
 
@@ -59,35 +47,27 @@ import static com.iaz.higister.util.Constants.PERMISSION_WRITE_EXTERNAL;
  * Created by Iago Aleksander on 06/03/18.
  */
 
-public class CreateItemActivity extends BaseActivity implements CreateItemMvpView {
+public class CreateItemActivity extends BaseActivity {
 
     @Inject
     CreateItemPresenter mCreateItemPresenter;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.item_title)
-    TextView itemTitle;
-    @BindView(R.id.item_description)
-    TextView itemDescription;
-    @BindView(R.id.listLogoImageLayout)
-    RelativeLayout listLogoImageLayout;
-    @BindView(R.id.listLogoImageView)
-    ImageView listLogoImage;
-    @BindView(R.id.logo_placeholder)
-    LinearLayout listLogoImagePlaceholder;
-    @BindView(R.id.text_input_list_name)
-    TextInputLayout listNameLayout;
-    @BindView(R.id.text_input_list_desc)
-    TextInputLayout listDescriptionLayout;
-    @BindView(R.id.activity_create_list_next_button)
+    @BindView(R.id.frame_layout)
+    FrameLayout frameLayout;
+    @BindView(R.id.next_button)
     TextView nextButton;
 
-    BaseItem item;
     UserList list;
+    int position;
+    ListItem listItem;
+
+    public String listName;
+    public String listDescription;
 
     private CustomPhotoPickerDialog photoDialog;
-
+    private static final int CONTENT_VIEW_ID = 10101010;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,82 +79,61 @@ public class CreateItemActivity extends BaseActivity implements CreateItemMvpVie
         ButterKnife.bind(this);
 
         if (getIntent() != null) {
-            item = getIntent().getExtras().getParcelable("item");
+            position = getIntent().getExtras().getInt("position", 0);
             list = getIntent().getExtras().getParcelable("list");
+
+            if (position == -1) {
+                listItem = getIntent().getExtras().getParcelable("listItem");
+            } else {
+                listItem = list.listItems.get(position);
+            }
         }
 
-        mCreateItemPresenter.attachView(this);
+//        mCreateItemPresenter.attachView(this);
         setSupportActionBar(mToolbar);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        getSupportActionBar().setTitle("Create List Item");
+        frameLayout.setId(CONTENT_VIEW_ID);
 
-        if (item != null) {
-            Glide.with(this)
-                    .load(item.imageUrl)
-                    .listener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            return false;
-                        }
+        if (list != null) {
 
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            listLogoImagePlaceholder.setVisibility(View.GONE);
-                            return false;
-                        }
-                    })
-                    .into(listLogoImage);
+            if (position == -1) {
+                getSupportActionBar().setTitle("Edit List Item");
+            } else {
+                getSupportActionBar().setTitle("Create List Item");
+            }
 
-            itemTitle.setText(item.title);
-            itemDescription.setText(item.description);
+            Fragment newFragment = CreateItemFragment.newInstance(listItem);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(CONTENT_VIEW_ID, newFragment).commit();
         }
 
-        listLogoImageLayout.setOnClickListener(v -> {
-            photoDialog = new CustomPhotoPickerDialog(CreateItemActivity.this, new CustomPhotoPickerDialog
-                    .OnOptionPhotoSelected() {
-                @Override
-                public void onGallery() {
-                    mCreateItemPresenter.openDialogWindow();
-                    photoDialog.dismiss();
-                }
+        nextButton.setOnClickListener(v -> {
 
-                @Override
-                public void onCamera() {
-                    // Here, thisActivity is the current activity
-                    if (ContextCompat.checkSelfPermission(CreateItemActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                            || ContextCompat.checkSelfPermission(CreateItemActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-                        photoDialog.dismiss();
-                        ActivityCompat.requestPermissions(CreateItemActivity.this,
-                                new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL);
-                    } else {
-                        mCreateItemPresenter.getPhoto();
-                        photoDialog.dismiss();
-                    }
-                }
-            });
-            photoDialog.show();
-
-        });
-
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Intent intent = new Intent(ViewItemFragment.this, ViewListActivity.class);
-//                ViewItemFragment.this.startActivity(intent);
-
-                ListItem listItem = new ListItem();
-                listItem.name = listNameLayout.getEditText().getText().toString();
-                listItem.description = listDescriptionLayout.getEditText().getText().toString();
-                listItem.baseItem = item;
-
+            if (position == -1) {
                 list.listItems.add(listItem);
-                mCreateItemPresenter.checkIfExists(list);
+
+                position = list.listItems.size() - 1;
+
+                list.listItems.get(position).name = listName;
+                list.listItems.get(position).description = listDescription;
+
+                if (list.listItems.size() == 1) {
+                    mCreateItemPresenter.saveList(list);
+                } else {
+                    mCreateItemPresenter.saveItem(list, list.listItems.size() - 1);
+                }
+            } else {
+
+                list.listItems.get(position).name = listName;
+                list.listItems.get(position).description = listDescription;
+
+                mCreateItemPresenter.updateItem(list, position);
             }
+
         });
 
     }
@@ -208,36 +167,6 @@ public class CreateItemActivity extends BaseActivity implements CreateItemMvpVie
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         mCreateItemPresenter.activityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void callGlide(Uri uri) {
-        if (uri != null) {
-            listLogoImagePlaceholder.setVisibility(View.GONE);
-        }
-        try {
-            Glide.with(CreateItemActivity.this)
-                    .load(uri)
-                    .into(listLogoImage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void showSnackBar(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void dismissDialog() {
-        if (photoDialog != null)
-            photoDialog.cancel();
-    }
-
-    @Override
-    public CreateItemActivity getActivity() {
-        return this;
     }
 
 }

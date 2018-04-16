@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.viewItem;
+package com.iaz.higister.ui.createItem;
 
 import android.Manifest;
 import android.content.Intent;
@@ -12,6 +12,8 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.ListItem;
+import com.iaz.higister.ui.viewItem.ViewItemActivity;
+import com.iaz.higister.ui.viewItem.ViewItemMvpView;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
 
 import butterknife.BindView;
@@ -39,7 +43,7 @@ import static com.iaz.higister.util.Constants.PERMISSION_WRITE_EXTERNAL;
  * Created by Iago Aleksander on 06/03/18.
  */
 
-public class ViewItemFragment extends Fragment implements ViewItemMvpView {
+public class CreateItemFragment extends Fragment implements CreateItemMvpView {
 
     @BindView(R.id.item_title)
     TextView itemTitle;
@@ -60,11 +64,11 @@ public class ViewItemFragment extends Fragment implements ViewItemMvpView {
     private CustomPhotoPickerDialog photoDialog;
 
     ListItem listItem;
-    ViewItemActivity activity;
+    CreateItemActivity activity;
 
     // newInstance constructor for creating fragment with arguments
-    public static ViewItemFragment newInstance(ListItem listItem) {
-        ViewItemFragment viewItemFragment = new ViewItemFragment();
+    public static CreateItemFragment newInstance(ListItem listItem) {
+        CreateItemFragment viewItemFragment = new CreateItemFragment();
         Bundle args = new Bundle();
         args.putParcelable("listItem", listItem);
         viewItemFragment.setArguments(args);
@@ -75,8 +79,11 @@ public class ViewItemFragment extends Fragment implements ViewItemMvpView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        listItem = getArguments().getParcelable("listItem");
-        activity = (ViewItemActivity) getActivity();
+
+        if (getArguments() != null)
+            listItem = getArguments().getParcelable("listItem");
+
+        activity = (CreateItemActivity) getActivity();
     }
 
     @Override
@@ -116,12 +123,46 @@ public class ViewItemFragment extends Fragment implements ViewItemMvpView {
             itemDescription.setText(listItem.description);
         }
 
+        listNameLayout.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                activity.listName = s.toString();
+            }
+        });
+
+        listDescriptionLayout.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                activity.listDescription = s.toString();
+            }
+        });
+
         listLogoImageLayout.setOnClickListener(v -> {
             photoDialog = new CustomPhotoPickerDialog(activity, new CustomPhotoPickerDialog
                     .OnOptionPhotoSelected() {
                 @Override
                 public void onGallery() {
-                    activity.mViewItemPresenter.openDialogWindow();
+                    activity.mCreateItemPresenter.openDialogWindow();
                     photoDialog.dismiss();
                 }
 
@@ -135,7 +176,7 @@ public class ViewItemFragment extends Fragment implements ViewItemMvpView {
                         ActivityCompat.requestPermissions(activity,
                                 new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL);
                     } else {
-                        activity.mViewItemPresenter.getPhoto();
+                        activity.mCreateItemPresenter.getPhoto();
                         photoDialog.dismiss();
                     }
                 }
@@ -149,12 +190,12 @@ public class ViewItemFragment extends Fragment implements ViewItemMvpView {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        activity.mViewItemPresenter.requestPermissionResult(requestCode, permissions, grantResults);
+        activity.mCreateItemPresenter.requestPermissionResult(requestCode, permissions, grantResults);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        activity.mViewItemPresenter.activityResult(requestCode, resultCode, data);
+        activity.mCreateItemPresenter.activityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -163,7 +204,7 @@ public class ViewItemFragment extends Fragment implements ViewItemMvpView {
             listLogoImagePlaceholder.setVisibility(View.GONE);
         }
         try {
-            Glide.with(ViewItemFragment.this)
+            Glide.with(CreateItemFragment.this)
                     .load(uri)
                     .into(listLogoImage);
         } catch (Exception e) {
@@ -183,7 +224,7 @@ public class ViewItemFragment extends Fragment implements ViewItemMvpView {
     }
 
     @Override
-    public ViewItemActivity getActivityFromView() {
+    public CreateItemActivity getActivityFromView() {
         return activity;
     }
 

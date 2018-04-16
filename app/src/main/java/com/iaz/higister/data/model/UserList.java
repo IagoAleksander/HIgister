@@ -34,6 +34,7 @@ public class UserList implements Parcelable{
         type = in.readInt();
         visibleForEveryone = in.readByte() != 0;
         commentsEnabled = in.readByte() != 0;
+        listItems = in.createTypedArrayList(ListItem.CREATOR);
     }
 
     @Override
@@ -49,6 +50,7 @@ public class UserList implements Parcelable{
         dest.writeInt(type);
         dest.writeByte(visibleForEveryone ? (byte) 1 : (byte) 0);
         dest.writeByte(commentsEnabled ? (byte) 1 : (byte) 0);
+        dest.writeTypedList(listItems);
 
     }
 

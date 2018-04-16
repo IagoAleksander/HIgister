@@ -20,6 +20,8 @@ import com.bumptech.glide.Glide;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.ListItem;
 import com.iaz.higister.data.model.UserList;
+import com.iaz.higister.ui.createItem.CreateItemActivity;
+import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.ui.profile.MyListsPresenter;
 import com.iaz.higister.ui.viewItem.ViewItemActivity;
 import com.iaz.higister.ui.viewItem.ViewItemFragment;
@@ -37,6 +39,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListIt
     }
 
     public void setListItem(ArrayList<ListItem> listItems) {
+
         list.listItems = listItems;
     }
 
@@ -52,13 +55,22 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListIt
         ListItem listItem = list.listItems.get(position);
 
         holder.listNameTextView.setText(listItem.name);
-        Glide.with(activity)
-                .load(listItem.baseItem.imageUrl)
-                .into(holder.image);
+
+        if (listItem.baseItem.imageUrl != null)
+            Glide.with(activity)
+                    .load(listItem.baseItem.imageUrl)
+                    .into(holder.image);
 
         holder.image.setOnClickListener(v -> {
             Intent intent = new Intent(activity, ViewItemActivity.class);
             intent.putParcelableArrayListExtra("listItems", list.listItems);
+            intent.putExtra("position", position);
+            activity.startActivity(intent);
+        });
+
+        holder.editButton.setOnClickListener(v -> {
+            Intent intent = new Intent(activity, CreateItemActivity.class);
+            intent.putExtra("list", list);
             intent.putExtra("position", position);
             activity.startActivity(intent);
         });
@@ -92,6 +104,9 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListIt
 
         @BindView(R.id.item_image)
         ImageView image;
+
+        @BindView(R.id.edit_button)
+        Button editButton;
 
         @BindView(R.id.remove_button)
         Button removeButton;

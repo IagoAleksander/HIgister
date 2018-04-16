@@ -94,7 +94,12 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
             listDescription.setText(list.description);
             listType.setText(Integer.toString(list.type));
 
-            mViewListPresenter.getListItems(list.uid);
+            if (list.uid != null) {
+                mViewListPresenter.getListItems(list.uid);
+            }
+            else {
+                updateData(new ArrayList<>());
+            }
         }
 
         fab.setVisibility(View.VISIBLE);

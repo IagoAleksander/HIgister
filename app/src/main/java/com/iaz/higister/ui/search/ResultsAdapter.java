@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.iaz.higister.data.model.ListItem;
 import com.iaz.higister.ui.createItem.CreateItemActivity;
 import com.yalantis.flipviewpager.adapter.BaseFlipAdapter;
 import com.yalantis.flipviewpager.utils.FlipSettings;
@@ -130,9 +131,14 @@ public class ResultsAdapter extends BaseFlipAdapter {
         holder.choose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                ListItem listItem = new ListItem();
+                listItem.baseItem = item;
+
                 Intent intent = new Intent(activity, CreateItemActivity.class);
                 intent.putExtra("list", activity.list);
-                intent.putExtra("item", item);
+                intent.putExtra("position", -1);
+                intent.putExtra("listItem", listItem);
                 activity.startActivity(intent);
             }
         });
