@@ -1,6 +1,5 @@
-package com.iaz.higister.ui.profile;
+package com.iaz.higister.ui.main;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,18 +9,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.iaz.higister.R;
-import com.iaz.higister.data.model.Ribot;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.ui.viewList.ViewListActivity;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

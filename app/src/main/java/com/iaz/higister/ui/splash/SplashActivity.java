@@ -1,34 +1,22 @@
 package com.iaz.higister.ui.splash;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.iaz.higister.R;
 import com.iaz.higister.ui.base.BaseActivity;
 import com.iaz.higister.ui.login.AuthActivity;
-import com.iaz.higister.ui.login.AuthMvpView;
-import com.iaz.higister.ui.login.AuthPresenter;
-import com.iaz.higister.ui.main.MainActivity;
 import com.sdsmdg.harjot.rotatingtext.RotatingTextWrapper;
 import com.sdsmdg.harjot.rotatingtext.models.Rotatable;
-
-import java.security.acl.Group;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static android.R.attr.id;
 
 /**
  * Created by alks_ander on 19/05/2017.

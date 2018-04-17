@@ -1,6 +1,5 @@
-package com.iaz.higister.ui.profile;
+package com.iaz.higister.ui.main;
 
-import com.iaz.higister.data.model.User;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.ui.base.MvpView;
 

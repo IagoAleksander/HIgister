@@ -21,10 +21,7 @@ import com.iaz.higister.R;
 import com.iaz.higister.data.model.ListItem;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.ui.createItem.CreateItemActivity;
-import com.iaz.higister.ui.createList.CreateListActivity;
-import com.iaz.higister.ui.profile.MyListsPresenter;
 import com.iaz.higister.ui.viewItem.ViewItemActivity;
-import com.iaz.higister.ui.viewItem.ViewItemFragment;
 
 public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListItemViewHolder> {
 

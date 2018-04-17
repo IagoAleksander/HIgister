@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.main;
+package com.iaz.higister.ui.temp;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;

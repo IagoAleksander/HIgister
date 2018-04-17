@@ -2,22 +2,16 @@ package com.iaz.higister.ui.splash;
 
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.iaz.higister.data.DataManager;
 import com.iaz.higister.injection.ConfigPersistent;
 import com.iaz.higister.ui.base.BasePresenter;
-import com.iaz.higister.ui.login.AuthActivity;
-import com.iaz.higister.ui.profile.ProfileActivity;
+import com.iaz.higister.ui.main.MainActivity;
 
 import javax.inject.Inject;
 
-import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 
 @ConfigPersistent
@@ -54,7 +48,7 @@ public class SplashPresenter extends BasePresenter<SplashMvpView> {
                 if (user != null) {
                     // User is signed in
                     Log.d("auth", "onAuthStateChanged:signed_in:" + user.getUid());
-                    Intent intent = new Intent(getMvpView().getActivity(), ProfileActivity.class);
+                    Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
                     getMvpView().getActivity().startActivity(intent);
                 } else {
                     // User is signed out

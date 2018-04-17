@@ -19,4 +19,6 @@ public class Constants {
     public static final int REQUEST_IMAGE_CAPTURE_BANNER = 1598;
     public static final int SELECT_PICTURE_BANNER = 1599;
 
+    public static final String PATH_USER_IMAGE = "user_image/";
+
 }

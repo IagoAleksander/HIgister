@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.main;
+package com.iaz.higister.ui.temp;
 
 import java.util.List;
 
@@ -17,18 +17,18 @@ import com.iaz.higister.ui.base.BasePresenter;
 import com.iaz.higister.util.RxUtil;
 
 @ConfigPersistent
-public class MainPresenter extends BasePresenter<MainMvpView> {
+public class TempMainPresenter extends BasePresenter<TempMainMvpView> {
 
     private final DataManager mDataManager;
     private Disposable mDisposable;
 
     @Inject
-    public MainPresenter(DataManager dataManager) {
+    public TempMainPresenter(DataManager dataManager) {
         mDataManager = dataManager;
     }
 
     @Override
-    public void attachView(MainMvpView mvpView) {
+    public void attachView(TempMainMvpView mvpView) {
         super.attachView(mvpView);
     }
 

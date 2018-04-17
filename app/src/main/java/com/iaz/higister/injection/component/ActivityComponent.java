@@ -6,12 +6,11 @@ import com.iaz.higister.injection.module.ActivityModule;
 import com.iaz.higister.ui.createItem.CreateItemActivity;
 import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.ui.login.AuthActivity;
-import com.iaz.higister.ui.main.MainActivity;
-import com.iaz.higister.ui.profile.MyListsFragment;
-import com.iaz.higister.ui.profile.ProfileFragment;
+import com.iaz.higister.ui.temp.TempTempMainActivity;
+import com.iaz.higister.ui.main.MyListsFragment;
+import com.iaz.higister.ui.main.ProfileFragment;
 import com.iaz.higister.ui.splash.SplashActivity;
 import com.iaz.higister.ui.viewItem.ViewItemActivity;
-import com.iaz.higister.ui.viewItem.ViewItemFragment;
 import com.iaz.higister.ui.viewList.ViewListActivity;
 
 /**
@@ -23,7 +22,7 @@ public interface ActivityComponent {
 
     void inject(SplashActivity splashActivity);
 
-    void inject(MainActivity mainActivity);
+    void inject(TempTempMainActivity tempMainActivity);
 
     void inject(AuthActivity authActivity);
 

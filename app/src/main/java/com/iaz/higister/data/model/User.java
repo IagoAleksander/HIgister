@@ -1,5 +1,7 @@
 package com.iaz.higister.data.model;
 
+import android.net.Uri;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +22,7 @@ public class User {
     public String description;
     public int age;
     public ArrayList<String> interests = new ArrayList<>();
+    public String profilePictureUri;
 
 
 

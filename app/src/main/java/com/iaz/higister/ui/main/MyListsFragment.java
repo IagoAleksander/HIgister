@@ -1,8 +1,7 @@
-package com.iaz.higister.ui.profile;
+package com.iaz.higister.ui.main;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,15 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.TextView;
 
 import com.iaz.higister.R;
-import com.iaz.higister.data.model.User;
 import com.iaz.higister.data.model.UserList;
-import com.iaz.higister.ui.viewList.ListItemAdapter;
 
 import java.util.ArrayList;
 
@@ -39,7 +32,7 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
-    ProfileActivity activity;
+    MainActivity activity;
 
     public UserListsAdapter mListAdapter;
 
@@ -56,7 +49,7 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        activity = (ProfileActivity) getActivity();
+        activity = (MainActivity) getActivity();
         activity.activityComponent().inject(this);
 
         mListsPresenter.attachView(this);

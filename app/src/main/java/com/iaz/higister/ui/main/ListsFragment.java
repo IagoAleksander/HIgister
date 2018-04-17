@@ -1,6 +1,5 @@
-package com.iaz.higister.ui.profile;
+package com.iaz.higister.ui.main;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,12 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.iaz.higister.R;
-import com.iaz.higister.data.model.Profile;
 import com.iaz.higister.data.model.UserList;
-import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.ui.viewList.ListItemAdapter;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,7 +25,7 @@ public class ListsFragment extends Fragment {
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
-    ProfileActivity activity;
+    MainActivity activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,7 +40,7 @@ public class ListsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        activity = (ProfileActivity) getActivity();
+        activity = (MainActivity) getActivity();
 
         ListItemAdapter mListItemAdapter = new ListItemAdapter(getActivity(), new UserList());
 

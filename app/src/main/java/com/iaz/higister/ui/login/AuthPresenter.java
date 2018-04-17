@@ -9,26 +9,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.iaz.higister.R;
 import com.iaz.higister.data.DataManager;
-import com.iaz.higister.data.model.Ribot;
 import com.iaz.higister.injection.ConfigPersistent;
 import com.iaz.higister.ui.base.BasePresenter;
-import com.iaz.higister.ui.base.MvpView;
-import com.iaz.higister.ui.main.MainMvpView;
-import com.iaz.higister.ui.profile.ProfileActivity;
-import com.iaz.higister.util.RxUtil;
-
-import java.util.List;
+import com.iaz.higister.ui.main.MainActivity;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import timber.log.Timber;
 
 @ConfigPersistent
 public class AuthPresenter extends BasePresenter<AuthMvpView> {
@@ -64,7 +53,7 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                 if (user != null) {
                     // User is signed in
                     Log.d("auth", "onAuthStateChanged:signed_in:" + user.getUid());
-                    Intent intent = new Intent(getMvpView().getActivity(), ProfileActivity.class);
+                    Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
                     getMvpView().getActivity().startActivity(intent);
                 } else {
                     // User is signed out
