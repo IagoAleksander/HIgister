@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.ui.base.BaseActivity;
@@ -42,9 +43,10 @@ import static com.iaz.higister.util.Constants.PERMISSION_WRITE_EXTERNAL;
  * Created by Iago Aleksander on 06/03/18.
  */
 
-public class CreateListActivity extends BaseActivity implements CreateListMvpView{
+public class CreateListActivity extends BaseActivity implements CreateListMvpView {
 
-    @Inject CreateListPresenter mCreateListPresenter;
+    @Inject
+    CreateListPresenter mCreateListPresenter;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -71,6 +73,8 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
     private CustomPhotoPickerDialog photoDialog;
     UserList list;
 
+    String uri;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,12 +99,13 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
             listNameLayout.getEditText().setText(list.name);
             listDescriptionLayout.getEditText().setText(list.description);
 
-//            Glide.with(this)
-//                    .load(list)
-//                    .into(holder.image);
+            if (list.listPictureUri != null) {
+                Glide.with(this)
+                        .load(list.listPictureUri)
+                        .into(listLogoImage);
+            }
             getSupportActionBar().setTitle("Edit UserList");
-        }
-        else {
+        } else {
             getSupportActionBar().setTitle("Create UserList");
         }
 
@@ -191,25 +196,55 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
                 list.description = listDescriptionLayout.getEditText().getText().toString();
 //                mCreateListPresenter.saveList(list);
 
+                list.listPictureUri = uri;
+                list.creatorId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
                 if (list.uid == null) {
                     Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
                     intent.putExtra("list", list);
                     startActivity(intent);
-                }
-                else {
-                    mCreateListPresenter.updateList(list, new CreateListPresenter.OnListUpdated() {
-                        @Override
-                        public void onSuccess() {
-                            Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
-                            intent.putExtra("list", list);
-                            startActivity(intent);
-                        }
+                } else {
 
-                        @Override
-                        public void onFailed(Exception e) {
-                            Log.w("updateList: ", "failed", e);
-                        }
-                    });
+                    if (uri != null) {
+                        mCreateListPresenter.saveListImageOnStorage(uri, new CreateListPresenter.OnImageUpload() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                list.listPictureUri = uri.toString();
+                                mCreateListPresenter.updateList(list, new CreateListPresenter.OnListUpdated() {
+                                    @Override
+                                    public void onSuccess() {
+                                        Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
+                                        intent.putExtra("list", list);
+                                        startActivity(intent);
+                                    }
+
+                                    @Override
+                                    public void onFailed(Exception e) {
+                                        Log.w("updateList: ", "failed", e);
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onFailure(String exception) {
+
+                            }
+                        });
+                    } else {
+                        mCreateListPresenter.updateList(list, new CreateListPresenter.OnListUpdated() {
+                            @Override
+                            public void onSuccess() {
+                                Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
+                                intent.putExtra("list", list);
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onFailed(Exception e) {
+                                Log.w("updateList: ", "failed", e);
+                            }
+                        });
+                    }
                 }
             }
         });
@@ -249,9 +284,11 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
 
     @Override
     public void callGlide(Uri uri) {
-        if (uri != null) {
+        if (uri == null) {
             listLogoImagePlaceholder.setVisibility(View.GONE);
         }
+
+        this.uri = uri.toString();
         try {
             Glide.with(CreateListActivity.this)
                     .load(uri)

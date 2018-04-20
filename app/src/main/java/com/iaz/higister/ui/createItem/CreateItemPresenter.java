@@ -15,12 +15,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.iaz.higister.data.DataManager;
 import com.iaz.higister.data.model.ListItem;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.injection.ConfigPersistent;
 import com.iaz.higister.ui.base.BasePresenter;
+import com.iaz.higister.ui.createList.CreateListPresenter;
 import com.iaz.higister.ui.viewList.ViewListActivity;
+import com.iaz.higister.util.CompressorUtil;
+import com.iaz.higister.util.Constants;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,6 +52,7 @@ public class CreateItemPresenter extends BasePresenter<CreateItemMvpView> {
     private CreateItemActivity activity;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseStorage storage = FirebaseStorage.getInstance();
 
     @Inject
     public CreateItemPresenter(DataManager dataManager) {
@@ -127,22 +134,54 @@ public class CreateItemPresenter extends BasePresenter<CreateItemMvpView> {
     }
 
     public void saveList(UserList list) {
-        db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .collection("createdLists").add(list)
+        db.collection("lists").add(list)
                 .addOnSuccessListener(documentReference -> {
-                    Log.d("updateProfile", "DocumentSnapshot successfully written!");
+                    Log.d("createList", "DocumentSnapshot successfully written!");
                     list.uid = documentReference.getId();
+
+                    db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .collection("createdLists").document(list.uid).set(list)
+                            .addOnSuccessListener(docRef -> {
+                                Log.d("createList", "DocumentSnapshot successfully written!");
+                            })
+                            .addOnFailureListener(e ->
+                                    Log.w("createList", "Error writing document", e));
+
                     saveItem(list, 0);
                 })
                 .addOnFailureListener(e ->
-                        Log.w("updateProfile", "Error writing document", e));
+                        Log.w("createList", "Error writing document", e));
+    }
+
+    public void saveListImageOnStorage(String uri, final OnImageUpload onImageUpload) {
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        final StorageReference storageReference = storage.getReference().child(Constants.PATH_USER_IMAGE + uid);
+
+        CompressorUtil.compress(activity, uri, new CompressorUtil.CompressListener() {
+            @Override
+            public void onCompressSuccess(File file) {
+                UploadTask uploadTask = storageReference.putFile(Uri.parse("file://" + file.getPath()));
+                uploadTask.
+                        addOnFailureListener(exception -> onImageUpload.onFailure(exception.getMessage()))
+                        .addOnSuccessListener(taskSnapshot -> {
+                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                            onImageUpload.onSuccess(downloadUrl);
+                        });
+            }
+
+            @Override
+            public void onCompressError() {
+                onImageUpload.onFailure("Error on compressing");
+            }
+        });
     }
 
     public void saveItem(UserList list, int position) {
 
 
-        db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .collection("createdLists").document(list.uid).collection("listItems").add(list.listItems.get(position))
+        db.collection("lists").document(list.uid).collection("listItems").add(list.listItems.get(position))
                 .addOnSuccessListener(documentReference -> {
                     Log.d("updateProfile", "DocumentSnapshot successfully written!");
                     Intent intent = new Intent(activity, ViewListActivity.class);
@@ -156,21 +195,26 @@ public class CreateItemPresenter extends BasePresenter<CreateItemMvpView> {
 
     public void updateItem(UserList list, int position) {
 
-        DocumentReference docRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .collection("createdLists").document(list.uid).collection("listItems")
+        DocumentReference docRef = db.collection("lists").document(list.uid).collection("listItems")
                 .document(list.listItems.get(position).uid);
 
         docRef.set(list.listItems.get(position))
                 .addOnSuccessListener(documentReference -> {
-                    Log.d("updateProfile", "DocumentSnapshot successfully written!");
+                    Log.d("updateListItem", "DocumentSnapshot successfully written!");
                     Intent intent = new Intent(activity, ViewListActivity.class);
                     intent.putExtra("list", list);
                     activity.startActivity(intent);
                 })
                 .addOnFailureListener(e ->
-                        Log.w("updateProfile", "Error writing document", e));
+                        Log.w("updateListItem", "Error writing document", e));
 
 
+    }
+
+    interface OnImageUpload {
+        void onSuccess(Uri uri);
+
+        void onFailure(String exception);
     }
 
 }

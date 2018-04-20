@@ -85,7 +85,9 @@ public class ProfilePresenter extends BasePresenter<ProfileMvpView> {
         user.interests = interests;
         user.listsCreatedNumber = 17;
         user.listsFavouritedNumber = 12;
-        user.profilePictureUri = uri.toString();
+
+        if (uri != null)
+            user.profilePictureUri = uri.toString();
 
         db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .set(user)
@@ -111,8 +113,10 @@ public class ProfilePresenter extends BasePresenter<ProfileMvpView> {
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                user = documentSnapshot.toObject(User.class);
-                getMvpView().updateData(user);
+                if (documentSnapshot.exists()) {
+                    user = documentSnapshot.toObject(User.class);
+                    getMvpView().updateData(user);
+                }
             }
         })
         .addOnFailureListener(new OnFailureListener() {

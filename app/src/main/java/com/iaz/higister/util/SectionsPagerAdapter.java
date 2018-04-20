@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.iaz.higister.ui.main.ListsFragment;
 import com.iaz.higister.ui.main.MyListsFragment;
 import com.iaz.higister.ui.main.ProfileFragment;
+import com.iaz.higister.ui.viewItem.ViewItemFragment;
 
 
 /**
@@ -32,11 +33,14 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return new ProfileFragment();
             case 1:
-                return new MyListsFragment();
+                new MyListsFragment();
+                return MyListsFragment.newInstance("created");
             case 2:
-                return new ListsFragment();
+                new MyListsFragment();
+                return MyListsFragment.newInstance("favorited");
             case 3:
-                return new ListsFragment();
+                new MyListsFragment();
+                return MyListsFragment.newInstance("feed");
             case 4:
                 return new ListsFragment();
             default:

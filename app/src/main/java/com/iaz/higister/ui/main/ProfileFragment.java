@@ -273,41 +273,44 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
 
 
             mNameTextInput.getEditText().setText(activity.getSupportActionBar().getTitle());
-            mDescriptionTextInput.getEditText().setText(user.description);
-            mAgeTextInput.getEditText().setText(Integer.toString(user.age));
+
+            if (user != null) {
+                mDescriptionTextInput.getEditText().setText(user.description);
+                mAgeTextInput.getEditText().setText(Integer.toString(user.age));
 
 
-            mCheckBoxMovies.setChecked(false);
-            mCheckBoxSeries.setChecked(false);
-            mCheckBoxBooks.setChecked(false);
-            mCheckBoxMusic.setChecked(false);
-            mCheckBoxAnimes.setChecked(false);
-            mCheckBoxMangas.setChecked(false);
-            mCheckBoxComics.setChecked(false);
+                mCheckBoxMovies.setChecked(false);
+                mCheckBoxSeries.setChecked(false);
+                mCheckBoxBooks.setChecked(false);
+                mCheckBoxMusic.setChecked(false);
+                mCheckBoxAnimes.setChecked(false);
+                mCheckBoxMangas.setChecked(false);
+                mCheckBoxComics.setChecked(false);
 
-            for (String interest : user.interests) {
-                switch (interest) {
-                    case "Movies":
-                        mCheckBoxMovies.setChecked(true);
-                        break;
-                    case "TV Series":
-                        mCheckBoxSeries.setChecked(true);
-                        break;
-                    case "Books":
-                        mCheckBoxBooks.setChecked(true);
-                        break;
-                    case "Music":
-                        mCheckBoxMusic.setChecked(true);
-                        break;
-                    case "Animes":
-                        mCheckBoxAnimes.setChecked(true);
-                        break;
-                    case "Mangas":
-                        mCheckBoxMangas.setChecked(true);
-                        break;
-                    case "Comics":
-                        mCheckBoxComics.setChecked(true);
-                        break;
+                for (String interest : user.interests) {
+                    switch (interest) {
+                        case "Movies":
+                            mCheckBoxMovies.setChecked(true);
+                            break;
+                        case "TV Series":
+                            mCheckBoxSeries.setChecked(true);
+                            break;
+                        case "Books":
+                            mCheckBoxBooks.setChecked(true);
+                            break;
+                        case "Music":
+                            mCheckBoxMusic.setChecked(true);
+                            break;
+                        case "Animes":
+                            mCheckBoxAnimes.setChecked(true);
+                            break;
+                        case "Mangas":
+                            mCheckBoxMangas.setChecked(true);
+                            break;
+                        case "Comics":
+                            mCheckBoxComics.setChecked(true);
+                            break;
+                    }
                 }
             }
             mViewProfileLayout.setVisibility(View.GONE);

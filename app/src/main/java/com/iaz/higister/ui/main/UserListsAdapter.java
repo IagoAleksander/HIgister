@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.ui.createList.CreateListActivity;
@@ -24,10 +25,12 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
 
     private ArrayList<UserList> mLists;
     private MyListsFragment fragment;
+    private String type;
 
-    public UserListsAdapter(MyListsFragment fragment, ArrayList<UserList> lists) {
+    public UserListsAdapter(MyListsFragment fragment, ArrayList<UserList> lists, String type) {
         mLists = lists;
         this.fragment = fragment;
+        this.type = type;
     }
 
     public void setLists(ArrayList<UserList> lists) {
@@ -44,7 +47,11 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
     @Override
     public void onBindViewHolder(final ListViewHolder holder, int position) {
         holder.listNameTextView.setText(mLists.get(position).name);
-
+        if (mLists.get(position).listPictureUri != null) {
+            Glide.with(fragment)
+                    .load(mLists.get(position).listPictureUri)
+                    .into(holder.image);
+        }
 
         holder.image.setOnClickListener(v -> {
             Intent intent = new Intent(fragment.getActivity(), ViewListActivity.class);
@@ -52,25 +59,102 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
             fragment.getActivity().startActivity(intent);
         });
 
-        holder.editButton.setOnClickListener(v -> {
-            Intent intent = new Intent(fragment.getActivity(), CreateListActivity.class);
-            intent.putExtra("list", mLists.get(position));
-            fragment.getActivity().startActivity(intent);
-        });
+        if (type.equals("created")) {
 
-        holder.removeButton.setOnClickListener(v ->
-                fragment.mListsPresenter.removeList(mLists.get(position), new MyListsPresenter.OnListRemoved() {
-                    @Override
-                    public void onSuccess() {
-                        mLists.remove(position);
-                        notifyDataSetChanged();
-                    }
+            holder.favoriteButton.setVisibility(View.GONE);
 
-                    @Override
-                    public void onFailed(String exception) {
-                        Log.d("onRemoveList", exception);
-                    }
-                }));
+            holder.editButton.setOnClickListener(v -> {
+                Intent intent = new Intent(fragment.getActivity(), CreateListActivity.class);
+                intent.putExtra("list", mLists.get(position));
+                fragment.getActivity().startActivity(intent);
+            });
+
+            holder.removeButton.setOnClickListener(v ->
+                    fragment.mListsPresenter.removeList(mLists.get(position), new MyListsPresenter.OnListRemoved() {
+                        @Override
+                        public void onSuccess() {
+                            mLists.remove(position);
+                            notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onFailed(String exception) {
+                            Log.d("onRemoveList", exception);
+                        }
+                    }));
+        } else if (type.equals("favorited")) {
+            holder.editButton.setVisibility(View.GONE);
+            holder.removeButton.setVisibility(View.GONE);
+
+            holder.favoriteButton.setOnClickListener(v ->
+//                    fragment.mListsPresenter.favoriteList(mLists.get(position), new MyListsPresenter.OnListFavorited() {
+//                        @Override
+//                        public void onSuccess() {
+////                mLists.remove(position);
+////                notifyDataSetChanged();
+//                        }
+//
+//                        @Override
+//                        public void onFailed(Exception e) {
+//                            Log.d("onFavoriteList", e.getMessage());
+//                        }
+//                    })
+
+                    fragment.mListsPresenter.unfavoriteList(mLists.get(position), new MyListsPresenter.OnListRemoved() {
+                                @Override
+                                public void onSuccess() {
+                                    mLists.remove(position);
+                                    notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void onFailed(String exception) {
+
+                                }
+                            }
+                    ));
+        } else {
+
+            holder.editButton.setVisibility(View.GONE);
+            holder.removeButton.setVisibility(View.GONE);
+
+            if (fragment.mListsPresenter.favoritedListsId.contains(mLists.get(position).uid)) {
+                holder.favoriteButton.setText("unfavorite");
+
+                holder.favoriteButton.setOnClickListener(v ->
+                        fragment.mListsPresenter.unfavoriteList(mLists.get(position), new MyListsPresenter.OnListRemoved() {
+                            @Override
+                            public void onSuccess() {
+                                mLists.remove(position);
+                                notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onFailed(String exception) {
+
+                            }
+                        }
+                ));
+
+            }
+            else {
+                holder.favoriteButton.setText("favorite");
+                holder.favoriteButton.setOnClickListener(v ->
+                        fragment.mListsPresenter.favoriteList(mLists.get(position), new MyListsPresenter.OnListFavorited() {
+                            @Override
+                            public void onSuccess() {
+//                mLists.remove(position);
+//                notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onFailed(Exception e) {
+                                Log.d("onFavoriteList", e.getMessage());
+                            }
+                        }));
+            }
+
+        }
     }
 
     @Override
@@ -90,6 +174,9 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
 
         @BindView(R.id.edit_button)
         Button editButton;
+
+        @BindView(R.id.favorite_button)
+        Button favoriteButton;
 
         @BindView(R.id.remove_button)
         Button removeButton;

@@ -12,12 +12,17 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.iaz.higister.data.DataManager;
 import com.iaz.higister.data.model.User;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.injection.ConfigPersistent;
 import com.iaz.higister.ui.base.BasePresenter;
 import com.iaz.higister.ui.viewList.ViewListActivity;
+import com.iaz.higister.util.CompressorUtil;
+import com.iaz.higister.util.Constants;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -48,6 +53,7 @@ public class CreateListPresenter extends BasePresenter<CreateListMvpView> {
     private CreateListActivity activity;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseStorage storage = FirebaseStorage.getInstance();
 
     @Inject
     public CreateListPresenter(DataManager dataManager) {
@@ -133,8 +139,7 @@ public class CreateListPresenter extends BasePresenter<CreateListMvpView> {
     }
 
     public void updateList(UserList list, OnListUpdated onListUpdated) {
-        db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .collection("createdLists").document(list.uid).set(list)
+        db.collection("lists").document(list.uid).set(list)
                 .addOnSuccessListener(documentReference -> {
                     Log.d("updateList: ", "success");
                     onListUpdated.onSuccess();
@@ -146,6 +151,37 @@ public class CreateListPresenter extends BasePresenter<CreateListMvpView> {
         void onSuccess();
 
         void onFailed(Exception exception);
+    }
+
+    public void saveListImageOnStorage(String uri, final OnImageUpload onImageUpload) {
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        final StorageReference storageReference = storage.getReference().child(Constants.PATH_USER_IMAGE + uid);
+
+        CompressorUtil.compress(getMvpView().getActivity(), uri, new CompressorUtil.CompressListener() {
+            @Override
+            public void onCompressSuccess(File file) {
+                UploadTask uploadTask = storageReference.putFile(Uri.parse("file://" + file.getPath()));
+                uploadTask.
+                        addOnFailureListener(exception -> onImageUpload.onFailure(exception.getMessage()))
+                        .addOnSuccessListener(taskSnapshot -> {
+                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                            onImageUpload.onSuccess(downloadUrl);
+                        });
+            }
+
+            @Override
+            public void onCompressError() {
+                onImageUpload.onFailure("Error on compressing");
+            }
+        });
+    }
+
+    interface OnImageUpload {
+        void onSuccess(Uri uri);
+
+        void onFailure(String exception);
     }
 
 }

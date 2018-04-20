@@ -21,6 +21,8 @@ public class UserList implements Parcelable{
     public int type;
     public boolean visibleForEveryone;
     public boolean commentsEnabled;
+    public String listPictureUri;
+    public String creatorId;
 
     @Exclude
     public ArrayList<ListItem> listItems = new ArrayList<>();
@@ -34,6 +36,8 @@ public class UserList implements Parcelable{
         type = in.readInt();
         visibleForEveryone = in.readByte() != 0;
         commentsEnabled = in.readByte() != 0;
+        listPictureUri = in.readString();
+        creatorId = in.readString();
         listItems = in.createTypedArrayList(ListItem.CREATOR);
     }
 
@@ -50,6 +54,8 @@ public class UserList implements Parcelable{
         dest.writeInt(type);
         dest.writeByte(visibleForEveryone ? (byte) 1 : (byte) 0);
         dest.writeByte(commentsEnabled ? (byte) 1 : (byte) 0);
+        dest.writeString(listPictureUri);
+        dest.writeString(creatorId);
         dest.writeTypedList(listItems);
 
     }

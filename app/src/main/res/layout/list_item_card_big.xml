@@ -47,10 +47,10 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:padding="10dp"
                     android:layout_toEndOf="@id/item_image"
-                    android:orientation="vertical">
+                    android:gravity="end"
+                    android:orientation="vertical"
+                    android:padding="10dp">
 
                     <TextView
                         android:id="@+id/list_name"
@@ -62,24 +62,38 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
                         android:orientation="horizontal"
-                        android:layout_marginTop="30dp">
-                    <Button
-                        android:id="@+id/edit_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:background="@color/accent_dark"
-                        android:text="edit"/>
+                        android:layout_gravity="center">
 
-                    <Button
-                        android:id="@+id/remove_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="20dp"
-                        android:background="@color/red"
-                        android:text="remove"/>
+                        <Button
+                            android:id="@+id/edit_button"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="@color/accent_dark"
+                            android:text="edit"
+                            android:layout_weight="1"/>
+
+                        <Button
+                            android:id="@+id/favorite_button"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="20dp"
+                            android:background="@color/saffron"
+                            android:text="favorite"
+                            android:layout_weight="1"/>
+
+                        <Button
+                            android:id="@+id/remove_button"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="20dp"
+                            android:background="@color/red"
+                            android:text="remove"
+                            android:layout_weight="1"/>
                     </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>

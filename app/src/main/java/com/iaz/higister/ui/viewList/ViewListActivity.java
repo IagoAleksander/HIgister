@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -93,6 +94,12 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
         if (list != null) {
             listDescription.setText(list.description);
             listType.setText(Integer.toString(list.type));
+
+            if (list.listPictureUri != null) {
+                Glide.with(this)
+                        .load(list.listPictureUri)
+                        .into(listLogoImage);
+            }
 
             if (list.uid != null) {
                 mViewListPresenter.getListItems(list.uid);

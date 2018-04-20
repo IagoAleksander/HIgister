@@ -29,6 +29,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.BaseItem;
 import com.iaz.higister.data.model.ListItem;
@@ -122,7 +123,21 @@ public class CreateItemActivity extends BaseActivity {
                 list.listItems.get(position).description = listDescription;
 
                 if (list.listItems.size() == 1) {
-                    mCreateItemPresenter.saveList(list);
+                    list.creatorId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                    if (list.listPictureUri != null)
+                        mCreateItemPresenter.saveListImageOnStorage(list.listPictureUri, new CreateItemPresenter.OnImageUpload() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                list.listPictureUri = uri.toString();
+                                mCreateItemPresenter.saveList(list);
+                            }
+
+                            @Override
+                            public void onFailure(String exception) {
+
+                            }
+                        });
                 } else {
                     mCreateItemPresenter.saveItem(list, list.listItems.size() - 1);
                 }

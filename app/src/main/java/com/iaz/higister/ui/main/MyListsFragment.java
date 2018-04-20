@@ -11,7 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.iaz.higister.R;
+import com.iaz.higister.data.model.ListItem;
 import com.iaz.higister.data.model.UserList;
+import com.iaz.higister.ui.viewItem.ViewItemActivity;
+import com.iaz.higister.ui.viewItem.ViewItemFragment;
 
 import java.util.ArrayList;
 
@@ -35,6 +38,23 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
     MainActivity activity;
 
     public UserListsAdapter mListAdapter;
+    String type;
+
+    public static MyListsFragment newInstance(String type) {
+        MyListsFragment myListsFragment = new MyListsFragment();
+        Bundle args = new Bundle();
+        args.putString("type", type);
+        myListsFragment.setArguments(args);
+        return myListsFragment;
+    }
+
+    // Store instance variables based on arguments passed
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        type = getArguments().getString("type");
+        activity = (MainActivity) getActivity();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,17 +74,46 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
         mListsPresenter.attachView(this);
 
-        mListsPresenter.receiveLists(new MyListsPresenter.OnUpdateLists() {
-            @Override
-            public void onSuccess(ArrayList<UserList> userLists) {
-                updateData(userLists);
-            }
 
-            @Override
-            public void onFailed(Exception e) {
-                Log.e("receiveMyLists: ", "failed", e);
-            }
-        });
+        if (type.equals("created")) {
+            mListsPresenter.receiveLists(new MyListsPresenter.OnUpdateLists() {
+                @Override
+                public void onSuccess(ArrayList<UserList> userLists) {
+                    updateData(userLists);
+                }
+
+                @Override
+                public void onFailed(Exception e) {
+                    Log.e("receiveMyLists: ", "failed", e);
+                }
+            });
+        }
+        if (type.equals("favorited")) {
+            mListsPresenter.receiveFavorites(new MyListsPresenter.OnUpdateLists() {
+                @Override
+                public void onSuccess(ArrayList<UserList> userLists) {
+                    updateData(userLists);
+                }
+
+                @Override
+                public void onFailed(Exception e) {
+                    Log.e("receiveMyLists: ", "failed", e);
+                }
+            });
+        }
+        if (type.equals("feed")) {
+            mListsPresenter.receiveFeed(new MyListsPresenter.OnUpdateLists() {
+                @Override
+                public void onSuccess(ArrayList<UserList> userLists) {
+                    updateData(userLists);
+                }
+
+                @Override
+                public void onFailed(Exception e) {
+                    Log.e("receiveMyLists: ", "failed", e);
+                }
+            });
+        }
     }
 
     @Override
@@ -76,7 +125,7 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
     public void updateData(ArrayList<UserList> lists) {
 
         if (mListAdapter == null) {
-            mListAdapter = new UserListsAdapter(this, lists);
+            mListAdapter = new UserListsAdapter(this, lists, type);
         }
         else {
             mListAdapter.setLists(lists);

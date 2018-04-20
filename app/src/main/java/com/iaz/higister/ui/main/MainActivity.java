@@ -118,6 +118,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(fm, this);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(4);
 
         final SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
         viewPagerTab.setCustomTabView(this);
@@ -142,7 +143,16 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 //        mTabLayout.getTabAt(0).setText("Friends");
 //        mTabLayout.getTabAt(1).setText("Suggested Friends");
 //        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        viewPagerTab.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                setFab(0);
+                viewPagerTab.removeOnLayoutChangeListener(this);
+            }
+        });
     }
+
 
     @Override
     public View createTabView(ViewGroup container, int position, PagerAdapter adapter) {
@@ -211,7 +221,8 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
         if (user.profilePictureUri != null)
             callGlide(Uri.parse(user.profilePictureUri));
 
-        setFab(PROFILE_TAB_INDEX);
+//        setFab(PROFILE_TAB_INDEX);
+//        mViewPager.setCurrentItem(PROFILE_TAB_INDEX);
     }
 
     public void setFab (int position) {

@@ -58,8 +58,7 @@ public class ViewListPresenter extends BasePresenter<ViewListMvpView> {
     public void getListItems(String listID) {
 
 
-        CollectionReference colRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .collection("createdLists").document(listID).collection("listItems");
+        CollectionReference colRef = db.collection("lists").document(listID).collection("listItems");
 
         colRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -80,8 +79,7 @@ public class ViewListPresenter extends BasePresenter<ViewListMvpView> {
 
     public void removeListItem(UserList list, int position, OnListItemRemoved onListItemRemoved) {
 
-        DocumentReference docRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .collection("createdLists").document(list.uid).collection("listItems").document(list.listItems.get(position).uid);
+        DocumentReference docRef = db.collection("lists").document(list.uid).collection("listItems").document(list.listItems.get(position).uid);
 
         docRef.delete()
                 .addOnSuccessListener(documentReference -> onListItemRemoved.onSuccess())
