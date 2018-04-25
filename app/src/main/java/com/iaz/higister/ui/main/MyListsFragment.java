@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.ListItem;
 import com.iaz.higister.data.model.UserList;
+import com.iaz.higister.data.repository.ListRepository;
 import com.iaz.higister.ui.viewItem.ViewItemActivity;
 import com.iaz.higister.ui.viewItem.ViewItemFragment;
 
@@ -39,6 +40,8 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
     public UserListsAdapter mListAdapter;
     String type;
+
+    ListRepository listRepository = new ListRepository();
 
     public static MyListsFragment newInstance(String type) {
         MyListsFragment myListsFragment = new MyListsFragment();
@@ -76,7 +79,7 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
 
         if (type.equals("created")) {
-            mListsPresenter.receiveLists(new MyListsPresenter.OnUpdateLists() {
+            listRepository.receiveLists(new ListRepository.OnUpdateLists() {
                 @Override
                 public void onSuccess(ArrayList<UserList> userLists) {
                     updateData(userLists);
@@ -89,10 +92,18 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
             });
         }
         if (type.equals("favorited")) {
-            mListsPresenter.receiveFavorites(new MyListsPresenter.OnUpdateLists() {
+            listRepository.receiveFavorites(new ListRepository.OnUpdateLists() {
                 @Override
                 public void onSuccess(ArrayList<UserList> userLists) {
+
+                    activity.favoritedListsId.clear();
+
+                    for (UserList list : userLists) {
+                        activity.favoritedListsId.add(list.uid);
+                    }
+
                     updateData(userLists);
+
                 }
 
                 @Override
@@ -102,7 +113,7 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
             });
         }
         if (type.equals("feed")) {
-            mListsPresenter.receiveFeed(new MyListsPresenter.OnUpdateLists() {
+            listRepository.receiveFeed(new ListRepository.OnUpdateLists() {
                 @Override
                 public void onSuccess(ArrayList<UserList> userLists) {
                     updateData(userLists);

@@ -9,6 +9,7 @@ import timber.log.Timber;
 import com.iaz.higister.injection.component.ApplicationComponent;
 import com.iaz.higister.injection.component.DaggerApplicationComponent;
 import com.iaz.higister.injection.module.ApplicationModule;
+import com.iaz.higister.util.ApplicationUtil;
 
 public class Application extends android.app.Application {
 
@@ -17,6 +18,8 @@ public class Application extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        ApplicationUtil.setContext(getApplicationContext());
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());

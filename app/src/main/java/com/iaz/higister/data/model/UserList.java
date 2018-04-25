@@ -23,6 +23,7 @@ public class UserList implements Parcelable{
     public boolean commentsEnabled;
     public String listPictureUri;
     public String creatorId;
+    public ArrayList<String> favoritedBy = new ArrayList<>();
 
     @Exclude
     public ArrayList<ListItem> listItems = new ArrayList<>();
@@ -39,6 +40,7 @@ public class UserList implements Parcelable{
         listPictureUri = in.readString();
         creatorId = in.readString();
         listItems = in.createTypedArrayList(ListItem.CREATOR);
+        favoritedBy = in.createStringArrayList();
     }
 
     @Override
@@ -57,6 +59,7 @@ public class UserList implements Parcelable{
         dest.writeString(listPictureUri);
         dest.writeString(creatorId);
         dest.writeTypedList(listItems);
+        dest.writeStringList(favoritedBy);
 
     }
 

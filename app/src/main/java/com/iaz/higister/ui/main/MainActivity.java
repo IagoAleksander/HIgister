@@ -30,12 +30,16 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.iaz.higister.R;
+import com.iaz.higister.data.model.FavoritedList;
 import com.iaz.higister.data.model.User;
+import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.ui.base.BaseActivity;
 import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.util.AppBarStateChangeListener;
 import com.iaz.higister.util.SectionsPagerAdapter;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -86,6 +90,9 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
     FragmentManager fm;
 
     Uri uri;
+
+    public ArrayList<String> favoritedListsId = new ArrayList<>();
+    public User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,7 +220,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
         return super.onOptionsItemSelected(item);
     }
 
-    public void updateUserInfo(User user) {
+    public void updateUserInfo() {
         followersCounter.setText(Integer.toString(user.followersNumber));
         createdListsCounter.setText(Integer.toString(user.listsCreatedNumber));
         favoritedListsCounter.setText(Integer.toString(user.listsFavouritedNumber));

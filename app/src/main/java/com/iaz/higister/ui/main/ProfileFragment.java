@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.User;
+import com.iaz.higister.data.repository.UserRepository;
 import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
 
@@ -121,10 +122,11 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
     @BindView(R.id.checkbox_comics)
     CheckBox mCheckBoxComics;
 
-    User user;
     MainActivity activity;
 
     private CustomPhotoPickerDialog photoDialog;
+
+    UserRepository userRepository = new UserRepository();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -144,27 +146,17 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
 
         mProfilePresenter.attachView(this);
 
-        mProfilePresenter.receiveProfileInfo();
-    }
+        userRepository.receiveProfileInfo(new UserRepository.OnUpdateProfile() {
+            @Override
+            public void onSuccess(User user) {
+                updateData(user);
+            }
 
-    @Override
-    public void setUserVisibleHint(boolean visible)
-    {
-        super.setUserVisibleHint(visible);
-        if (visible && isResumed())
-        {
-            onResume();
-        }
-    }
+            @Override
+            public void onFailure(String exception) {
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (!getUserVisibleHint())
-        {
-            return;
-        }
+            }
+        });
     }
 
     @Override
@@ -174,9 +166,8 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
 
     @Override
     public void updateData(User user) {
-        this.user = user;
-
-        activity.updateUserInfo(user);
+        activity.user = user;
+        activity.updateUserInfo();
 
         activity.getSupportActionBar().setTitle(user.name);
         mDescriptionTextView.setText(user.description);
@@ -242,41 +233,43 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
     public void swapBetweenDisplayAndEditProfileInfos() {
         if (mViewProfileLayout.getVisibility() == View.VISIBLE) {
 
+            userRepository.removeListener();
+
             changePictureButton.setOnClickListener(v -> {
-                    photoDialog = new CustomPhotoPickerDialog(activity, new CustomPhotoPickerDialog
-                            .OnOptionPhotoSelected() {
-                        @Override
-                        public void onGallery() {
-                            mProfilePresenter.openDialogWindow();
+                photoDialog = new CustomPhotoPickerDialog(activity, new CustomPhotoPickerDialog
+                        .OnOptionPhotoSelected() {
+                    @Override
+                    public void onGallery() {
+                        mProfilePresenter.openDialogWindow();
+                        photoDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onCamera() {
+                        // Here, thisActivity is the current activity
+                        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                                || ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                            photoDialog.dismiss();
+                            ActivityCompat.requestPermissions(activity,
+                                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL);
+                        } else {
+                            mProfilePresenter.getPhoto();
                             photoDialog.dismiss();
                         }
-
-                        @Override
-                        public void onCamera() {
-                            // Here, thisActivity is the current activity
-                            if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                                    || ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-                                photoDialog.dismiss();
-                                ActivityCompat.requestPermissions(activity,
-                                        new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL);
-                            } else {
-                                mProfilePresenter.getPhoto();
-                                photoDialog.dismiss();
-                            }
-                        }
-                    });
-                    photoDialog.show();
+                    }
+                });
+                photoDialog.show();
 
 
-        });
+            });
 
 
             mNameTextInput.getEditText().setText(activity.getSupportActionBar().getTitle());
 
-            if (user != null) {
-                mDescriptionTextInput.getEditText().setText(user.description);
-                mAgeTextInput.getEditText().setText(Integer.toString(user.age));
+            if (activity.user != null) {
+                mDescriptionTextInput.getEditText().setText(activity.user.description);
+                mAgeTextInput.getEditText().setText(Integer.toString(activity.user.age));
 
 
                 mCheckBoxMovies.setChecked(false);
@@ -287,7 +280,7 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
                 mCheckBoxMangas.setChecked(false);
                 mCheckBoxComics.setChecked(false);
 
-                for (String interest : user.interests) {
+                for (String interest : activity.user.interests) {
                     switch (interest) {
                         case "Movies":
                             mCheckBoxMovies.setChecked(true);
@@ -313,27 +306,96 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
                     }
                 }
             }
+
+//        }
+//        else {
+//
             mViewProfileLayout.setVisibility(View.GONE);
             mEditProfileLayout.setVisibility(View.VISIBLE);
             activity.fab.setImageResource(R.drawable.ic_save);
-        } else {
+            activity.fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-            ArrayList<String> interests = new ArrayList<>();
-            if (mCheckBoxMovies.isChecked())
-                interests.add("Movies");
-            if (mCheckBoxSeries.isChecked())
-                interests.add("TV Series");
-            if (mCheckBoxBooks.isChecked())
-                interests.add("Books");
-            if (mCheckBoxMusic.isChecked())
-                interests.add("Music");
-            if (mCheckBoxAnimes.isChecked())
-                interests.add("Animes");
-            if (mCheckBoxMangas.isChecked())
-                interests.add("Mangas");
-            if (mCheckBoxComics.isChecked())
-                interests.add("Comics");
+                    ArrayList<String> interests = new ArrayList<>();
+                    if (mCheckBoxMovies.isChecked())
+                        interests.add("Movies");
+                    if (mCheckBoxSeries.isChecked())
+                        interests.add("TV Series");
+                    if (mCheckBoxBooks.isChecked())
+                        interests.add("Books");
+                    if (mCheckBoxMusic.isChecked())
+                        interests.add("Music");
+                    if (mCheckBoxAnimes.isChecked())
+                        interests.add("Animes");
+                    if (mCheckBoxMangas.isChecked())
+                        interests.add("Mangas");
+                    if (mCheckBoxComics.isChecked())
+                        interests.add("Comics");
 
+                    if (activity.uri != null && !activity.uri.toString().contains("http")) {
+                        userRepository.saveProfileImageOnStorage(activity.uri.toString(), new UserRepository.OnImageUpload() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+
+                                activity.user = new User();
+                                activity.user.name = mNameTextInput.getEditText().getText().toString();
+                                activity.user.description = mDescriptionTextInput.getEditText().getText().toString();
+                                activity.user.age = Integer.parseInt(mAgeTextInput.getEditText().getText().toString());
+                                activity.user.interests = interests;
+                                activity.user.profilePictureUri = uri.toString();
+
+                                userRepository.saveProfileInfo(activity.user, new UserRepository.OnUpdateProfile() {
+                                    @Override
+                                    public void onSuccess(User user) {
+                                        updateData(user);
+                                    }
+
+                                    @Override
+                                    public void onFailure(String exception) {
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onFailure(String exception) {
+                            }
+                        });
+
+                    } else {
+
+                        activity.user = new User();
+                        activity.user.name = mNameTextInput.getEditText().getText().toString();
+                        activity.user.description = mDescriptionTextInput.getEditText().getText().toString();
+                        activity.user.age = Integer.parseInt(mAgeTextInput.getEditText().getText().toString());
+                        activity.user.interests = interests;
+
+                        if (activity.uri != null)
+                            activity.user.profilePictureUri = activity.uri.toString();
+
+                        userRepository.saveProfileInfo(activity.user, new UserRepository.OnUpdateProfile() {
+                            @Override
+                            public void onSuccess(User user) {
+                                updateData(user);
+                            }
+
+                            @Override
+                            public void onFailure(String exception) {
+
+                            }
+                        });
+                    }
+
+                    activity.fab.setImageResource(R.drawable.ic_edit);
+                    activity.fab.setOnClickListener(view ->
+
+                    {
+                        swapBetweenDisplayAndEditProfileInfos();
+                    });
+                }
+            });
+        }
 //            mProfilePresenter.saveProfileInfo(
 //                    mNameTextInput.getEditText().getText().toString(),
 //                    mDescriptionTextInput.getEditText().getText().toString(),
@@ -341,35 +403,7 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
 //                    interests
 //            );
 
-            if (activity.uri != null) {
-                mProfilePresenter.saveProfileImageOnStorage(activity.uri.toString(), new ProfilePresenter.OnImageUpload() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        mProfilePresenter.saveProfileInfo(
-                                mNameTextInput.getEditText().getText().toString(),
-                                mDescriptionTextInput.getEditText().getText().toString(),
-                                Integer.parseInt(mAgeTextInput.getEditText().getText().toString()),
-                                interests, uri);
-                    }
 
-                    @Override
-                    public void onFailure(String exception) {
-
-                    }
-                });
-            }
-            else {
-                mProfilePresenter.saveProfileInfo(
-                        mNameTextInput.getEditText().getText().toString(),
-                        mDescriptionTextInput.getEditText().getText().toString(),
-                        Integer.parseInt(mAgeTextInput.getEditText().getText().toString()),
-                        interests, activity.uri);
-            }
-
-
-            activity.fab.setImageResource(R.drawable.ic_edit);
-
-        }
     }
 
     @Override
@@ -392,6 +426,6 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
 
     @Override
     public void callGlide(Uri uri) {
-       activity.callGlide(uri);
+        activity.callGlide(uri);
     }
 }

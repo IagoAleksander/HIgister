@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.UserList;
+import com.iaz.higister.data.repository.ListRepository;
 import com.iaz.higister.ui.base.BaseActivity;
 import com.iaz.higister.ui.splash.SplashActivity;
 import com.iaz.higister.ui.viewList.ViewListActivity;
@@ -74,6 +75,7 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
     UserList list;
 
     String uri;
+    ListRepository listRepository = new ListRepository();
 
 
     @Override
@@ -204,47 +206,20 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
                     intent.putExtra("list", list);
                     startActivity(intent);
                 } else {
+                    listRepository.updateList(list, new ListRepository.OnListUpdated() {
+                        @Override
+                        public void onSuccess() {
+                            Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
+                            intent.putExtra("list", list);
+                            startActivity(intent);
+                        }
 
-                    if (uri != null) {
-                        mCreateListPresenter.saveListImageOnStorage(uri, new CreateListPresenter.OnImageUpload() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                list.listPictureUri = uri.toString();
-                                mCreateListPresenter.updateList(list, new CreateListPresenter.OnListUpdated() {
-                                    @Override
-                                    public void onSuccess() {
-                                        Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
-                                        intent.putExtra("list", list);
-                                        startActivity(intent);
-                                    }
+                        @Override
+                        public void onFailed(Exception e) {
+                            Log.w("updateList: ", "failed", e);
+                        }
+                    });
 
-                                    @Override
-                                    public void onFailed(Exception e) {
-                                        Log.w("updateList: ", "failed", e);
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onFailure(String exception) {
-
-                            }
-                        });
-                    } else {
-                        mCreateListPresenter.updateList(list, new CreateListPresenter.OnListUpdated() {
-                            @Override
-                            public void onSuccess() {
-                                Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
-                                intent.putExtra("list", list);
-                                startActivity(intent);
-                            }
-
-                            @Override
-                            public void onFailed(Exception e) {
-                                Log.w("updateList: ", "failed", e);
-                            }
-                        });
-                    }
                 }
             }
         });

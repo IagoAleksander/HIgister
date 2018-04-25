@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -34,7 +35,9 @@ import com.iaz.higister.R;
 import com.iaz.higister.data.model.BaseItem;
 import com.iaz.higister.data.model.ListItem;
 import com.iaz.higister.data.model.UserList;
+import com.iaz.higister.data.repository.ListRepository;
 import com.iaz.higister.ui.base.BaseActivity;
+import com.iaz.higister.ui.viewList.ViewListActivity;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
 
 import javax.inject.Inject;
@@ -69,6 +72,8 @@ public class CreateItemActivity extends BaseActivity {
 
     private CustomPhotoPickerDialog photoDialog;
     private static final int CONTENT_VIEW_ID = 10101010;
+
+    ListRepository listRepository = new ListRepository();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,28 +130,40 @@ public class CreateItemActivity extends BaseActivity {
                 if (list.listItems.size() == 1) {
                     list.creatorId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-                    if (list.listPictureUri != null)
-                        mCreateItemPresenter.saveListImageOnStorage(list.listPictureUri, new CreateItemPresenter.OnImageUpload() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                list.listPictureUri = uri.toString();
-                                mCreateItemPresenter.saveList(list);
-                            }
-
-                            @Override
-                            public void onFailure(String exception) {
-
-                            }
-                        });
+                    listRepository.saveList(list);
                 } else {
-                    mCreateItemPresenter.saveItem(list, list.listItems.size() - 1);
+                    listRepository.saveItem(list, list.listItems.size() - 1, new ListRepository.OnItemSaved() {
+                        @Override
+                        public void onSuccess() {
+                            Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
+                            intent.putExtra("list", list);
+                            CreateItemActivity.this.startActivity(intent);
+                        }
+
+                        @Override
+                        public void onFailed(Exception exception) {
+                            Log.d("saveItem: ", exception.getMessage());
+                        }
+                    });
                 }
             } else {
 
                 list.listItems.get(position).name = listName;
                 list.listItems.get(position).description = listDescription;
 
-                mCreateItemPresenter.updateItem(list, position);
+                listRepository.updateItem(list, position, new ListRepository.OnItemUpdated() {
+                    @Override
+                    public void onSuccess() {
+                        Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
+                        intent.putExtra("list", list);
+                        CreateItemActivity.this.startActivity(intent);
+                    }
+
+                    @Override
+                    public void onFailed(Exception exception) {
+                        Log.d("updateItem: ", exception.getMessage());
+                    }
+                });
             }
 
         });

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.UserList;
+import com.iaz.higister.data.repository.ListRepository;
 import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.ui.viewList.ViewListActivity;
 
@@ -27,10 +28,41 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
     private MyListsFragment fragment;
     private String type;
 
+    ListRepository listRepository = new ListRepository();
+
     public UserListsAdapter(MyListsFragment fragment, ArrayList<UserList> lists, String type) {
         mLists = lists;
         this.fragment = fragment;
         this.type = type;
+
+        listRepository.addListener(fragment.activity, type, new ListRepository.OnUpdateLists() {
+            @Override
+            public void onSuccess(ArrayList<UserList> userLists) {
+                mLists = userLists;
+
+
+                if (type.equals("created")) {
+                    fragment.activity.user.listsCreatedNumber = userLists.size();
+                    fragment.activity.updateUserInfo();
+                }
+                else if (type.equals("favorited")) {
+                    fragment.activity.favoritedListsId.clear();
+
+                    for (UserList list : userLists) {
+                        fragment.activity.favoritedListsId.add(list.uid);
+                    }
+
+                    fragment.activity.user.listsFavouritedNumber = userLists.size();
+                    fragment.activity.updateUserInfo();
+                }
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+
+            }
+        });
     }
 
     public void setLists(ArrayList<UserList> lists) {
@@ -70,10 +102,10 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
             });
 
             holder.removeButton.setOnClickListener(v ->
-                    fragment.mListsPresenter.removeList(mLists.get(position), new MyListsPresenter.OnListRemoved() {
+                    listRepository.removeList(mLists.get(position), new ListRepository.OnListRemoved() {
                         @Override
-                        public void onSuccess() {
-                            mLists.remove(position);
+                        public void onSuccess(String listUid) {
+//                            mLists.remove(position);
                             notifyDataSetChanged();
                         }
 
@@ -83,27 +115,45 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
                         }
                     }));
         } else if (type.equals("favorited")) {
+
+            holder.editButton.setVisibility(View.GONE);
+            holder.removeButton.setVisibility(View.GONE);
+            holder.favoriteButton.setText("unfavorite");
+
+            holder.favoriteButton.setOnClickListener(v -> {
+
+                if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
+                    fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
+
+                listRepository.unfavoriteList(mLists.get(position), new ListRepository.OnListRemoved() {
+                            @Override
+                            public void onSuccess(String listUid) {
+                                notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onFailed(String exception) {
+                                fragment.activity.favoritedListsId.add(mLists.get(position).uid);
+                            }
+                        }
+                );
+            });
+        } else {
+
             holder.editButton.setVisibility(View.GONE);
             holder.removeButton.setVisibility(View.GONE);
 
-            holder.favoriteButton.setOnClickListener(v ->
-//                    fragment.mListsPresenter.favoriteList(mLists.get(position), new MyListsPresenter.OnListFavorited() {
-//                        @Override
-//                        public void onSuccess() {
-////                mLists.remove(position);
-////                notifyDataSetChanged();
-//                        }
-//
-//                        @Override
-//                        public void onFailed(Exception e) {
-//                            Log.d("onFavoriteList", e.getMessage());
-//                        }
-//                    })
+            if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid)) {
+                holder.favoriteButton.setText("unfavorite");
 
-                    fragment.mListsPresenter.unfavoriteList(mLists.get(position), new MyListsPresenter.OnListRemoved() {
+                holder.favoriteButton.setOnClickListener(v -> {
+
+                    if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
+                        fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
+
+                    listRepository.unfavoriteList(mLists.get(position), new ListRepository.OnListRemoved() {
                                 @Override
-                                public void onSuccess() {
-                                    mLists.remove(position);
+                                public void onSuccess(String listUid) {
                                     notifyDataSetChanged();
                                 }
 
@@ -112,39 +162,19 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
 
                                 }
                             }
-                    ));
-        } else {
+                    );
+                });
 
-            holder.editButton.setVisibility(View.GONE);
-            holder.removeButton.setVisibility(View.GONE);
-
-            if (fragment.mListsPresenter.favoritedListsId.contains(mLists.get(position).uid)) {
-                holder.favoriteButton.setText("unfavorite");
-
-                holder.favoriteButton.setOnClickListener(v ->
-                        fragment.mListsPresenter.unfavoriteList(mLists.get(position), new MyListsPresenter.OnListRemoved() {
-                            @Override
-                            public void onSuccess() {
-                                mLists.remove(position);
-                                notifyDataSetChanged();
-                            }
-
-                            @Override
-                            public void onFailed(String exception) {
-
-                            }
-                        }
-                ));
-
-            }
-            else {
+            } else {
                 holder.favoriteButton.setText("favorite");
                 holder.favoriteButton.setOnClickListener(v ->
-                        fragment.mListsPresenter.favoriteList(mLists.get(position), new MyListsPresenter.OnListFavorited() {
+                        listRepository.favoriteList(mLists.get(position), new ListRepository.OnListFavorited() {
                             @Override
-                            public void onSuccess() {
-//                mLists.remove(position);
-//                notifyDataSetChanged();
+                            public void onSuccess(String listUid) {
+                                if (!fragment.activity.favoritedListsId.contains(listUid))
+                                    fragment.activity.favoritedListsId.add(listUid);
+
+                                notifyDataSetChanged();
                             }
 
                             @Override

@@ -14,8 +14,8 @@ import me.shaohui.advancedluban.OnCompressListener;
  */
 
 public class CompressorUtil {
-    public static void compress(Context context, String uri, final CompressListener compressListener) {
-            Luban.compress(context, new File(uri.replace("file://", "")))
+    public static void compress(String uri, final CompressListener compressListener) {
+            Luban.compress(ApplicationUtil.getContext(), new File(uri.replace("file://", "")))
                     .putGear(Luban.CUSTOM_GEAR)
                     .setMaxSize(1024)
                     .launch(new OnCompressListener() {
