@@ -20,6 +20,7 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/user_description_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -40,6 +41,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/user_age_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -64,6 +66,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/user_interests_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -136,6 +139,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/user_social_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">

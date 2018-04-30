@@ -1,5 +1,6 @@
 package com.iaz.higister.data.repository;
 
+import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 
@@ -42,18 +43,18 @@ public class UserRepository {
         storage = FirebaseStorage.getInstance();
     }
 
-    public void saveProfileInfo(User user, OnUpdateProfile onUpdateProfile) {
+    public void saveProfileInfo(Activity activity, User user, OnUpdateProfile onUpdateProfile) {
         // Add a new document with a generated ID
 
         db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .set(user)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("updateProfile", "DocumentSnapshot successfully written!");
-                    addListener(onUpdateProfile);
+                    addListener(activity, onUpdateProfile);
                 })
                 .addOnFailureListener(e -> {
                     Log.w("updateProfile", "Error writing document", e);
-                    addListener(onUpdateProfile);
+                    addListener(activity, onUpdateProfile);
                 });
     }
 
@@ -65,6 +66,9 @@ public class UserRepository {
                 user = documentSnapshot.toObject(User.class);
 
                 onUpdateProfile.onSuccess(user);
+            }
+            else {
+                onUpdateProfile.onFailure("usuário nao existe");
             }
         })
                 .addOnFailureListener(e -> Log.w("updateProfile", "Error writing document", e));
@@ -95,7 +99,7 @@ public class UserRepository {
         });
     }
 
-    public void addListener(OnUpdateProfile onUpdateProfile) {
+    public void addListener(Activity activity, OnUpdateProfile onUpdateProfile) {
 //        if (listenerRegistration == null ) {
 
         if (eventListener == null) {
@@ -107,7 +111,7 @@ public class UserRepository {
             };
         }
         listenerRegistration = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .addSnapshotListener(eventListener);
+                .addSnapshotListener(activity, eventListener);
 //        }
     }
 

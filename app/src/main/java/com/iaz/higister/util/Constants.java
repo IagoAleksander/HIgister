@@ -6,11 +6,11 @@ package com.iaz.higister.util;
 
 public class Constants {
 
-    public static final int PROFILE_TAB_INDEX = 0;
+    public static final int SEARCH_TAB_INDEX = 3;
     public static final int LISTS_TAB_INDEX = 1;
     public static final int FAVOURITES_TAB_INDEX = 2;
-    public static final int SEARCH_TAB_INDEX = 3;
-    public static final int PEOPLE_TAB_INDEX = 4;
+    public static final int FEED_TAB_INDEX = 0;
+    public static final int PROFILE_TAB_INDEX = 4;
 
     public static final int PERMISSION_WRITE_EXTERNAL = 1594;
 

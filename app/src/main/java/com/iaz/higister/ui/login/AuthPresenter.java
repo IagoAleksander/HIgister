@@ -4,12 +4,18 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.Profile;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.iaz.higister.data.DataManager;
+import com.iaz.higister.data.model.User;
+import com.iaz.higister.data.repository.UserRepository;
 import com.iaz.higister.injection.ConfigPersistent;
 import com.iaz.higister.ui.base.BasePresenter;
 import com.iaz.higister.ui.main.MainActivity;
@@ -27,6 +33,8 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
+    UserRepository userRepository = new UserRepository();
 
     @Inject
     public AuthPresenter(DataManager dataManager) {
@@ -46,19 +54,41 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
 
     public void setAutenticationListener() {
         mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@android.support.annotation.NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Log.d("auth", "onAuthStateChanged:signed_in:" + user.getUid());
-                    Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
-                    getMvpView().getActivity().startActivity(intent);
-                } else {
-                    // User is signed out
-                    Log.d("auth", "onAuthStateChanged:signed_out");
-                }
+        mAuthListener = firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+
+            if (user != null) {
+
+                userRepository.receiveProfileInfo(new UserRepository.OnUpdateProfile() {
+                    @Override
+                    public void onSuccess(User user) {
+                        Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
+                        getMvpView().getActivity().startActivity(intent);
+                    }
+
+                    @Override
+                    public void onFailure(String exception) {
+
+                        Log.d("auth", "onCheckUser: user does not exist");
+                        userRepository.saveProfileInfo(getMvpView().getActivity(), new User(), new UserRepository.OnUpdateProfile() {
+                            @Override
+                            public void onSuccess(User user) {
+                                Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
+                                getMvpView().getActivity().startActivity(intent);
+                            }
+
+                            @Override
+                            public void onFailure(String exception) {
+                                Log.d("auth", "onCreateNewUser:failure");
+                            }
+                        });
+                    }
+                });
+                // User is signed in
+                Log.d("auth", "onAuthStateChanged:signed_in:" + user.getUid());
+            } else {
+                // User is signed out
+                Log.d("auth", "onAuthStateChanged:signed_out");
             }
         };
     }
@@ -73,7 +103,7 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
         }
     }
 
-    public void createAccount (String email, String password) {
+    public void createAccount(String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getMvpView().getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
@@ -91,7 +121,7 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                 });
     }
 
-    public void signInWithEmailAndPassword (String email, String password) {
+    public void signInWithEmailAndPassword(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getMvpView().getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
@@ -108,6 +138,64 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                         }
 
                         // ...
+                    }
+                });
+    }
+
+    public void handleFacebookAccessToken(AccessToken token) {
+        Log.d("", "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(getMvpView().getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("", "signInWithCredential:success");
+
+                            userRepository.receiveProfileInfo(new UserRepository.OnUpdateProfile() {
+                                @Override
+                                public void onSuccess(User user) {
+                                    Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
+                                    getMvpView().getActivity().startActivity(intent);
+                                }
+
+                                @Override
+                                public void onFailure(String exception) {
+
+                                    Profile profile = Profile.getCurrentProfile().getCurrentProfile();
+                                    if (profile != null) {
+                                        // user has logged in
+
+                                        User newUser = new User();
+                                        newUser.name = profile.getName();
+                                        newUser.profilePictureUri = profile.getProfilePictureUri(400,400).toString();
+
+                                        Log.d("auth", "onCheckUser: user does not exist");
+                                        userRepository.saveProfileInfo(getMvpView().getActivity(), newUser, new UserRepository.OnUpdateProfile() {
+                                            @Override
+                                            public void onSuccess(User user) {
+                                                Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
+                                                intent.putExtra("loggedWithFacebook", 1);
+                                                getMvpView().getActivity().startActivity(intent);
+                                            }
+
+                                            @Override
+                                            public void onFailure(String exception) {
+                                                Log.d("auth", "onCreateNewUser:failure");
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("", "signInWithCredential:failure", task.getException());
+                            Toast.makeText(getMvpView().getActivity(), "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+//                            updateUI(null);
+                        }
                     }
                 });
     }

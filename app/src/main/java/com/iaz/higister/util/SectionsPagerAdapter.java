@@ -31,7 +31,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         switch (position) {
 
             case 0:
-                return new ProfileFragment();
+                new MyListsFragment();
+                return MyListsFragment.newInstance("feed");
             case 1:
                 new MyListsFragment();
                 return MyListsFragment.newInstance("created");
@@ -39,10 +40,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                 new MyListsFragment();
                 return MyListsFragment.newInstance("favorited");
             case 3:
-                new MyListsFragment();
-                return MyListsFragment.newInstance("feed");
-            case 4:
                 return new ListsFragment();
+            case 4:
+                return new ProfileFragment();
             default:
                 return null;
         }

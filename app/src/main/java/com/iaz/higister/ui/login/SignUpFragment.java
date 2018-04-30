@@ -217,8 +217,13 @@ public class SignUpFragment extends AuthFragment{
             focusView.requestFocus();
             ViewUtil.showKeyboard(getActivity(), focusView);
         } else {
-            AuthActivity activity = (AuthActivity) getActivity();
-            activity.mAuthPresenter.createAccount(views.get(0).getText().toString(), views.get(1).getText().toString());
+
+            if (getActivity() instanceof AuthActivity) {
+                AuthActivity activity = (AuthActivity) getActivity();
+
+                activity.mAuthPresenter.addAuthStateListener();
+                activity.mAuthPresenter.createAccount(views.get(0).getText().toString(), views.get(1).getText().toString());
+            }
         }
         return !cancel;
     }

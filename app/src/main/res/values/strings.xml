@@ -1,4 +1,8 @@
 <resources>
+
+    <string name="facebook_app_id">2529947693896049</string>
+    <string name="fb_login_protocol_scheme">fb2529947693896049</string>
+
     <string name="app_name">HIgister</string>
 
     <string name="action_settings">Settings</string>

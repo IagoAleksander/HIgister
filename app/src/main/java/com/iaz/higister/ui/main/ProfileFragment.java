@@ -95,11 +95,20 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
     @BindView(R.id.text_input_user_name)
     TextInputLayout mNameTextInput;
 
+    @BindView(R.id.user_description_layout)
+    LinearLayout userDescriptionLayout;
+
     @BindView(R.id.text_input_user_description)
     TextInputLayout mDescriptionTextInput;
 
+    @BindView(R.id.user_age_layout)
+    LinearLayout userAgeLayout;
+
     @BindView(R.id.text_input_user_age)
     TextInputLayout mAgeTextInput;
+
+    @BindView(R.id.user_interests_layout)
+    LinearLayout userInterestsLayout;
 
     @BindView(R.id.checkbox_movies)
     CheckBox mCheckBoxMovies;
@@ -121,6 +130,9 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
 
     @BindView(R.id.checkbox_comics)
     CheckBox mCheckBoxComics;
+
+    @BindView(R.id.user_social_layout)
+    LinearLayout userSocialLayout;
 
     MainActivity activity;
 
@@ -150,6 +162,17 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
             @Override
             public void onSuccess(User user) {
                 updateData(user);
+                userRepository.addListener(activity, new UserRepository.OnUpdateProfile() {
+                    @Override
+                    public void onSuccess(User user) {
+                        updateData(user);
+                    }
+
+                    @Override
+                    public void onFailure(String exception) {
+
+                    }
+                });
             }
 
             @Override
@@ -170,8 +193,26 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
         activity.updateUserInfo();
 
         activity.getSupportActionBar().setTitle(user.name);
-        mDescriptionTextView.setText(user.description);
-        mAgeTextView.setText(Integer.toString(user.age));
+
+        if (user.description == null || user.description.isEmpty())
+            userDescriptionLayout.setVisibility(View.GONE);
+        else {
+            mDescriptionTextView.setText(user.description);
+            userDescriptionLayout.setVisibility(View.VISIBLE);
+        }
+
+        if (user.age == 0 || user.description.isEmpty())
+            userAgeLayout.setVisibility(View.GONE);
+        else {
+            mAgeTextView.setText(String.format("%d", user.age));
+            userAgeLayout.setVisibility(View.VISIBLE);
+        }
+
+//        if (user.socialMedia == null || user.socialMedia.isEmpty())
+        userSocialLayout.setVisibility(View.GONE);
+//        else
+//            mSocialTextView.setText(user.socialMedia);
+
 
         mEditProfileLayout.setVisibility(View.GONE);
         mViewProfileLayout.setVisibility(View.VISIBLE);
@@ -187,7 +228,8 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
         interests6.setVisibility(View.GONE);
         interests7.setVisibility(View.GONE);
 
-        if (!user.interests.isEmpty()) {
+        if (user.interests != null && !user.interests.isEmpty()) {
+            userInterestsLayout.setVisibility(View.VISIBLE);
             interestsLayout1.setVisibility(View.VISIBLE);
 
             interests1.setVisibility(View.VISIBLE);
@@ -227,6 +269,8 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
                     }
                 }
             }
+        } else {
+            userInterestsLayout.setVisibility(View.GONE);
         }
     }
 
@@ -345,7 +389,7 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
                                 activity.user.interests = interests;
                                 activity.user.profilePictureUri = uri.toString();
 
-                                userRepository.saveProfileInfo(activity.user, new UserRepository.OnUpdateProfile() {
+                                userRepository.saveProfileInfo(activity, activity.user, new UserRepository.OnUpdateProfile() {
                                     @Override
                                     public void onSuccess(User user) {
                                         updateData(user);
@@ -374,7 +418,7 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
                         if (activity.uri != null)
                             activity.user.profilePictureUri = activity.uri.toString();
 
-                        userRepository.saveProfileInfo(activity.user, new UserRepository.OnUpdateProfile() {
+                        userRepository.saveProfileInfo(activity, activity.user, new UserRepository.OnUpdateProfile() {
                             @Override
                             public void onSuccess(User user) {
                                 updateData(user);

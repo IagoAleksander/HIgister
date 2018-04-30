@@ -1,12 +1,23 @@
 package com.iaz.higister.ui.login;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.widget.ImageView;
+
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.higister.R;
+import com.iaz.higister.data.repository.UserRepository;
 import com.iaz.higister.ui.base.BaseActivity;
+import com.iaz.higister.ui.main.MainActivity;
 import com.iaz.higister.util.AnimatedViewPager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -35,6 +46,12 @@ public class AuthActivity extends BaseActivity implements AuthMvpView {
     @BindView(R.id.scrolling_background)
     public ImageView background;
 
+    @BindView(R.id.login_button)
+    LoginButton loginButton;
+
+    private FirebaseAuth mAuth;
+    CallbackManager callbackManager = CallbackManager.Factory.create();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,15 +59,35 @@ public class AuthActivity extends BaseActivity implements AuthMvpView {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         mAuthPresenter.attachView(this);
+        mAuthPresenter.setAutenticationListener();
 
         setBackgroundImageAnimation();
-        mAuthPresenter.setAutenticationListener();
+
+        loginButton.setReadPermissions("email", "public_profile", "user_friends");
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d("", "facebook:onSuccess:" + loginResult);
+                mAuthPresenter.handleFacebookAccessToken(loginResult.getAccessToken());
+
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d("", "facebook:onCancel");
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                Log.d("", "facebook:onError", exception);
+            }
+        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        mAuthPresenter.addAuthStateListener();
+//        mAuthPresenter.addAuthStateListener();
 
     }
 
@@ -122,5 +159,11 @@ public class AuthActivity extends BaseActivity implements AuthMvpView {
                     }
                 });
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
