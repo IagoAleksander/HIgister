@@ -8,9 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.data.repository.ListRepository;
@@ -21,6 +23,14 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.iaz.higister.util.Constants.ANIMES;
+import static com.iaz.higister.util.Constants.BOOKS;
+import static com.iaz.higister.util.Constants.COMICS;
+import static com.iaz.higister.util.Constants.MANGAS;
+import static com.iaz.higister.util.Constants.MOVIES;
+import static com.iaz.higister.util.Constants.MUSICS;
+import static com.iaz.higister.util.Constants.TV_SERIES;
 
 public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.ListViewHolder> {
 
@@ -42,7 +52,7 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
 
 
                 if (type.equals("created")) {
-                    fragment.activity.user.listsCreatedNumber = userLists.size();
+                    fragment.activity.user.setListsCreatedNumber(userLists.size());
                     fragment.activity.updateUserInfo();
                 }
                 else if (type.equals("favorited")) {
@@ -52,7 +62,7 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
                         fragment.activity.favoritedListsId.add(list.uid);
                     }
 
-                    fragment.activity.user.listsFavouritedNumber = userLists.size();
+                    fragment.activity.user.setListsFavouritedNumber(userLists.size());
                     fragment.activity.updateUserInfo();
                 }
                 notifyDataSetChanged();
@@ -78,14 +88,14 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
 
     @Override
     public void onBindViewHolder(final ListViewHolder holder, int position) {
-        holder.listNameTextView.setText(mLists.get(position).name);
-        if (mLists.get(position).listPictureUri != null) {
+        holder.listNameTextView.setText(mLists.get(position).getName());
+        if (mLists.get(position).getListPictureUri() != null) {
             Glide.with(fragment)
-                    .load(mLists.get(position).listPictureUri)
+                    .load(mLists.get(position).getListPictureUri())
                     .into(holder.image);
         }
 
-        holder.image.setOnClickListener(v -> {
+        holder.listItem.setOnClickListener(v -> {
             Intent intent = new Intent(fragment.getActivity(), ViewListActivity.class);
             intent.putExtra("list", mLists.get(position));
             fragment.getActivity().startActivity(intent);
@@ -140,51 +150,83 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
             });
         } else {
 
-            holder.editButton.setVisibility(View.GONE);
-            holder.removeButton.setVisibility(View.GONE);
+            if (mLists.get(position).getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                holder.editButton.setVisibility(View.VISIBLE);
+                holder.removeButton.setVisibility(View.VISIBLE);
+                holder.favoriteButton.setVisibility(View.GONE);
 
-            if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid)) {
-                holder.favoriteButton.setText("unfavorite");
-
-                holder.favoriteButton.setOnClickListener(v -> {
-
-                    if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
-                        fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
-
-                    listRepository.unfavoriteList(mLists.get(position), new ListRepository.OnListRemoved() {
-                                @Override
-                                public void onSuccess(String listUid) {
-                                    notifyDataSetChanged();
-                                }
-
-                                @Override
-                                public void onFailed(String exception) {
-
-                                }
-                            }
-                    );
+                holder.editButton.setOnClickListener(v -> {
+                    Intent intent = new Intent(fragment.getActivity(), CreateListActivity.class);
+                    intent.putExtra("list", mLists.get(position));
+                    fragment.getActivity().startActivity(intent);
                 });
 
-            } else {
-                holder.favoriteButton.setText("favorite");
-                holder.favoriteButton.setOnClickListener(v ->
-                        listRepository.favoriteList(mLists.get(position), new ListRepository.OnListFavorited() {
+                holder.removeButton.setOnClickListener(v ->
+                        listRepository.removeList(mLists.get(position), new ListRepository.OnListRemoved() {
                             @Override
                             public void onSuccess(String listUid) {
-                                if (!fragment.activity.favoritedListsId.contains(listUid))
-                                    fragment.activity.favoritedListsId.add(listUid);
-
+//                            mLists.remove(position);
                                 notifyDataSetChanged();
                             }
 
                             @Override
-                            public void onFailed(Exception e) {
-                                Log.d("onFavoriteList", e.getMessage());
+                            public void onFailed(String exception) {
+                                Log.d("onRemoveList", exception);
                             }
                         }));
             }
+            else {
+                holder.editButton.setVisibility(View.GONE);
+                holder.removeButton.setVisibility(View.GONE);
+                holder.favoriteButton.setVisibility(View.VISIBLE);
+
+                if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid)) {
+                    holder.favoriteButton.setText("unfavorite");
+
+                    holder.favoriteButton.setOnClickListener(v -> {
+
+                        if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
+                            fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
+
+                        listRepository.unfavoriteList(mLists.get(position), new ListRepository.OnListRemoved() {
+                                    @Override
+                                    public void onSuccess(String listUid) {
+                                        notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onFailed(String exception) {
+
+                                    }
+                                }
+                        );
+                    });
+
+                } else {
+                    holder.favoriteButton.setText("favorite");
+                    holder.favoriteButton.setOnClickListener(v ->
+                            listRepository.favoriteList(mLists.get(position), new ListRepository.OnListFavorited() {
+                                @Override
+                                public void onSuccess(String listUid) {
+                                    if (!fragment.activity.favoritedListsId.contains(listUid))
+                                        fragment.activity.favoritedListsId.add(listUid);
+
+                                    notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void onFailed(Exception e) {
+                                    Log.d("onFavoriteList", e.getMessage());
+                                }
+                            }));
+                }
+            }
 
         }
+
+        populateLabel(holder, mLists.get(position).getType());
+
+
     }
 
     @Override
@@ -192,8 +234,54 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
         return mLists.size();
     }
 
+    public void populateLabel(final ListViewHolder holder, int type) {
+        switch (type) {
+            case MOVIES:
+                holder.labelLayout.setBackgroundResource(R.color.accent_dark);
+                holder.labelText.setText("MOVIES");
+                break;
+            case TV_SERIES:
+                holder.labelLayout.setBackgroundResource(R.color.pink);
+                holder.labelText.setText("TV SERIES");
+                break;
+            case ANIMES:
+                holder.labelLayout.setBackgroundResource(R.color.green);
+                holder.labelText.setText("ANIMES");
+                break;
+            case MANGAS:
+                holder.labelLayout.setBackgroundResource(R.color.sienna);
+                holder.labelText.setText("MANGAS");
+                break;
+            case BOOKS:
+                holder.labelLayout.setBackgroundResource(R.color.orange);
+                holder.labelText.setText("BOOKS");
+                break;
+            case MUSICS:
+                holder.labelLayout.setBackgroundResource(R.color.saffron);
+                holder.labelText.setText("MUSICS");
+                break;
+            case COMICS:
+                holder.labelLayout.setBackgroundResource(R.color.purple);
+                holder.labelText.setText("COMICS");
+                break;
+
+            default:
+                holder.labelLayout.setBackgroundResource(R.color.primary_light);
+                holder.labelText.setText("MISC");
+
+        }
+    }
+
     class ListViewHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.label_layout)
+        RelativeLayout labelLayout;
+
+        @BindView(R.id.label_text)
+        TextView labelText;
+
+        @BindView(R.id.list_item)
+        RelativeLayout listItem;
         //        @BindView(R.id.view_hex_color) View hexColorView;
         @BindView(R.id.list_name)
         TextView listNameTextView;

@@ -20,15 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.User;
 import com.iaz.higister.data.repository.UserRepository;
-import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -158,7 +155,7 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
 
         mProfilePresenter.attachView(this);
 
-        userRepository.receiveProfileInfo(new UserRepository.OnUpdateProfile() {
+        userRepository.receiveProfileInfo(FirebaseAuth.getInstance().getCurrentUser().getUid(), new UserRepository.OnUpdateProfile() {
             @Override
             public void onSuccess(User user) {
                 updateData(user);
@@ -192,19 +189,17 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
         activity.user = user;
         activity.updateUserInfo();
 
-        activity.getSupportActionBar().setTitle(user.name);
-
-        if (user.description == null || user.description.isEmpty())
+        if (user.getDescription() == null || user.getDescription().isEmpty())
             userDescriptionLayout.setVisibility(View.GONE);
         else {
-            mDescriptionTextView.setText(user.description);
+            mDescriptionTextView.setText(user.getDescription());
             userDescriptionLayout.setVisibility(View.VISIBLE);
         }
 
-        if (user.age == 0 || user.description.isEmpty())
+        if (user.getAge() == 0 || user.getDescription().isEmpty())
             userAgeLayout.setVisibility(View.GONE);
         else {
-            mAgeTextView.setText(String.format("%d", user.age));
+            mAgeTextView.setText(String.format("%d", user.getAge()));
             userAgeLayout.setVisibility(View.VISIBLE);
         }
 
@@ -228,40 +223,40 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
         interests6.setVisibility(View.GONE);
         interests7.setVisibility(View.GONE);
 
-        if (user.interests != null && !user.interests.isEmpty()) {
+        if (user.getInterests() != null && !user.getInterests().isEmpty()) {
             userInterestsLayout.setVisibility(View.VISIBLE);
             interestsLayout1.setVisibility(View.VISIBLE);
 
             interests1.setVisibility(View.VISIBLE);
-            interests1.setText(user.interests.get(0));
+            interests1.setText(user.getInterests().get(0));
 
-            if (user.interests.size() > 1) {
+            if (user.getInterests().size() > 1) {
                 interests2.setVisibility(View.VISIBLE);
-                interests2.setText(user.interests.get(1));
+                interests2.setText(user.getInterests().get(1));
 
-                if (user.interests.size() > 2) {
+                if (user.getInterests().size() > 2) {
                     interests3.setVisibility(View.VISIBLE);
-                    interests3.setText(user.interests.get(2));
+                    interests3.setText(user.getInterests().get(2));
 
-                    if (user.interests.size() > 3) {
+                    if (user.getInterests().size() > 3) {
                         interestsLayout2.setVisibility(View.VISIBLE);
 
                         interests4.setVisibility(View.VISIBLE);
-                        interests4.setText(user.interests.get(3));
+                        interests4.setText(user.getInterests().get(3));
 
-                        if (user.interests.size() > 4) {
+                        if (user.getInterests().size() > 4) {
                             interests5.setVisibility(View.VISIBLE);
-                            interests5.setText(user.interests.get(4));
+                            interests5.setText(user.getInterests().get(4));
 
-                            if (user.interests.size() > 5) {
+                            if (user.getInterests().size() > 5) {
                                 interests6.setVisibility(View.VISIBLE);
-                                interests6.setText(user.interests.get(5));
+                                interests6.setText(user.getInterests().get(5));
 
-                                if (user.interests.size() > 6) {
+                                if (user.getInterests().size() > 6) {
                                     interestsLayout3.setVisibility(View.VISIBLE);
 
                                     interests7.setVisibility(View.VISIBLE);
-                                    interests7.setText(user.interests.get(6));
+                                    interests7.setText(user.getInterests().get(6));
 
                                 }
                             }
@@ -312,8 +307,8 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
             mNameTextInput.getEditText().setText(activity.getSupportActionBar().getTitle());
 
             if (activity.user != null) {
-                mDescriptionTextInput.getEditText().setText(activity.user.description);
-                mAgeTextInput.getEditText().setText(Integer.toString(activity.user.age));
+                mDescriptionTextInput.getEditText().setText(activity.user.getDescription());
+                mAgeTextInput.getEditText().setText(Integer.toString(activity.user.getAge()));
 
 
                 mCheckBoxMovies.setChecked(false);
@@ -324,7 +319,7 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
                 mCheckBoxMangas.setChecked(false);
                 mCheckBoxComics.setChecked(false);
 
-                for (String interest : activity.user.interests) {
+                for (String interest : activity.user.getInterests()) {
                     switch (interest) {
                         case "Movies":
                             mCheckBoxMovies.setChecked(true);
@@ -383,11 +378,11 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
                             public void onSuccess(Uri uri) {
 
                                 activity.user = new User();
-                                activity.user.name = mNameTextInput.getEditText().getText().toString();
-                                activity.user.description = mDescriptionTextInput.getEditText().getText().toString();
-                                activity.user.age = Integer.parseInt(mAgeTextInput.getEditText().getText().toString());
-                                activity.user.interests = interests;
-                                activity.user.profilePictureUri = uri.toString();
+                                activity.user.setName(mNameTextInput.getEditText().getText().toString());
+                                activity.user.setDescription(mDescriptionTextInput.getEditText().getText().toString());
+                                activity.user.setAge(Integer.parseInt(mAgeTextInput.getEditText().getText().toString()));
+                                activity.user.setInterests(interests);
+                                activity.user.setProfilePictureUri(uri.toString());
 
                                 userRepository.saveProfileInfo(activity, activity.user, new UserRepository.OnUpdateProfile() {
                                     @Override
@@ -410,13 +405,13 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
                     } else {
 
                         activity.user = new User();
-                        activity.user.name = mNameTextInput.getEditText().getText().toString();
-                        activity.user.description = mDescriptionTextInput.getEditText().getText().toString();
-                        activity.user.age = Integer.parseInt(mAgeTextInput.getEditText().getText().toString());
-                        activity.user.interests = interests;
+                        activity.user.setName(mNameTextInput.getEditText().getText().toString());
+                        activity.user.setDescription(mDescriptionTextInput.getEditText().getText().toString());
+                        activity.user.setAge(Integer.parseInt(mAgeTextInput.getEditText().getText().toString()));
+                        activity.user.setInterests(interests);
 
                         if (activity.uri != null)
-                            activity.user.profilePictureUri = activity.uri.toString();
+                            activity.user.setProfilePictureUri(activity.uri.toString());
 
                         userRepository.saveProfileInfo(activity, activity.user, new UserRepository.OnUpdateProfile() {
                             @Override

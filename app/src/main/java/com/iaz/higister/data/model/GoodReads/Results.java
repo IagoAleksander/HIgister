@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Results
 {
     @ElementList(required = false, inline = true)
-    private ArrayList<Work> work;
+    private ArrayList<Work> work = new ArrayList<>();
 
     public ArrayList<Work> getWork ()
     {

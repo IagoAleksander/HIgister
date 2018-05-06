@@ -40,7 +40,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                 new MyListsFragment();
                 return MyListsFragment.newInstance("favorited");
             case 3:
-                return new ListsFragment();
+                new MyListsFragment();
+                return MyListsFragment.newInstance("search");
             case 4:
                 return new ProfileFragment();
             default:

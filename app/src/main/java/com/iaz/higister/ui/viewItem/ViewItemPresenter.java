@@ -158,7 +158,7 @@ public class ViewItemPresenter extends BasePresenter<ViewItemMvpView> {
 
     public void saveItens(UserList list, String listUid) {
 
-        for (ListItem item : list.listItems) {
+        for (ListItem item : list.getListItems()) {
             db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .collection("createdLists").document(listUid).collection("listItems").add(item)
                     .addOnSuccessListener(documentReference -> {

@@ -26,6 +26,7 @@ import com.iaz.higister.data.remote.MoviesService;
 import com.iaz.higister.data.remote.MusicsService;
 import com.iaz.higister.ui.search.RecyclerViewFragment2;
 import com.iaz.higister.ui.search.SearchActivity;
+import com.iaz.higister.util.Constants;
 
 /**
  * Created by alksander on 01/03/2018.
@@ -33,9 +34,18 @@ import com.iaz.higister.ui.search.SearchActivity;
 
 public class BackendManager {
 
-    public void fetchMovies(final RecyclerViewFragment2 activity, String type, String text) {
+    public void fetchMovies(final RecyclerViewFragment2 activity, int type, String text) {
 
-        MoviesService.Creator.newMoviesService().fetchMovies(type, text).enqueue(
+        String typeString;
+
+        if (type == Constants.MOVIES) {
+            typeString = "movie";
+        }
+        else {
+            typeString = "series";
+        }
+
+        MoviesService.Creator.newMoviesService().fetchMovies(typeString, text).enqueue(
                 new Callback<OmdbResponse>() {
                     @Override
                     public void onResponse(Call<OmdbResponse> call, Response<OmdbResponse> response) {
@@ -48,7 +58,7 @@ public class BackendManager {
                                 results.add(new BaseItem(search, type));
                         }
 
-                        activity.showItems(results);
+                        activity.showItems(results, type);
                     }
 
                     @Override
@@ -60,23 +70,34 @@ public class BackendManager {
         );
     }
 
-    public void fetchAnimes(final RecyclerViewFragment2 activity, String type, String text) {
+    public void fetchAnimes(final RecyclerViewFragment2 activity, int type, String text) {
 
-        AnimesService.Creator.newAnimesService().fetchAnimes(type, text).enqueue(
+        String typeString;
+
+        if (type == Constants.ANIMES) {
+            typeString = "anime";
+        }
+        else {
+            typeString = "manga";
+        }
+
+        AnimesService.Creator.newAnimesService().fetchAnimes(typeString, text).enqueue(
                 new Callback<MyAnimeListResponse>() {
                     @Override
                     public void onResponse(Call<MyAnimeListResponse> call, Response<MyAnimeListResponse> response) {
 
                         ArrayList<BaseItem> results = new ArrayList<>();
 
-                        if (response.body().getResult().size() > 10)
-                            for (Result result : response.body().getResult().subList(0, 10))
-                                results.add(new BaseItem(result, type));
-                        else
-                            for (Result result : response.body().getResult())
-                                results.add(new BaseItem(result, type));
+                        if (response.body() != null) {
+                            if (response.body().getResult().size() > 10)
+                                for (Result result : response.body().getResult().subList(0, 10))
+                                    results.add(new BaseItem(result, type));
+                            else
+                                for (Result result : response.body().getResult())
+                                    results.add(new BaseItem(result, type));
 
-                        activity.showItems(results);
+                        }
+                            activity.showItems(results, type);
                     }
 
                     @Override
@@ -97,15 +118,17 @@ public class BackendManager {
 
                         ArrayList<BaseItem> results = new ArrayList<>();
 
-                        if (response.body().getSearch().getResults().getWork().size() > 10) {
-                            for (Work work : response.body().getSearch().getResults().getWork().subList(0, 10))
-                                results.add(new BaseItem(work.getBest_book()));
-                        } else {
-                            for (Work work : response.body().getSearch().getResults().getWork())
-                                results.add(new BaseItem(work.getBest_book()));
+                        if (response.body() != null) {
+                            if (response.body().getSearch().getResults().getWork().size() > 10) {
+                                for (Work work : response.body().getSearch().getResults().getWork().subList(0, 10))
+                                    results.add(new BaseItem(work.getBest_book()));
+                            } else {
+                                for (Work work : response.body().getSearch().getResults().getWork())
+                                    results.add(new BaseItem(work.getBest_book()));
+                            }
                         }
 
-                        activity.showItems(results);
+                        activity.showItems(results, Constants.BOOKS);
                     }
 
                     @Override
@@ -126,15 +149,17 @@ public class BackendManager {
 
                         ArrayList<BaseItem> results = new ArrayList<>();
 
-                        if (response.body().getResults().getTrackmatches().getTrack().size() > 10) {
-                            for (Track track : response.body().getResults().getTrackmatches().getTrack().subList(0, 10))
-                                results.add(new BaseItem(track));
-                        } else {
-                            for (Track track : response.body().getResults().getTrackmatches().getTrack())
-                                results.add(new BaseItem(track));
+                        if (response.body() != null) {
+                            if (response.body().getResults().getTrackmatches().getTrack().size() > 10) {
+                                for (Track track : response.body().getResults().getTrackmatches().getTrack().subList(0, 10))
+                                    results.add(new BaseItem(track));
+                            } else {
+                                for (Track track : response.body().getResults().getTrackmatches().getTrack())
+                                    results.add(new BaseItem(track));
+                            }
                         }
 
-                        activity.showItems(results);
+                        activity.showItems(results, Constants.MUSICS);
                     }
 
                     @Override
@@ -155,15 +180,17 @@ public class BackendManager {
 
                         ArrayList<BaseItem> results = new ArrayList<>();
 
-                        if (response.body().getResults().size() > 10) {
-                            for (Results result : response.body().getResults().subList(0, 10))
-                                results.add(new BaseItem(result));
-                        } else {
-                            for (Results result : response.body().getResults())
-                                results.add(new BaseItem(result));
+                        if (response.body() != null) {
+                            if (response.body().getResults().size() > 10) {
+                                for (Results result : response.body().getResults().subList(0, 10))
+                                    results.add(new BaseItem(result));
+                            } else {
+                                for (Results result : response.body().getResults())
+                                    results.add(new BaseItem(result));
+                            }
                         }
 
-                        activity.showItems(results);
+                        activity.showItems(results, Constants.COMICS);
                     }
 
                     @Override

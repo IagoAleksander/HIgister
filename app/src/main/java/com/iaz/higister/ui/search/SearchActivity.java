@@ -1,8 +1,11 @@
 package com.iaz.higister.ui.search;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,31 +13,30 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.BaseItem;
-import com.github.florent37.materialviewpager.MaterialViewPager;
-import com.github.florent37.materialviewpager.header.HeaderDesign;
+import com.iaz.higister.data.model.ListItem;
 import com.iaz.higister.data.model.UserList;
+import com.iaz.higister.ui.createItem.CreateItemActivity;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import devlight.io.library.ntb.NavigationTabBar;
 
 public class SearchActivity extends AppCompatActivity {
 
-    @BindView(R.id.materialViewPager)
-    public MaterialViewPager mViewPager;
+    @BindView(R.id.container)
+    ViewPager mViewPager;
 
+//    @BindView(R.id.logo_text_view)
+//    public TextView textView;
 
-    @BindView(R.id.logo_text_view)
-    public TextView textView;
-
-    @BindView(R.id.logo_text_layout)
-    public LinearLayout textLayout;
+//    @BindView(R.id.logo_text_layout)
+//    public LinearLayout textLayout;
 
     @BindView(R.id.search_bar)
     EditText editText;
@@ -42,11 +44,16 @@ public class SearchActivity extends AppCompatActivity {
     @BindView(R.id.button)
     Button button;
 
-    public String searchedItem = "";
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+
+    @BindView(R.id.ntb_vertical)
+    public NavigationTabBar navigationTabBar;
+
+    @BindView(R.id.add_new_item_button)
+    TextView nextButton;
 
     public ArrayList<BaseItem> itens = new ArrayList<>();
-
-    public boolean canChange = true;
 
     public UserList list;
 
@@ -57,138 +64,122 @@ public class SearchActivity extends AppCompatActivity {
         setTitle("");
         ButterKnife.bind(this);
 
-        final Toolbar toolbar = mViewPager.getToolbar();
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-        }
+        setSupportActionBar(mToolbar);
 
         if (getIntent() != null)
             list = getIntent().getParcelableExtra("list");
 
-        mViewPager.getViewPager().setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+        mViewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
 
             @Override
             public Fragment getItem(int position) {
-//                switch (position % 4) {
-                    //case 0:
-                    //    return RecyclerViewFragment.newInstance();
-                    //case 1:
-                    //    return RecyclerViewFragment.newInstance();
-                    //case 2:
-                    //    return WebViewFragment.newInstance();
-//                    default:
-                        return RecyclerViewFragment2.newInstance(itens);
-//                }
+                return RecyclerViewFragment2.newInstance(itens, -1);
             }
 
             @Override
             public int getCount() {
-                return 8;
-            }
 
-            @Override
-            public CharSequence getPageTitle(int position) {
-                switch (position % 8) {
-                    case 0:
-                        return "Movies";
-                    case 1:
-                        return "Series";
-                    case 2:
-                        return "Animes";
-                    case 3:
-                        return "Mangas";
-                    case 4:
-                        return "Books";
-                    case 5:
-                        return "Musics";
-                    case 6:
-                        return "Comics";
-                    case 7:
-                        return "People";
-                }
-                return "";
+                return 1;
             }
         });
 
-        mViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
+        final ArrayList<NavigationTabBar.Model> models = new ArrayList<>();
+        models.add(
+                new NavigationTabBar.Model.Builder(
+                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
+                        ContextCompat.getColor(getApplicationContext(), R.color.accent_dark))
+                        .title("ic_first")
+                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
+                        .build()
+        );
+        models.add(
+                new NavigationTabBar.Model.Builder(
+                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
+                        ContextCompat.getColor(getApplicationContext(), R.color.pink))
+                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
+                        .title("ic_second")
+                        .build()
+        );
+        models.add(
+                new NavigationTabBar.Model.Builder(
+                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
+                        ContextCompat.getColor(getApplicationContext(), R.color.green))
+                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
+                        .title("ic_third")
+                        .build()
+        );
+        models.add(
+                new NavigationTabBar.Model.Builder(
+                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
+                        ContextCompat.getColor(getApplicationContext(), R.color.sienna))
+                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
+                        .title("ic_fourth")
+                        .build()
+        );
+        models.add(
+                new NavigationTabBar.Model.Builder(
+                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
+                        ContextCompat.getColor(getApplicationContext(), R.color.orange))
+                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
+                        .title("ic_fifth")
+                        .build()
+        );
+        models.add(
+                new NavigationTabBar.Model.Builder(
+                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
+                        ContextCompat.getColor(getApplicationContext(), R.color.saffron))
+                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
+                        .title("ic_sixth")
+                        .build()
+        );
+        models.add(
+                new NavigationTabBar.Model.Builder(
+                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
+                        ContextCompat.getColor(getApplicationContext(), R.color.purple))
+                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
+                        .title("ic_seventh")
+                        .build()
+        );
+        models.add(
+                new NavigationTabBar.Model.Builder(
+                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
+                        ContextCompat.getColor(getApplicationContext(), R.color.primary))
+                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
+                        .title("ic_eighth")
+                        .build()
+        );
+
+        navigationTabBar.setModels(models);
+        navigationTabBar.setViewPager(mViewPager, 4);
+
+        navigationTabBar.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
-            public HeaderDesign getHeaderDesign(int page) {
-                switch (page % 4) {
-                    case 0:
-                        return HeaderDesign.fromColorResAndDrawable(
-                                R.color.red,
-                                getDrawable(R.drawable.movie));
-                    case 1:
-                        return HeaderDesign.fromColorResAndUrl(
-                                R.color.blue,
-                                "http://www.hdiphonewallpapers.us/phone-wallpapers/540x960-1/540x960-mobile-wallpapers-hd-2218x5ox3.jpg");
-                    case 2:
-                        return HeaderDesign.fromColorResAndUrl(
-                                R.color.cyan,
-                                "http://www.droid-life.com/wp-content/uploads/2014/10/lollipop-wallpapers10.jpg");
-                    case 3:
-                        return HeaderDesign.fromColorResAndUrl(
-                                R.color.red,
-                                "http://www.tothemobile.com/wp-content/uploads/2014/07/original.jpg");
-                }
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
 
-                //execute others actions if needed (ex : modify your header logo)
-
-                return null;
+//                setFab(position);
             }
         });
 
-        mViewPager.getPagerTitleStrip().setTabPaddingLeftRight(0);
-        mViewPager.getPagerTitleStrip().setDividerPadding(20);
-        mViewPager.getViewPager().setOffscreenPageLimit(mViewPager.getViewPager().getAdapter().getCount());
-        mViewPager.getPagerTitleStrip().setViewPager(mViewPager.getViewPager());
+        if (list != null && list.getType() != 0)
+            navigationTabBar.setVisibility(View.VISIBLE);
+        else
+            navigationTabBar.setVisibility(View.GONE);
 
+        nextButton.setOnClickListener(view -> {
+            ListItem listItem = new ListItem();
 
-//        final View logo = findViewById(R.id.logo_white);
-//        if (logo != null) {
-//            logo.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    mViewPager.notifyHeaderChanged();
-//                    Toast.makeText(getApplicationContext(), "Yes, the title is clickable", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//        }
-
-
-
-        if (textView != null && textLayout != null) {
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (canChange) {
-                        textView.setVisibility(View.GONE);
-                        textLayout.setVisibility(View.VISIBLE);
-                    }
-                }
-            });
-        }
-
-        if (button != null && editText != null) {
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if (editText.getText().length() > 3) {
-                        textLayout.setVisibility(View.GONE);
-                        textView.setText(editText.getText());
-                        textView.setVisibility(View.VISIBLE);
-                    }
-
-                }
-            });
-        }
+            Intent intent = new Intent(SearchActivity.this, CreateItemActivity.class);
+            intent.putExtra("list", list);
+            intent.putExtra("position", -1);
+            intent.putExtra("listItem", listItem);
+            SearchActivity.this.startActivity(intent);
+        });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
 
 
         final ActionBar actionBar = getSupportActionBar();
@@ -208,12 +199,26 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case android.R.id.home:
+                finish();
+//                overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                break;
+//            case R.id.action_next:
+//                goToNextSection();
+//                break;
+            default:
+                return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
-            finish();
+        finish();
 
     }
 

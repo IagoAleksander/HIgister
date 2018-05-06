@@ -1,18 +1,11 @@
 package com.iaz.higister.ui.viewList;
 
-import android.content.Intent;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.iaz.higister.data.DataManager;
 import com.iaz.higister.data.model.ListItem;
 import com.iaz.higister.data.model.UserList;
@@ -23,7 +16,6 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 
 @ConfigPersistent
@@ -79,7 +71,7 @@ public class ViewListPresenter extends BasePresenter<ViewListMvpView> {
 
     public void removeListItem(UserList list, int position, OnListItemRemoved onListItemRemoved) {
 
-        DocumentReference docRef = db.collection("lists").document(list.uid).collection("listItems").document(list.listItems.get(position).uid);
+        DocumentReference docRef = db.collection("lists").document(list.uid).collection("listItems").document(list.getListItems().get(position).uid);
 
         docRef.delete()
                 .addOnSuccessListener(documentReference -> onListItemRemoved.onSuccess())

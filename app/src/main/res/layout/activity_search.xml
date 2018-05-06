@@ -1,32 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary">
 
-    <com.github.florent37.materialviewpager.MaterialViewPager
-        android:id="@+id/materialViewPager"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary">
+
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary_transparency"
+            app:layout_collapseMode="pin"
+            app:titleTextColor="@android:color/white">
+
+
+            <LinearLayout
+                android:id="@+id/logo_text_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/appbar"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <EditText
+                    android:id="@+id/search_bar"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="search" />
+            </LinearLayout>
+        </android.support.v7.widget.Toolbar>
+
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:viewpager_logo="@layout/header_logo"
-        app:viewpager_pagerTitleStrip="@layout/material_view_pager_pagertitlestrip_newstand"
-        app:viewpager_logoMarginTop="100dp"
-        app:viewpager_color="@color/colorPrimary"
-        app:viewpager_headerHeight="200dp"
-        app:viewpager_headerAlpha="1.0"
-        app:viewpager_imageHeaderDarkLayerAlpha="0.2"
-        app:viewpager_hideLogoWithFade="false"
-        app:viewpager_hideToolbarAndTitle="true"
-        app:viewpager_enableToolbarElevation="true"
-        app:viewpager_parallaxHeaderFactor="1.5"
-        app:viewpager_headerAdditionalHeight="20dp"
-        app:viewpager_displayToolbarWhenSwipe="true"
-        app:viewpager_transparentToolbar="false"
-        app:viewpager_animatedHeaderImage="true"
+        android:layout_above="@+id/bottom_bar"
+        android:layout_below="@+id/appbar"
+        android:orientation="horizontal">
 
-        />
+        <devlight.io.library.ntb.NavigationTabBar
+            android:id="@+id/ntb_vertical"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            app:ntb_title_mode="all"
+            app:ntb_title_size="14sp"
+            app:ntb_titled="true"
+            app:ntb_bg_color="@color/primary_light"
+            app:ntb_inactive_color="@color/white"/>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/primary_light"
+        android:clickable="true"
+        android:focusable="true">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/white" />
+
+        <TextView
+            android:id="@+id/add_new_item_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="8dp"
+            android:drawableEnd="@drawable/ic_keyboard_arrow_right"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Continue without pre-populate"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

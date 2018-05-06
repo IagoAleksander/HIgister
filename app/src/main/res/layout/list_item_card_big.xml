@@ -22,80 +22,112 @@
             android:id="@+id/card_view2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginBottom="2dp"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp"
             android:layout_marginTop="2dp"
-            app:cardBackgroundColor="@color/primary_light"
             app:cardCornerRadius="2dp"
             app:cardElevation="2dp"
             app:cardPreventCornerOverlap="false"
             app:contentPadding="0dp">
 
             <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:id="@+id/label_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:background="@color/accent_dark"
+                android:layout_gravity="center">
 
-                <ImageView
-                    android:id="@+id/item_image"
-                    android:layout_width="90dp"
+                <TextView
+                    android:id="@+id/label_text"
+                    android:layout_width="110dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/large_movie_poster" />
+                    android:layout_alignTop="@+id/list_item"
+                    android:layout_alignBottom="@+id/list_item"
+                    android:text="TV SERIES"
+                    android:paddingTop="15dp"
+                    android:rotation="-90"
+                    android:textColor="@color/white"
+                    android:layout_centerVertical="true" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="20dp"
+                    android:layout_alignBottom="@+id/list_item"
+                    android:layout_alignTop="@+id/list_item"
+                    android:background="@color/white"
+                    android:layout_marginStart="30dp"/>
+
+                <RelativeLayout
+                    android:id="@+id/list_item"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/item_image"
-                    android:gravity="end"
-                    android:orientation="vertical"
-                    android:padding="10dp">
+                    android:layout_marginStart="31dp"
+                    android:orientation="horizontal"
+                    android:background="@color/primary_light">
 
-                    <TextView
-                        android:id="@+id/list_name"
-                        android:layout_width="wrap_content"
+                    <ImageView
+                        android:id="@+id/item_image"
+                        android:layout_width="90dp"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:textSize="22sp" />
+                        android:layout_centerVertical="true"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/large_movie_poster" />
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:orientation="horizontal"
-                        android:layout_gravity="center">
+                        android:layout_toEndOf="@id/item_image"
+                        android:orientation="vertical"
+                        android:padding="10dp">
 
-                        <Button
-                            android:id="@+id/edit_button"
-                            android:layout_width="0dp"
+                        <TextView
+                            android:id="@+id/list_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="22sp" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:background="@color/accent_dark"
-                            android:text="edit"
-                            android:layout_weight="1"/>
+                            android:layout_marginTop="30dp"
+                            android:orientation="horizontal">
 
-                        <Button
-                            android:id="@+id/favorite_button"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="20dp"
-                            android:background="@color/saffron"
-                            android:text="favorite"
-                            android:layout_weight="1"/>
+                            <Button
+                                android:id="@+id/edit_button"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="1"
+                                android:background="@color/accent_dark"
+                                android:text="edit" />
 
-                        <Button
-                            android:id="@+id/remove_button"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="20dp"
-                            android:background="@color/red"
-                            android:text="remove"
-                            android:layout_weight="1"/>
+                            <Button
+                                android:id="@+id/favorite_button"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="20dp"
+                                android:layout_weight="1"
+                                android:background="@color/saffron"
+                                android:text="favorite" />
+
+                            <Button
+                                android:id="@+id/remove_button"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="20dp"
+                                android:layout_weight="1"
+                                android:background="@color/red"
+                                android:text="remove" />
+                        </LinearLayout>
                     </LinearLayout>
-                </LinearLayout>
+                </RelativeLayout>
             </RelativeLayout>
 
         </android.support.v7.widget.CardView>

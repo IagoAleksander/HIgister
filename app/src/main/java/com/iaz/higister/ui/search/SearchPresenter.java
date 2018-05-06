@@ -7,6 +7,7 @@ import com.iaz.higister.data.BackendManager;
 import com.iaz.higister.data.DataManager;
 import com.iaz.higister.injection.ConfigPersistent;
 import com.iaz.higister.ui.base.BasePresenter;
+import com.iaz.higister.util.Constants;
 import com.iaz.higister.util.RxUtil;
 
 @ConfigPersistent
@@ -34,24 +35,28 @@ public class SearchPresenter extends BasePresenter<SearchMvpView> {
         if (mDisposable != null) mDisposable.dispose();
     }
 
-    public void loadResults(String type, String text) {
-        checkViewAttached();
-        RxUtil.dispose(mDisposable);
+    public void loadResults(int type, String text) {
         BackendManager backendManager = new BackendManager();
 
 
-        if (type.equals("movie") || type.equals("series"))
-            backendManager.fetchMovies((RecyclerViewFragment2) getMvpView(), type, text);
-        else if (type.equals("book"))
-            backendManager.fetchBooks((RecyclerViewFragment2) getMvpView(), text);
-        else if (type.equals("anime") || type.equals("manga")) {
-            backendManager.fetchAnimes((RecyclerViewFragment2) getMvpView(), type, text);
-        }
-        else if (type.equals("music")){
-            backendManager.fetchMusics((RecyclerViewFragment2) getMvpView(), text);
-        }
-        else if (type.equals("comics")){
-            backendManager.fetchComics((RecyclerViewFragment2) getMvpView(), text);
+        switch (type) {
+            case Constants.MOVIES:
+            case Constants.TV_SERIES:
+                backendManager.fetchMovies((RecyclerViewFragment2) getMvpView(), type, text);
+                break;
+            case Constants.BOOKS:
+                backendManager.fetchBooks((RecyclerViewFragment2) getMvpView(), text);
+                break;
+            case Constants.ANIMES:
+            case Constants.MANGAS:
+                backendManager.fetchAnimes((RecyclerViewFragment2) getMvpView(), type, text);
+                break;
+            case Constants.MUSICS:
+                backendManager.fetchMusics((RecyclerViewFragment2) getMvpView(), text);
+                break;
+            case Constants.COMICS:
+                backendManager.fetchComics((RecyclerViewFragment2) getMvpView(), text);
+                break;
         }
     }
 

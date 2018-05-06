@@ -8,37 +8,36 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.BaseItem;
-import com.iaz.higister.data.model.ComicVine.Results;
-import com.iaz.higister.data.model.GoodReads.BestBook;
-import com.iaz.higister.data.model.LastFM.Track;
-import com.iaz.higister.data.model.MyAnimeList.Result;
-import com.iaz.higister.data.model.Omdb.Search;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
+import com.iaz.higister.util.Constants;
 import com.yalantis.flipviewpager.utils.FlipSettings;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
+
+import static com.iaz.higister.util.Constants.*;
 
 /**
  * Created by florentchampigny on 24/04/15.
@@ -53,20 +52,29 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
 
+    @BindView(R.id.lists_header_text)
+    TextView listsHeaderText;
+
+    @BindView(R.id.insert_text_layout)
+    CardView insertTextLayout;
+
+    @BindView(R.id.show_results_layout)
+    LinearLayout showResultsLayout;
+
     SearchActivity activity;
 
     ResultsAdapter adapter;
     ArrayList<BaseItem> items = new ArrayList<>();
-    HashMap<String, ArrayList<BaseItem>> itemsCollection = new HashMap<>();
-    HashMap<String, Integer> counterList = new HashMap<>();
+    int type;
+    HashMap<Integer, ArrayList<BaseItem>> itemsCollection = new HashMap<>();
+    HashMap<Integer, Integer> counterList = new HashMap<>();
 
-    Fragment frag;
-
-    public static RecyclerViewFragment2 newInstance(ArrayList<BaseItem> items) {
+    public static RecyclerViewFragment2 newInstance(ArrayList<BaseItem> items, int type) {
 
         RecyclerViewFragment2 f = new RecyclerViewFragment2();
         Bundle args = new Bundle();
         args.putParcelableArrayList("searchData", items);
+        args.putInt("type", type);
         f.setArguments(args);
         return f;
     }
@@ -87,6 +95,19 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
         Bundle args = getArguments();
         if (args != null && args.getParcelableArrayList("searchData") != null) {
             items = args.getParcelableArrayList("searchData");
+            type = args.getInt("type", 0);
+        }
+
+        if (type == -1) {
+            insertTextLayout.setVisibility(View.VISIBLE);
+            showResultsLayout.setVisibility(View.GONE);
+            activity.navigationTabBar.setVisibility(View.GONE);
+        } else {
+            showResultsLayout.setVisibility(View.VISIBLE);
+            insertTextLayout.setVisibility(View.GONE);
+
+            if (activity.list.getType() == 0)
+                activity.navigationTabBar.setVisibility(View.VISIBLE);
         }
 
         float logicalDensity = Resources.getSystem().getDisplayMetrics().density;
@@ -111,8 +132,8 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
 
 //                Log.d ("height", ""+dx);
 //                if (activity.textLayout.getVisibility() == View.VISIBLE) {
-                activity.textLayout.setVisibility(View.GONE);
-                activity.textView.setVisibility(View.VISIBLE);
+//                activity.textLayout.setVisibility(View.GONE);
+//                activity.textView.setVisibility(View.VISIBLE);
 
 //                    activity.canChange = false;
 //                }
@@ -129,15 +150,22 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
                 i = 0;
 //                counter = 0;
                 itemsCollection.clear();
-                mSearchPresenter.loadResults("movie", activity.editText.getText().toString());
-                mSearchPresenter.loadResults("series", activity.editText.getText().toString());
-                mSearchPresenter.loadResults("anime", activity.editText.getText().toString());
-                mSearchPresenter.loadResults("manga", activity.editText.getText().toString());
-                mSearchPresenter.loadResults("book", activity.editText.getText().toString());
-                mSearchPresenter.loadResults("music", activity.editText.getText().toString());
-                mSearchPresenter.loadResults("comics", activity.editText.getText().toString());
+
+                if (activity.list.getType() == -1 || activity.list.getType() == 0) {
+                    mSearchPresenter.loadResults(Constants.MOVIES, activity.editText.getText().toString());
+                    mSearchPresenter.loadResults(Constants.TV_SERIES, activity.editText.getText().toString());
+                    mSearchPresenter.loadResults(Constants.ANIMES, activity.editText.getText().toString());
+                    mSearchPresenter.loadResults(Constants.MANGAS, activity.editText.getText().toString());
+                    mSearchPresenter.loadResults(Constants.BOOKS, activity.editText.getText().toString());
+                    mSearchPresenter.loadResults(Constants.MUSICS, activity.editText.getText().toString());
+                    mSearchPresenter.loadResults(Constants.COMICS, activity.editText.getText().toString());
+                } else {
+                    mSearchPresenter.loadResults(activity.list.getType(), activity.editText.getText().toString());
+                }
             }
         });
+
+        populateLabel();
 
     }
 
@@ -151,90 +179,76 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
     /***** MVP View methods implementation *****/
 
     @Override
-    public void showItems(final ArrayList<BaseItem> itens) {
+    public void showItems(final ArrayList<BaseItem> itens, final int type) {
 
 //        final int counter = this.counter++;
 
-        if (itens != null && !itens.isEmpty()) {
-            counterList.put(itens.get(0).getMyType(), 0);
-//        } else {
-//            this.counter--;
-        }
-
-        for (final BaseItem item : itens) {
-
-            if (item.getMyType().equals("music")) {
-                itemsCollection.put(item.getMyType(), itens);
+        if (itens != null) {
+            counterList.put(type, 0);
+            if (type == Constants.MUSICS || itens.isEmpty()) {
+                itemsCollection.put(type, itens);
                 preupdateAdapter();
-                break;
-            }
+            } else {
+                for (final BaseItem item : itens) {
 
-            String bitmapAddress = item.imageUrl;
+                    String bitmapAddress = item.imageUrl;
 
-            RequestOptions myOptions = new RequestOptions()
-                    .override(200, 300)
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
+                    RequestOptions myOptions = new RequestOptions()
+                            .override(200, 300)
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE);
 
-            Glide.with(this)
-                    .asBitmap()
-                    .load(bitmapAddress)
-                    .apply(myOptions)
-                    .into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                            counterList.put(item.getMyType(), counterList.get(item.getMyType()) + 1);
+                    Glide.with(this)
+                            .asBitmap()
+                            .load(bitmapAddress)
+                            .apply(myOptions)
+                            .into(new SimpleTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                                    counterList.put(item.getMyType(), counterList.get(item.getMyType()) + 1);
 //
-                            item.setBit(resource);
-                            if (item.getMyType().equals("book")) {
-                                Timber.d("sucesso");
-                            }
-                            if (counterList.get(item.getMyType()) == itens.size()) {
-                                if (item.getMyType().equals("book")) {
-                                    Timber.d("sucesso");
+                                    item.setBit(resource);
+                                    if (counterList.get(item.getMyType()) == itens.size()) {
+                                        Timber.d("sucesso");
+                                        itemsCollection.put(item.getMyType(), itens);
+                                        preupdateAdapter();
+                                    }
                                 }
-                                Timber.d("sucesso");
-                                itemsCollection.put(item.getMyType(), itens);
-                                preupdateAdapter();
-                            }
-                        }
 
-                        @Override
-                        public void onLoadFailed(@Nullable Drawable errorDrawable) {
-                            counterList.put(item.getMyType(), counterList.get(item.getMyType()) + 1);
+                                @Override
+                                public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                                    counterList.put(item.getMyType(), counterList.get(item.getMyType()) + 1);
 
-                            InputStream is = getResources().openRawResource(R.drawable.large_movie_poster);
-                            Bitmap pisc = BitmapFactory.decodeStream(new BufferedInputStream(is));
+                                    InputStream is = getResources().openRawResource(R.drawable.large_movie_poster);
+                                    Bitmap pisc = BitmapFactory.decodeStream(new BufferedInputStream(is));
 
-                            item.setBit(pisc);
+                                    item.setBit(pisc);
 
-                            if (item.getMyType().equals("book")) {
-                                Timber.d("sucesso");
-                            }
+                                    if (counterList.get(item.getMyType()) == itens.size()) {
 
-                            if (counterList.get(item.getMyType()) == itens.size()) {
-
-                                if (item.getMyType().equals("book")) {
-                                    Timber.d("sucesso");
+                                        if (item.getMyType() == Constants.BOOKS) {
+                                            Timber.d("sucesso");
+                                        }
+                                        itemsCollection.put(item.getMyType(), itens);
+                                        preupdateAdapter();
+                                    }
                                 }
-                                itemsCollection.put(item.getMyType(), itens);
-                                preupdateAdapter();
-                            }
-                        }
-                    });
+                            });
 
+                }
+            }
         }
     }
 
     public void preupdateAdapter() {
 
-        if (counterList.size() == 7
-                && itemsCollection.containsKey("movie")
-                && itemsCollection.containsKey("series")
-                && itemsCollection.containsKey("anime")
-                && itemsCollection.containsKey("manga")
-                && itemsCollection.containsKey("book")
-                && itemsCollection.containsKey("music")
-                && itemsCollection.containsKey("comics")) {
+        if (activity.list.getType() != 0 || (counterList.size() == 7
+                && itemsCollection.containsKey(Constants.MOVIES)
+                && itemsCollection.containsKey(Constants.TV_SERIES)
+                && itemsCollection.containsKey(Constants.ANIMES)
+                && itemsCollection.containsKey(Constants.MANGAS)
+                && itemsCollection.containsKey(Constants.BOOKS)
+                && itemsCollection.containsKey(Constants.MUSICS)
+                && itemsCollection.containsKey(Constants.COMICS))) {
             updateAdapter();
         }
     }
@@ -248,67 +262,77 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
         }
 
         Runtime.getRuntime().gc();
-        List<Fragment> frags = activity.getSupportFragmentManager().getFragments();
-
-        activity.mViewPager.getViewPager().setAdapter(new FragmentStatePagerAdapter(activity.getSupportFragmentManager()) {
+        activity.mViewPager.setAdapter(new FragmentStatePagerAdapter(activity.getSupportFragmentManager()) {
 
             @Override
             public Fragment getItem(int position) {
-                switch (position % 8) {
-                    case 0:
-                        return RecyclerViewFragment2.newInstance(itemsCollection.get("movie"));
-                    case 1:
-                        return RecyclerViewFragment2.newInstance(itemsCollection.get("series"));
-                    case 2:
-                        return RecyclerViewFragment2.newInstance(itemsCollection.get("anime"));
-                    case 3:
-                        return RecyclerViewFragment2.newInstance(itemsCollection.get("manga"));
-                    case 4:
-                        return RecyclerViewFragment2.newInstance(itemsCollection.get("book"));
-                    case 5:
-                        return RecyclerViewFragment2.newInstance(itemsCollection.get("music"));
-                    case 6:
-                        return RecyclerViewFragment2.newInstance(itemsCollection.get("comics"));
-                    default:
-                        return RecyclerViewFragment2.newInstance(itemsCollection.get("movie"));
+
+                if (activity.list.getType() != 0) {
+                    return RecyclerViewFragment2.newInstance(itemsCollection.get(activity.list.getType()), activity.list.getType());
+                } else {
+                    switch (position % 8) {
+                        case 0:
+                            return RecyclerViewFragment2.newInstance(itemsCollection.get(Constants.MOVIES), MOVIES);
+                        case 1:
+                            return RecyclerViewFragment2.newInstance(itemsCollection.get(Constants.TV_SERIES), TV_SERIES);
+                        case 2:
+                            return RecyclerViewFragment2.newInstance(itemsCollection.get(Constants.ANIMES), ANIMES);
+                        case 3:
+                            return RecyclerViewFragment2.newInstance(itemsCollection.get(Constants.MANGAS), MANGAS);
+                        case 4:
+                            return RecyclerViewFragment2.newInstance(itemsCollection.get(Constants.BOOKS), BOOKS);
+                        case 5:
+                            return RecyclerViewFragment2.newInstance(itemsCollection.get(Constants.MUSICS), MUSICS);
+                        case 6:
+                            return RecyclerViewFragment2.newInstance(itemsCollection.get(Constants.COMICS), COMICS);
+                        default:
+                            return RecyclerViewFragment2.newInstance(itemsCollection.get(Constants.MOVIES), MOVIES);
+                    }
                 }
             }
 
             @Override
             public int getCount() {
-                return 8;
-            }
-
-            @Override
-            public CharSequence getPageTitle(int position) {
-                switch (position % 8) {
-                    case 0:
-                        return "Movies";
-                    case 1:
-                        return "Series";
-                    case 2:
-                        return "Animes";
-                    case 3:
-                        return "Mangas";
-                    case 4:
-                        return "Books";
-                    case 5:
-                        return "Musics";
-                    case 6:
-                        return "Comics";
-                    case 7:
-                        return "People";
+                if (activity.list.getType() != 0) {
+                    return 1;
+                } else {
+                    return 8;
                 }
-                return "";
             }
 
-            @Override
-            public int getItemPosition(Object object) {
-                return PagerAdapter.POSITION_NONE;
-            }
         });
-        activity.mViewPager.getViewPager().getAdapter().notifyDataSetChanged();
-        activity.mViewPager.getPagerTitleStrip().setViewPager(activity.mViewPager.getViewPager());
+        activity.mViewPager.getAdapter().notifyDataSetChanged();
+//        activity.mViewPager.getPagerTitleStrip().setViewPager(activity.mViewPager.getViewPager());
+    }
+
+    public void populateLabel() {
+        switch (type) {
+            case MOVIES:
+                listsHeaderText.setText("MOVIES");
+                break;
+            case TV_SERIES:
+                listsHeaderText.setText("TV SERIES");
+                break;
+            case ANIMES:
+                listsHeaderText.setText("ANIMES");
+                break;
+            case MANGAS:
+                listsHeaderText.setText("MANGAS");
+                break;
+            case BOOKS:
+                listsHeaderText.setText("BOOKS");
+                break;
+            case MUSICS:
+                listsHeaderText.setText("MUSICS");
+                break;
+            case COMICS:
+                listsHeaderText.setText("COMICS");
+                break;
+
+            default:
+                listsHeaderText.setText("MISC");
+
+        }
     }
 
 

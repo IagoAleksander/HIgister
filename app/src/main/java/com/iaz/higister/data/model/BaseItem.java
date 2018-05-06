@@ -9,6 +9,7 @@ import com.iaz.higister.data.model.GoodReads.BestBook;
 import com.iaz.higister.data.model.LastFM.Track;
 import com.iaz.higister.data.model.MyAnimeList.Result;
 import com.iaz.higister.data.model.Omdb.Search;
+import com.iaz.higister.util.Constants;
 
 /**
  * Created by alksander on 04/03/2018.
@@ -19,7 +20,7 @@ public class BaseItem implements Parcelable{
     public String title;
     public String description;
     public String detailsUrl;
-    private String myType;
+    private int myType;
     private Bitmap bit;
     public String imageUrl;
 
@@ -28,11 +29,11 @@ public class BaseItem implements Parcelable{
     public BaseItem(BestBook book) {
         this.title = book.getTitle();
 //        this.description = book.getAuthor();
-        this.myType = "book";
-        this.imageUrl = book.getSmall_image_url();
+        this.myType = Constants.BOOKS;
+        this.imageUrl = book.getImage_url();
     }
 
-    public BaseItem(Result myAnimeListItem, String type) {
+    public BaseItem(Result myAnimeListItem, int type) {
         this.title = myAnimeListItem.getTitle();
         this.description = myAnimeListItem.getDescription();
         this.myType = type;
@@ -43,12 +44,12 @@ public class BaseItem implements Parcelable{
     public BaseItem(Results comicsVineItem) {
         this.title = comicsVineItem.getVolume().getName() +" " +comicsVineItem.getName();
         this.description = comicsVineItem.getDescription();
-        this.myType = "comics";
+        this.myType = Constants.COMICS;
         this.imageUrl = comicsVineItem.getImage().getSmall_url();
         this.detailsUrl = comicsVineItem.getSite_detail_url();
     }
 
-    public BaseItem(Search omdbItem, String type) {
+    public BaseItem(Search omdbItem, int type) {
         this.title = omdbItem.getTitle();
         this.description = omdbItem.getYear();
         this.myType = type;
@@ -59,15 +60,15 @@ public class BaseItem implements Parcelable{
     public BaseItem(Track lastFmItem) {
         this.title = lastFmItem.getName();
         this.description = lastFmItem.getArtist();
-        this.myType = "music";
+        this.myType = Constants.MUSICS;
         this.detailsUrl = lastFmItem.getUrl();
     }
 
-    public String getMyType() {
+    public int getMyType() {
         return myType;
     }
 
-    public void setMyType(String myType) {
+    public void setMyType(int myType) {
         this.myType = myType;
     }
 
@@ -83,7 +84,7 @@ public class BaseItem implements Parcelable{
         title = in.readString();
         description = in.readString();
         detailsUrl = in.readString();
-        myType = in.readString();
+        myType = in.readInt();
 //        bit = (Bitmap) in.readValue(Bitmap.class.getClassLoader());
         imageUrl = in.readString();
     }
@@ -98,7 +99,7 @@ public class BaseItem implements Parcelable{
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(detailsUrl);
-        dest.writeString(myType);
+        dest.writeInt(myType);
         //        dest.writeValue(bit);
         dest.writeString(imageUrl);
 

@@ -1,8 +1,6 @@
 package com.iaz.higister.ui.search;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,7 +131,7 @@ public class ResultsAdapter extends BaseFlipAdapter {
             public void onClick(View v) {
 
                 ListItem listItem = new ListItem();
-                listItem.baseItem = item;
+                listItem.setBaseItem(item);
 
                 Intent intent = new Intent(activity, CreateItemActivity.class);
                 intent.putExtra("list", activity.list);

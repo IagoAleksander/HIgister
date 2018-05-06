@@ -30,8 +30,6 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.ListItem;
-import com.iaz.higister.ui.viewItem.ViewItemActivity;
-import com.iaz.higister.ui.viewItem.ViewItemMvpView;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
 
 import butterknife.BindView;
@@ -101,9 +99,9 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
 
         if (listItem != null) {
 
-            if (listItem.baseItem.imageUrl != null) {
+            if (listItem.getBaseItem() != null && listItem.getBaseItem().imageUrl != null) {
                 Glide.with(this)
-                        .load(listItem.baseItem.imageUrl)
+                        .load(listItem.getBaseItem().imageUrl)
                         .listener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -119,8 +117,8 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
                         .into(listLogoImage);
             }
 
-            itemTitle.setText(listItem.name);
-            itemDescription.setText(listItem.description);
+            itemTitle.setText(listItem.getName());
+            itemDescription.setText(listItem.getDescription());
         }
 
         listNameLayout.getEditText().addTextChangedListener(new TextWatcher() {

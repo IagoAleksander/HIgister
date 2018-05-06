@@ -22,7 +22,7 @@
             android:id="@+id/item_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:paddingTop="10dp"
             android:layout_margin="20dp"
             android:layout_centerHorizontal="true"
@@ -63,7 +63,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/text_small_body"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"
+                android:maxLines="8"/>
 
         </LinearLayout>
         </LinearLayout>

@@ -2,23 +2,20 @@ package com.iaz.higister.ui.main;
 
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -37,7 +34,6 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import devlight.io.library.ntb.NavigationTabBar;
 
 import static com.iaz.higister.util.Constants.FAVOURITES_TAB_INDEX;
 import static com.iaz.higister.util.Constants.LISTS_TAB_INDEX;
@@ -77,6 +73,15 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 
     @BindView(R.id.container)
     ViewPager mViewPager;
+
+    @BindView(R.id.search_layout)
+    LinearLayout searchLayout;
+
+    @BindView(R.id.close_search_layout_button)
+    ImageView closeSearchLayoutButton;
+
+    @BindView(R.id.search_text)
+    EditText searchText;
 
 //    @BindView(R.id.tabs)
 //    TabLayout mTabLayout;
@@ -122,123 +127,21 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setOffscreenPageLimit(4);
 
-//        if (getIntent().getExtras() != null)
-//            if (getIntent().getExtras().getInt("loggedWithFacebook", 0) == 1) {
-//                AccessToken token = AccessToken.getCurrentAccessToken();
-//                GraphRequest graphRequest = GraphRequest.newMeRequest(token, new GraphRequest.GraphJSONObjectCallback() {
-//                    @Override
-//                    public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
-//                        try {
-//                            JSONArray jsonArrayFriends = jsonObject.getJSONObject("friendlist").getJSONArray("data");
-//                            JSONObject friendlistObject = jsonArrayFriends.getJSONObject(0);
-//                            String friendListID = friendlistObject.getString("id");
-//                            myNewGraphReq(friendListID);
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                });
-//                Bundle param = new Bundle();
-//                param.putString("fields", "friendlist,members");
-//                graphRequest.setParameters(param);
-//                graphRequest.executeAsync();
-//            }
+        final SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
+        viewPagerTab.setCustomTabView(this);
+        viewPagerTab.setViewPager(mViewPager);
 
-//        final SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
-//        viewPagerTab.setCustomTabView(this);
-//        viewPagerTab.setViewPager(mViewPager);
-
-        final NavigationTabBar navigationTabBar = (NavigationTabBar) findViewById(R.id.ntb_vertical);
-        final ArrayList<NavigationTabBar.Model> models = new ArrayList<>();
-        models.add(
-                new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
-                        ContextCompat.getColor(getApplicationContext(),R.color.primary))
-                        .title("ic_first")
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
-                        .build()
-        );
-        models.add(
-                new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
-                        ContextCompat.getColor(getApplicationContext(),R.color.primary))
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
-                        .title("ic_second")
-                        .build()
-        );
-        models.add(
-                new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
-                        ContextCompat.getColor(getApplicationContext(),R.color.primary))
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
-                        .title("ic_third")
-                        .build()
-        );
-        models.add(
-                new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
-                        ContextCompat.getColor(getApplicationContext(),R.color.primary))
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
-                        .title("ic_fourth")
-                        .build()
-        );
-        models.add(
-                new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
-                        ContextCompat.getColor(getApplicationContext(),R.color.primary))
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
-                        .title("ic_fifth")
-                        .build()
-        );
-        models.add(
-                new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
-                        ContextCompat.getColor(getApplicationContext(),R.color.primary))
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
-                        .title("ic_sixth")
-                        .build()
-        );
-        models.add(
-                new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
-                        ContextCompat.getColor(getApplicationContext(),R.color.primary))
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
-                        .title("ic_seventh")
-                        .build()
-        );
-        models.add(
-                new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
-                        ContextCompat.getColor(getApplicationContext(),R.color.primary))
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
-                        .title("ic_eighth")
-                        .build()
-        );
-
-        navigationTabBar.setModels(models);
-        navigationTabBar.setViewPager(mViewPager, 4);
-
-        navigationTabBar.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        viewPagerTab.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
+                View tab = viewPagerTab.getTabAt(position);
+                View mark = tab.findViewById(R.id.custom_tab_notification_mark);
+                mark.setVisibility(View.GONE);
 
                 setFab(position);
             }
         });
-
-//        viewPagerTab.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-//            @Override
-//            public void onPageSelected(int position) {
-//                super.onPageSelected(position);
-//                View tab = viewPagerTab.getTabAt(position);
-//                View mark = tab.findViewById(R.id.custom_tab_notification_mark);
-//                mark.setVisibility(View.GONE);
-//
-//                setFab(position);
-//            }
-//        });
 
 //        mTabLayout.setupWithViewPager(mViewPager);
 //        mTabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.accent));
@@ -248,11 +151,18 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 //        mTabLayout.getTabAt(1).setText("Suggested Friends");
 //        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        navigationTabBar.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+        viewPagerTab.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 setFab(0);
-                navigationTabBar.removeOnLayoutChangeListener(this);
+                viewPagerTab.removeOnLayoutChangeListener(this);
+            }
+        });
+
+        closeSearchLayoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchLayout.setVisibility(View.GONE);
             }
         });
     }
@@ -318,12 +228,12 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 //    }
 
     public void updateUserInfo() {
-        followersCounter.setText(Integer.toString(user.followersNumber));
-        createdListsCounter.setText(Integer.toString(user.listsCreatedNumber));
-        favoritedListsCounter.setText(Integer.toString(user.listsFavouritedNumber));
+        followersCounter.setText(Integer.toString(user.getFollowersNumber()));
+        createdListsCounter.setText(Integer.toString(user.getListsCreatedNumber()));
+        favoritedListsCounter.setText(Integer.toString(user.getListsFavouritedNumber()));
 
-        if (user.profilePictureUri != null)
-            callGlide(Uri.parse(user.profilePictureUri));
+        if (user.getProfilePictureUri() != null)
+            callGlide(Uri.parse(user.getProfilePictureUri()));
 
 //        setFab(PROFILE_TAB_INDEX);
 //        mViewPager.setCurrentItem(PROFILE_TAB_INDEX);
@@ -331,6 +241,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 
     public void setFab (int position) {
 
+        searchLayout.setVisibility(View.GONE);
         Fragment fragment = fm.findFragmentByTag("android:switcher:" + R.id.container + ":" +position);
 
         if (position == PROFILE_TAB_INDEX) {
@@ -341,6 +252,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
                     ((ProfileFragment) fragment).swapBetweenDisplayAndEditProfileInfos();
                 }
             });
+            getSupportActionBar().setTitle("My Profile");
         } else if (position == LISTS_TAB_INDEX) {
             fab.setVisibility(View.VISIBLE);
             fab.setImageResource(R.drawable.ic_add);
@@ -348,17 +260,27 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
                 Intent intent = new Intent(MainActivity.this, CreateListActivity.class);
                 MainActivity.this.startActivity(intent);
             });
+            getSupportActionBar().setTitle("My Lists");
         } else if (position == FAVOURITES_TAB_INDEX) {
             fab.setVisibility(View.GONE);
+            getSupportActionBar().setTitle("Favorited Lists");
         } else if (position == FEED_TAB_INDEX) {
             fab.setVisibility(View.GONE);
+            getSupportActionBar().setTitle("My Feed");
         } else if (position == SEARCH_TAB_INDEX) {
             fab.setVisibility(View.VISIBLE);
             fab.setImageResource(R.drawable.ic_search_white_24dp);
             fab.setOnClickListener(v -> {
-                Intent intent = new Intent(MainActivity.this, CreateListActivity.class);
-                MainActivity.this.startActivity(intent);
+
+                if (searchLayout.getVisibility() == View.GONE)
+                    searchLayout.setVisibility(View.VISIBLE);
+                else {
+                    if (fragment != null && fragment instanceof MyListsFragment) {
+                        ((MyListsFragment) fragment).mListsPresenter.search(searchText.getText().toString());
+                    }
+                }
             });
+            getSupportActionBar().setTitle("Search");
         }
     }
 
@@ -401,4 +323,10 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 //        request.setParameters(param);
 //        request.executeAsync();
 //    }
+
+    @Override
+    public void onBackPressed()
+    {
+        moveTaskToBack(true);
+    }
 }

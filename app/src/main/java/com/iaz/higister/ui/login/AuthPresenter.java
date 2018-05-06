@@ -59,7 +59,7 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
 
             if (user != null) {
 
-                userRepository.receiveProfileInfo(new UserRepository.OnUpdateProfile() {
+                userRepository.receiveProfileInfo(user.getUid(), new UserRepository.OnUpdateProfile() {
                     @Override
                     public void onSuccess(User user) {
                         Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
@@ -154,7 +154,7 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("", "signInWithCredential:success");
 
-                            userRepository.receiveProfileInfo(new UserRepository.OnUpdateProfile() {
+                            userRepository.receiveProfileInfo(FirebaseAuth.getInstance().getCurrentUser().getUid(), new UserRepository.OnUpdateProfile() {
                                 @Override
                                 public void onSuccess(User user) {
                                     Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
@@ -169,8 +169,8 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                                         // user has logged in
 
                                         User newUser = new User();
-                                        newUser.name = profile.getName();
-                                        newUser.profilePictureUri = profile.getProfilePictureUri(400,400).toString();
+                                        newUser.setName(profile.getName());
+                                        newUser.setProfilePictureUri(profile.getProfilePictureUri(400,400).toString());
 
                                         Log.d("auth", "onCheckUser: user does not exist");
                                         userRepository.saveProfileInfo(getMvpView().getActivity(), newUser, new UserRepository.OnUpdateProfile() {

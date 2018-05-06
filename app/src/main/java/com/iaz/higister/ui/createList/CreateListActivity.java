@@ -14,10 +14,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +31,6 @@ import com.iaz.higister.R;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.data.repository.ListRepository;
 import com.iaz.higister.ui.base.BaseActivity;
-import com.iaz.higister.ui.splash.SplashActivity;
 import com.iaz.higister.ui.viewList.ViewListActivity;
 import com.iaz.higister.util.AppBarStateChangeListener;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
@@ -67,6 +70,8 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
     TextInputLayout listNameLayout;
     @BindView(R.id.text_input_list_desc)
     TextInputLayout listDescriptionLayout;
+    @BindView(R.id.list_type_spinner)
+    Spinner listTypeSpinner;
     @BindView(R.id.activity_create_list_next_button)
     TextView nextButton;
 
@@ -76,6 +81,8 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
 
     String uri;
     ListRepository listRepository = new ListRepository();
+
+    int typeSelected = 1;
 
 
     @Override
@@ -98,12 +105,12 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
             list = getIntent().getExtras().getParcelable("list");
 
         if (list != null) {
-            listNameLayout.getEditText().setText(list.name);
-            listDescriptionLayout.getEditText().setText(list.description);
+            listNameLayout.getEditText().setText(list.getName());
+            listDescriptionLayout.getEditText().setText(list.getDescription());
 
-            if (list.listPictureUri != null) {
+            if (list.getListPictureUri() != null) {
                 Glide.with(this)
-                        .load(list.listPictureUri)
+                        .load(list.getListPictureUri())
                         .into(listLogoImage);
             }
             getSupportActionBar().setTitle("Edit UserList");
@@ -194,12 +201,14 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
                 if (list == null)
                     list = new UserList();
 
-                list.name = listNameLayout.getEditText().getText().toString();
-                list.description = listDescriptionLayout.getEditText().getText().toString();
+                list.setName(listNameLayout.getEditText().getText().toString());
+                list.setDescription(listDescriptionLayout.getEditText().getText().toString());
 //                mCreateListPresenter.saveList(list);
 
-                list.listPictureUri = uri;
-                list.creatorId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                list.setListPictureUri(uri);
+                list.setCreatorId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                list.setType(typeSelected);
 
                 if (list.uid == null) {
                     Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
@@ -223,6 +232,8 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
                 }
             }
         });
+
+        bindSpinnerLabel();
 
     }
 
@@ -281,6 +292,49 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
                     .into(listBannerImage);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void bindSpinnerLabel() {
+
+        String[] stringArray = getResources().getStringArray(R.array.list_type);
+
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                this, R.layout.item_list_type, stringArray) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                return view;
+            }
+        };
+
+        listTypeSpinner.setAdapter(arrayAdapter);
+        listTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0)
+                    typeSelected = position;
+                else
+                    typeSelected = position - 1;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        if (list != null) {
+            listTypeSpinner.setSelection(list.getType()+1);
         }
     }
 

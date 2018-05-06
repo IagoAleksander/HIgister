@@ -9,6 +9,7 @@
     <dimen name="text_large_body">18sp</dimen>
     <dimen name="text_body">16sp</dimen>
     <dimen name="text_small_body">14sp</dimen>
+    <dimen name="text_really_small_body">14sp</dimen>
 
     <item name="match_parent" format="integer" type="dimen">-1</item>
     <item name="wrap_content" format="integer" type="dimen">-2</item>

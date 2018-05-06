@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.ListItem;
@@ -35,6 +36,9 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
+
+    @BindView(R.id.lists_header_text)
+    TextView listsHeaderText;
 
     MainActivity activity;
 
@@ -90,6 +94,8 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
                     Log.e("receiveMyLists: ", "failed", e);
                 }
             });
+
+            listsHeaderText.setText("My created lists:");
         }
         if (type.equals("favorited")) {
             listRepository.receiveFavorites(new ListRepository.OnUpdateLists() {
@@ -111,6 +117,8 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
                     Log.e("receiveMyLists: ", "failed", e);
                 }
             });
+
+            listsHeaderText.setText("My favorited lists:");
         }
         if (type.equals("feed")) {
             listRepository.receiveFeed(new ListRepository.OnUpdateLists() {
@@ -124,6 +132,8 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
                     Log.e("receiveMyLists: ", "failed", e);
                 }
             });
+
+            listsHeaderText.setText("My feed:");
         }
     }
 

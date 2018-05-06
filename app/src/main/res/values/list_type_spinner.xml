@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="list_type">
+        <item>List Type</item>
+        <item>Misc</item>
+        <item>Movies</item>
+        <item>Tv Series</item>
+        <item>Animes</item>
+        <item>Mangas</item>
+        <item>Books</item>
+        <item>Musics</item>
+        <item>Comics</item>
+    </string-array>
+</resources>

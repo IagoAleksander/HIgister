@@ -16,31 +16,33 @@ public class UserList implements Parcelable{
     @Exclude
     public String uid;
 
-    public String name;
-    public String description;
-    public int type;
-    public boolean visibleForEveryone;
-    public boolean commentsEnabled;
-    public String listPictureUri;
-    public String creatorId;
-    public ArrayList<String> favoritedBy = new ArrayList<>();
+    private String name;
+    private String description;
+    private int type;
+    private boolean visibleForEveryone;
+    private boolean commentsEnabled;
+    private String listPictureUri;
+    private String creatorId;
+    private ArrayList<String> favoritedBy = new ArrayList<>();
+    private ArrayList<String> comments = new ArrayList<>();
 
     @Exclude
-    public ArrayList<ListItem> listItems = new ArrayList<>();
+    private ArrayList<ListItem> listItems = new ArrayList<>();
 
     public UserList() {}
 
     protected UserList(Parcel in) {
         uid = in.readString();
-        name = in.readString();
-        description = in.readString();
-        type = in.readInt();
-        visibleForEveryone = in.readByte() != 0;
-        commentsEnabled = in.readByte() != 0;
-        listPictureUri = in.readString();
-        creatorId = in.readString();
-        listItems = in.createTypedArrayList(ListItem.CREATOR);
-        favoritedBy = in.createStringArrayList();
+        setName(in.readString());
+        setDescription(in.readString());
+        setType(in.readInt());
+        setVisibleForEveryone(in.readByte() != 0);
+        setCommentsEnabled(in.readByte() != 0);
+        setListPictureUri(in.readString());
+        setCreatorId(in.readString());
+        setListItems(in.createTypedArrayList(ListItem.CREATOR));
+        setFavoritedBy(in.createStringArrayList());
+        in.readStringList(getComments());
     }
 
     @Override
@@ -51,15 +53,16 @@ public class UserList implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(uid);
-        dest.writeString(name);
-        dest.writeString(description);
-        dest.writeInt(type);
-        dest.writeByte(visibleForEveryone ? (byte) 1 : (byte) 0);
-        dest.writeByte(commentsEnabled ? (byte) 1 : (byte) 0);
-        dest.writeString(listPictureUri);
-        dest.writeString(creatorId);
-        dest.writeTypedList(listItems);
-        dest.writeStringList(favoritedBy);
+        dest.writeString(getName());
+        dest.writeString(getDescription());
+        dest.writeInt(getType());
+        dest.writeByte(isVisibleForEveryone() ? (byte) 1 : (byte) 0);
+        dest.writeByte(isCommentsEnabled() ? (byte) 1 : (byte) 0);
+        dest.writeString(getListPictureUri());
+        dest.writeString(getCreatorId());
+        dest.writeTypedList(getListItems());
+        dest.writeStringList(getFavoritedBy());
+        dest.writeStringList(getComments());
 
     }
 
@@ -76,4 +79,83 @@ public class UserList implements Parcelable{
         }
     };
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public boolean isVisibleForEveryone() {
+        return visibleForEveryone;
+    }
+
+    public void setVisibleForEveryone(boolean visibleForEveryone) {
+        this.visibleForEveryone = visibleForEveryone;
+    }
+
+    public boolean isCommentsEnabled() {
+        return commentsEnabled;
+    }
+
+    public void setCommentsEnabled(boolean commentsEnabled) {
+        this.commentsEnabled = commentsEnabled;
+    }
+
+    public String getListPictureUri() {
+        return listPictureUri;
+    }
+
+    public void setListPictureUri(String listPictureUri) {
+        this.listPictureUri = listPictureUri;
+    }
+
+    public String getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
+    }
+
+    public ArrayList<String> getFavoritedBy() {
+        return favoritedBy;
+    }
+
+    public void setFavoritedBy(ArrayList<String> favoritedBy) {
+        this.favoritedBy = favoritedBy;
+    }
+
+    public ArrayList<String> getComments() {
+        return comments;
+    }
+
+    public void setComments(ArrayList<String> comments) {
+        this.comments = comments;
+    }
+
+    public ArrayList<ListItem> getListItems() {
+        return listItems;
+    }
+
+    public void setListItems(ArrayList<ListItem> listItems) {
+        this.listItems = listItems;
+    }
 }

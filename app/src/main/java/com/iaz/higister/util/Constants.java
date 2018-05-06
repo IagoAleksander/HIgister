@@ -21,4 +21,13 @@ public class Constants {
 
     public static final String PATH_USER_IMAGE = "user_image/";
 
+    public static final int MISC = 0;
+    public static final int MOVIES = 1;
+    public static final int TV_SERIES = 2;
+    public static final int ANIMES = 3;
+    public static final int MANGAS = 4;
+    public static final int BOOKS = 5;
+    public static final int MUSICS = 6;
+    public static final int COMICS = 7;
+
 }

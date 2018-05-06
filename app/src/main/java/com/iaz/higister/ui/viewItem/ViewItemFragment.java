@@ -94,9 +94,9 @@ public class ViewItemFragment extends Fragment implements ViewItemMvpView {
 
         if (listItem != null) {
 
-            if (listItem.baseItem.imageUrl != null) {
+            if (listItem.getBaseItem() != null && listItem.getBaseItem().imageUrl != null) {
                 Glide.with(this)
-                        .load(listItem.baseItem.imageUrl)
+                        .load(listItem.getBaseItem().imageUrl)
                         .listener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -112,8 +112,8 @@ public class ViewItemFragment extends Fragment implements ViewItemMvpView {
                         .into(listLogoImage);
             }
 
-            itemTitle.setText(listItem.name);
-            itemDescription.setText(listItem.description);
+            itemTitle.setText(listItem.getName());
+            itemDescription.setText(listItem.getDescription());
         }
 
         listLogoImageLayout.setOnClickListener(v -> {

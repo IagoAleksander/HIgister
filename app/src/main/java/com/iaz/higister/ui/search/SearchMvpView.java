@@ -7,5 +7,5 @@ import com.iaz.higister.ui.base.MvpView;
 
 public interface SearchMvpView extends MvpView {
 
-    void showItems(ArrayList<BaseItem> itens);
+    void showItems(ArrayList<BaseItem> itens, int type);
 }

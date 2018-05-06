@@ -58,9 +58,9 @@ public class UserRepository {
                 });
     }
 
-    public void receiveProfileInfo(OnUpdateProfile onUpdateProfile) {
+    public void receiveProfileInfo(String uid, OnUpdateProfile onUpdateProfile) {
 
-        DocumentReference docRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        DocumentReference docRef = db.collection("users").document(uid);
         docRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 user = documentSnapshot.toObject(User.class);

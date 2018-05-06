@@ -1,12 +1,9 @@
 package com.iaz.higister.data.model;
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.firebase.firestore.Exclude;
-
-import java.util.ArrayList;
 
 /**
  * Created by alksander on 17/03/2018.
@@ -17,20 +14,20 @@ public class ListItem implements Parcelable{
     @Exclude
     public String uid;
 
-    public String name;
-    public String description;
-    public int type;
-    public BaseItem baseItem;
+    private String name;
+    private String description;
+    private int type;
+    private BaseItem baseItem;
 //    public Bitmap photo;
 
     public ListItem() {}
 
     protected ListItem(Parcel in) {
         uid = in.readString();
-        name = in.readString();
-        description = in.readString();
-        type = in.readInt();
-        baseItem = in.readTypedObject(BaseItem.CREATOR);
+        setName(in.readString());
+        setDescription(in.readString());
+        setType(in.readInt());
+        setBaseItem(in.readTypedObject(BaseItem.CREATOR));
     }
 
     @Override
@@ -41,10 +38,10 @@ public class ListItem implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(uid);
-        dest.writeString(name);
-        dest.writeString(description);
-        dest.writeInt(type);
-        dest.writeTypedObject(baseItem, PARCELABLE_WRITE_RETURN_VALUE);
+        dest.writeString(getName());
+        dest.writeString(getDescription());
+        dest.writeInt(getType());
+        dest.writeTypedObject(getBaseItem(), PARCELABLE_WRITE_RETURN_VALUE);
 
     }
 
@@ -61,4 +58,35 @@ public class ListItem implements Parcelable{
         }
     };
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public BaseItem getBaseItem() {
+        return baseItem;
+    }
+
+    public void setBaseItem(BaseItem baseItem) {
+        this.baseItem = baseItem;
+    }
 }

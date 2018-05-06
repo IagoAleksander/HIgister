@@ -15,8 +15,15 @@ public class FavoritedList {
 
     @Exclude
     public String uid;
-    public String creatorId;
+    private String creatorId;
 
     public FavoritedList() {}
 
+    public String getCreatorId() {
+        return creatorId;
+    }
+
+    public void setCreatorId(String creatorId) {
+        this.creatorId = creatorId;
+    }
 }

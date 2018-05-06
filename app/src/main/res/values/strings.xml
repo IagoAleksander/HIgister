@@ -19,4 +19,6 @@
     <string name="password_hint">Password</string>
     <string name="email_hint">Email</string>
     <string name="confirm_hint">Confirm Password</string>
+
+    <string name="test">"m\n o \n v \n i \n e "</string>
 </resources>

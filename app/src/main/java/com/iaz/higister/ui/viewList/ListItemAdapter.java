@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.ListItem;
 import com.iaz.higister.data.model.UserList;
@@ -37,7 +39,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListIt
 
     public void setListItem(ArrayList<ListItem> listItems) {
 
-        list.listItems = listItems;
+        list.setListItems(listItems);
     }
 
     @Override
@@ -49,52 +51,74 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListIt
 
     @Override
     public void onBindViewHolder(final ListItemViewHolder holder, int position) {
-        ListItem listItem = list.listItems.get(position);
+        ListItem listItem = list.getListItems().get(position);
 
-        holder.listNameTextView.setText(listItem.name);
+        holder.listNameTextView.setText(listItem.getName());
 
-        if (listItem.baseItem.imageUrl != null)
+        if (listItem.getBaseItem() != null && listItem.getBaseItem().imageUrl != null)
             Glide.with(activity)
-                    .load(listItem.baseItem.imageUrl)
+                    .load(listItem.getBaseItem().imageUrl)
                     .into(holder.image);
 
-        holder.image.setOnClickListener(v -> {
+        holder.listItem.setOnClickListener(v -> {
             Intent intent = new Intent(activity, ViewItemActivity.class);
-            intent.putParcelableArrayListExtra("listItems", list.listItems);
+            intent.putParcelableArrayListExtra("listItems", list.getListItems());
             intent.putExtra("position", position);
             activity.startActivity(intent);
         });
 
-        holder.editButton.setOnClickListener(v -> {
-            Intent intent = new Intent(activity, CreateItemActivity.class);
-            intent.putExtra("list", list);
-            intent.putExtra("position", position);
-            activity.startActivity(intent);
-        });
+        if (list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
 
-        holder.removeButton.setOnClickListener(v ->
-                activity.mViewListPresenter.removeListItem(list, position, new ViewListPresenter.OnListItemRemoved() {
-                    @Override
-                    public void onSuccess() {
-                        Log.d("removeListItem: ", "success");
-                        list.listItems.remove(position);
-                        notifyDataSetChanged();
-                    }
+            holder.editButton.setVisibility(View.VISIBLE);
+            holder.editButton.setOnClickListener(v -> {
+                Intent intent = new Intent(activity, CreateItemActivity.class);
+                intent.putExtra("list", list);
+                intent.putExtra("position", position);
+                activity.startActivity(intent);
+            });
 
-                    @Override
-                    public void onFailed(Exception e) {
-                        Log.e("removeListItem: ", "failed", e);
-                    }
-                }));
+            holder.removeButton.setVisibility(View.VISIBLE);
+            holder.removeButton.setOnClickListener(v ->
+                    activity.mViewListPresenter.removeListItem(list, position, new ViewListPresenter.OnListItemRemoved() {
+                        @Override
+                        public void onSuccess() {
+                            Log.d("removeListItem: ", "success");
+                            list.getListItems().remove(position);
+                            notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onFailed(Exception e) {
+                            Log.e("removeListItem: ", "failed", e);
+                        }
+                    }));
+        }
+        else {
+            holder.editButton.setVisibility(View.GONE);
+            holder.removeButton.setVisibility(View.GONE);
+        }
+
+        holder.favoriteButton.setVisibility(View.GONE);
 
     }
+
+
 
     @Override
     public int getItemCount() {
-        return list.listItems.size();
+        return list.getListItems().size();
     }
 
     class ListItemViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.label_layout)
+        RelativeLayout labelLayout;
+
+        @BindView(R.id.label_text)
+        TextView labelText;
+
+        @BindView(R.id.list_item)
+        RelativeLayout listItem;
 
         @BindView(R.id.list_name)
         TextView listNameTextView;
@@ -104,6 +128,9 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListIt
 
         @BindView(R.id.edit_button)
         Button editButton;
+
+        @BindView(R.id.favorite_button)
+        Button favoriteButton;
 
         @BindView(R.id.remove_button)
         Button removeButton;
