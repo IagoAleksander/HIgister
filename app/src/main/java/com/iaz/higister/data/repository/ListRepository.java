@@ -256,10 +256,13 @@ public class ListRepository {
 
                         if (documentSnapshot.exists()) {
                             tempList = documentSnapshot.toObject(UserList.class);
-                            tempList.uid = documentSnapshot.getId();
-                            favoritedLists.add(tempList);
 
-                            onUpdateLists.onSuccess(favoritedLists);
+                            if (tempList != null && tempList.isVisibleForEveryone()) {
+                                tempList.uid = documentSnapshot.getId();
+                                favoritedLists.add(tempList);
+
+                                onUpdateLists.onSuccess(favoritedLists);
+                            }
                         }
                     })
                     .addOnFailureListener(e -> {
@@ -288,7 +291,7 @@ public class ListRepository {
             colRef.addSnapshotListener(activity, (documentSnapshots, e) -> {
                 receiveFavorites(onUpdateLists);
             });
-        } else if (type.equals("feed")){
+        } else if (type.equals("feed")) {
             CollectionReference colRef = db.collection("lists");
 
             colRef.addSnapshotListener(activity, (documentSnapshots, e) -> receiveFeed(onUpdateLists));
@@ -309,7 +312,9 @@ public class ListRepository {
                     for (DocumentSnapshot doc : documentSnapshots) {
                         tempList = doc.toObject(UserList.class);
 
-                        if (!tempList.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        if (tempList != null
+                                && !tempList.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                && tempList.isVisibleForEveryone()) {
                             tempList.uid = doc.getId();
                             feedLists.add(tempList);
                         }
@@ -332,8 +337,13 @@ public class ListRepository {
 
                     for (DocumentSnapshot doc : documentSnapshots) {
                         tempList = doc.toObject(UserList.class);
-                        tempList.uid = doc.getId();
-                        allLists.add(tempList);
+
+                        if (tempList != null
+                                && (tempList.isVisibleForEveryone()
+                                || tempList.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))) {
+                            tempList.uid = doc.getId();
+                            allLists.add(tempList);
+                        }
                     }
                     onUpdateLists.onSuccess(allLists);
 
@@ -430,6 +440,13 @@ public class ListRepository {
         docRef.delete()
                 .addOnSuccessListener(aVoid -> onListRemoved.onSuccess(userList.uid))
                 .addOnFailureListener(e -> onListRemoved.onFailed(e.toString()));
+
+        deleteList(userList);
+    }
+
+    public void deleteList(UserList userList) {
+        DocumentReference docRef = db.collection("lists").document(userList.uid);
+        docRef.delete();
     }
 
     public interface OnListSaved {

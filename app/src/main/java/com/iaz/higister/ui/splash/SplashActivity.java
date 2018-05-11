@@ -12,6 +12,8 @@ import com.iaz.higister.ui.base.BaseActivity;
 import com.iaz.higister.ui.login.AuthActivity;
 import com.sdsmdg.harjot.rotatingtext.RotatingTextWrapper;
 import com.sdsmdg.harjot.rotatingtext.models.Rotatable;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 import javax.inject.Inject;
 
@@ -41,6 +43,7 @@ public class SplashActivity extends BaseActivity implements SplashMvpView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityComponent().inject(this);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
         mSplashPresenter.attachView(this);

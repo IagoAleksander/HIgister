@@ -7,8 +7,8 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primary"
-        android:layout_above="@+id/search_layout">
+        android:layout_above="@+id/search_layout"
+        android:background="@color/primary">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
@@ -146,6 +146,7 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
+                    android:background="@color/primary_transparency"
                     app:layout_collapseMode="pin"
                     app:titleTextColor="@android:color/white">
 
@@ -199,71 +200,77 @@
             android:fitsSystemWindows="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    </android.support.design.widget.CoordinatorLayout>
-
-
-    <LinearLayout
-        android:id="@+id/search_layout"
-        android:layout_width="match_parent"
-        android:layout_height="95dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/primary_light"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/close_search_layout_button"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:src="@drawable/ic_keyboard_arrow_right" />
-
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/search_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="50dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/card_shape"
-            android:orientation="horizontal">
+            android:layout_height="95dp"
+            android:layout_gravity="bottom"
+            android:visibility="gone"
+            android:background="@color/primary_light">
 
-            <android.support.v7.widget.AppCompatSpinner
-                android:id="@+id/spinner_search_types"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_centerVertical="true" />
+            <ImageView
+                android:id="@+id/close_search_layout_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:src="@drawable/ic_keyboard_arrow_right" />
 
-            <EditText
-                android:id="@+id/search_text"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="56dp"
-                android:layout_marginStart="56dp"
-                android:hint="Click to Search"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:maxLength="100"
-                android:maxLines="1"
-                android:textColor="@color/primary"
-                android:textSize="14sp" />
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="50dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/card_shape"
+                android:orientation="horizontal">
+
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/spinner_search_types"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_centerVertical="true" />
+
+                <EditText
+                    android:id="@+id/search_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="56dp"
+                    android:layout_marginStart="56dp"
+                    android:hint="Click to Search"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLength="100"
+                    android:maxLines="1"
+                    android:textColor="@color/primary"
+                    android:textSize="14sp" />
 
 
-        </RelativeLayout>
-    </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <com.truizlop.fabreveallayout.CircularExpandingView
+        android:id="@+id/circular"
+        android:layout_width="match_parent"
+        android:layout_height="95dp"
+        android:layout_alignParentBottom="true"/>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginBottom="20dp"
         android:layout_marginEnd="20dp"
         android:tint="@color/white"
+        android:visibility="gone"
         app:backgroundTint="@color/accent"
         app:fabSize="normal" />
 </RelativeLayout>

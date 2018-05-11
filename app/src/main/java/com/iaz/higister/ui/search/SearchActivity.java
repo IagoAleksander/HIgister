@@ -86,66 +86,58 @@ public class SearchActivity extends AppCompatActivity {
         final ArrayList<NavigationTabBar.Model> models = new ArrayList<>();
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
+                        getResources().getDrawable(R.drawable.ic_local_movies),
                         ContextCompat.getColor(getApplicationContext(), R.color.accent_dark))
                         .title("ic_first")
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
+                        .selectedIcon(getResources().getDrawable(R.drawable.ic_local_movies))
                         .build()
         );
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
+                        getResources().getDrawable(R.drawable.ic_action_tv),
                         ContextCompat.getColor(getApplicationContext(), R.color.pink))
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
+                        .selectedIcon(getResources().getDrawable(R.drawable.ic_action_tv))
                         .title("ic_second")
                         .build()
         );
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
+                        getResources().getDrawable(R.drawable.ic_action_eye_open),
                         ContextCompat.getColor(getApplicationContext(), R.color.green))
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
+                        .selectedIcon(getResources().getDrawable(R.drawable.ic_action_eye_open))
                         .title("ic_third")
                         .build()
         );
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
+                        getResources().getDrawable(R.drawable.icons8_manga),
                         ContextCompat.getColor(getApplicationContext(), R.color.sienna))
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
+                        .selectedIcon(getResources().getDrawable(R.drawable.icons8_manga))
                         .title("ic_fourth")
                         .build()
         );
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
+                        getResources().getDrawable(R.drawable.ic_action_book),
                         ContextCompat.getColor(getApplicationContext(), R.color.orange))
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
+                        .selectedIcon(getResources().getDrawable(R.drawable.ic_action_book))
                         .title("ic_fifth")
                         .build()
         );
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
+                        getResources().getDrawable(R.drawable.ic_action_music_2),
                         ContextCompat.getColor(getApplicationContext(), R.color.saffron))
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
+                        .selectedIcon(getResources().getDrawable(R.drawable.ic_action_music_2))
                         .title("ic_sixth")
                         .build()
         );
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
+                        getResources().getDrawable(R.drawable.ic_action_flash),
                         ContextCompat.getColor(getApplicationContext(), R.color.purple))
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
+                        .selectedIcon(getResources().getDrawable(R.drawable.ic_action_flash))
                         .title("ic_seventh")
-                        .build()
-        );
-        models.add(
-                new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_person_white_24dp),
-                        ContextCompat.getColor(getApplicationContext(), R.color.primary))
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_person_white_24dp))
-                        .title("ic_eighth")
                         .build()
         );
 

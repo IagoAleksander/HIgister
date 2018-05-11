@@ -97,7 +97,7 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
             listsHeaderText.setText("My created lists:");
         }
-        if (type.equals("favorited")) {
+        else if (type.equals("favorited")) {
             listRepository.receiveFavorites(new ListRepository.OnUpdateLists() {
                 @Override
                 public void onSuccess(ArrayList<UserList> userLists) {
@@ -120,7 +120,7 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
             listsHeaderText.setText("My favorited lists:");
         }
-        if (type.equals("feed")) {
+       else if (type.equals("feed")) {
             listRepository.receiveFeed(new ListRepository.OnUpdateLists() {
                 @Override
                 public void onSuccess(ArrayList<UserList> userLists) {
@@ -135,6 +135,10 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
             listsHeaderText.setText("My feed:");
         }
+        else {
+            listsHeaderText.setText("Search Lists:");
+        }
+
     }
 
     @Override

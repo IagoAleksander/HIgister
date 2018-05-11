@@ -3,96 +3,92 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="10dp"
-    android:layout_marginTop="10dp"
+    android:layout_height="200dp"
     android:layout_marginLeft="20dp"
     android:layout_marginRight="20dp"
-    card_view:cardElevation="2dp"
-    card_view:cardCornerRadius="2dp">
+    android:layout_marginTop="10dp"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:weightSum="21">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="10"
+            android:background="@color/primary_light"
             android:orientation="vertical"
-            android:paddingBottom="6dp"
-            android:background="@color/primary_light">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white"
-                android:layout_margin="5dp">
+            android:paddingBottom="6dp">
 
             <ImageView
                 android:id="@+id/first"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_above="@+id/titleLeft"
                 android:adjustViewBounds="true"
-                android:contentDescription="left image"
-                android:padding="1dp" />
-            </LinearLayout>
+                android:layout_margin="5dp"
+                android:contentDescription="left image"/>
 
             <TextView
                 android:id="@+id/titleLeft"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal|bottom"
-                android:text="test test"
-                android:textColor="@color/white"
-                android:textSize="18sp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:ellipsize="end"
+                android:gravity="center_horizontal"
                 android:maxLines="2"
-                android:ellipsize="end"/>
-        </LinearLayout>
+                android:text="test test"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="5dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="@color/primary" />
 
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/second_item"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="10"
+            android:background="@color/primary_light"
             android:orientation="vertical"
-            android:paddingBottom="6dp"
-            android:background="@color/primary_light">
+            android:paddingBottom="6dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white"
-                android:layout_margin="5dp">
             <ImageView
                 android:id="@+id/second"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_above="@+id/titleRight"
                 android:adjustViewBounds="true"
-                android:clickable="true"
-                android:contentDescription="right image"
-                android:focusable="true"
-                android:padding="1dp" />
-            </LinearLayout>
+                android:layout_margin="5dp"
+                android:contentDescription="left image"/>
 
             <TextView
                 android:id="@+id/titleRight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal|bottom"
-                android:text="test test"
-                android:textColor="@color/white"
-                android:textSize="18sp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:ellipsize="end"
+                android:gravity="center_horizontal"
                 android:maxLines="2"
-                android:ellipsize="end"/>
-        </LinearLayout>
+                android:text="test test"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+        </RelativeLayout>
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

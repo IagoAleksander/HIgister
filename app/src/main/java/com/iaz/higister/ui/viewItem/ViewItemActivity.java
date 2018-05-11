@@ -154,18 +154,6 @@ public class ViewItemActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        mViewItemPresenter.requestPermissionResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mViewItemPresenter.activityResult(requestCode, resultCode, data);
-    }
-
     public static class MyPagerAdapter extends FragmentPagerAdapter {
 
         ArrayList<ListItem> listItems = new ArrayList<>();

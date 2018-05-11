@@ -154,7 +154,7 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
         activity.activityComponent().inject(this);
 
         mProfilePresenter.attachView(this);
-
+        
         userRepository.receiveProfileInfo(FirebaseAuth.getInstance().getCurrentUser().getUid(), new UserRepository.OnUpdateProfile() {
             @Override
             public void onSuccess(User user) {
@@ -407,7 +407,13 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
                         activity.user = new User();
                         activity.user.setName(mNameTextInput.getEditText().getText().toString());
                         activity.user.setDescription(mDescriptionTextInput.getEditText().getText().toString());
-                        activity.user.setAge(Integer.parseInt(mAgeTextInput.getEditText().getText().toString()));
+
+                        try {
+                            activity.user.setAge(Integer.parseInt(mAgeTextInput.getEditText().getText().toString()));
+                        } catch (NumberFormatException e) {
+                            activity.user.setAge(0);
+                        }
+
                         activity.user.setInterests(interests);
 
                         if (activity.uri != null)

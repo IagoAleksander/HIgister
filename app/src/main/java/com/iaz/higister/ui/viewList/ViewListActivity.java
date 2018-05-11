@@ -1,6 +1,7 @@
 package com.iaz.higister.ui.viewList;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,7 +25,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.ListItem;
@@ -33,9 +36,11 @@ import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.data.repository.ListRepository;
 import com.iaz.higister.data.repository.UserRepository;
 import com.iaz.higister.ui.base.BaseActivity;
+import com.iaz.higister.ui.gallery.GalleryActivity;
 import com.iaz.higister.ui.main.MainActivity;
 import com.iaz.higister.ui.search.SearchActivity;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
+import com.iaz.higister.util.ViewUtil;
 
 import java.util.ArrayList;
 
@@ -44,6 +49,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+import timber.log.Timber;
 
 import static com.iaz.higister.util.Constants.*;
 
@@ -64,6 +70,8 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     ImageView listLogoImage;
     @BindView(R.id.list_item_recycler)
     RecyclerView mRecyclerView;
+    @BindView(R.id.list_name)
+    TextView listName;
     @BindView(R.id.list_description)
     TextView listDescription;
     @BindView(R.id.label_text)
@@ -104,23 +112,41 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
         mViewListPresenter.attachView(this);
         setSupportActionBar(mToolbar);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        getSupportActionBar().setTitle("Test UserList");
 
         if (getIntent() != null)
             list = getIntent().getExtras().getParcelable("list");
 
         if (list != null) {
+            listName.setText(list.getName());
             listDescription.setText(list.getDescription());
             populateLabel(list.getType());
 
             if (list.getListPictureUri() != null) {
+
                 Glide.with(this)
+                        .asBitmap()
                         .load(list.getListPictureUri())
-                        .into(listLogoImage);
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                                Bitmap resourceWithBorder = ViewUtil.addWhiteBorder(resource, 3);
+                                listLogoImage.setImageBitmap(resourceWithBorder);
+                            }
+                        });
+
+                listLogoImage.setOnClickListener(view -> {
+                    Intent goToCarousel = new Intent(getApplicationContext(), GalleryActivity.class);
+                    ArrayList<String> listOfPaths = new ArrayList<>();
+                    listOfPaths.add(list.getListPictureUri());
+
+                    goToCarousel.putStringArrayListExtra("photos", listOfPaths);
+                    goToCarousel.putExtra("startPosition", 0);
+                    getApplicationContext().startActivity(goToCarousel);
+
+                });
             }
 
             if (list.uid != null) {
@@ -134,6 +160,15 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
 
                 if (list.getComments() != null && !list.getComments().isEmpty()) {
                     populateCommentsLayout();
+
+                    if (!list.isCommentsEnabled()) {
+                        addCommentButton.setVisibility(View.GONE);
+                    }
+                }
+                else if (!list.isCommentsEnabled()) {
+                    addCommentButton.setVisibility(View.GONE);
+                    commentsLayout.setVisibility(View.GONE);
+                    //TODO change button
                 }
                 addCommentButton.setOnClickListener(view -> new MaterialDialog.Builder(ViewListActivity.this)
                         .title("Add new comment")

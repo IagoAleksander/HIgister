@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.iaz.higister.data.model.ListItem;
@@ -44,16 +45,18 @@ public class ResultsAdapter extends BaseFlipAdapter {
             convertView = activity.getLayoutInflater().inflate(R.layout.friends_merge_page, parent, false);
             holder.leftAvatar = (ImageView) convertView.findViewById(R.id.first);
             holder.rightAvatar = (ImageView) convertView.findViewById(R.id.second);
+            holder.rightItem = (RelativeLayout) convertView.findViewById(R.id.second_item);
             holder.titleLeft = (TextView) convertView.findViewById(R.id.titleLeft);
             holder.titleRight = (TextView) convertView.findViewById(R.id.titleRight);
             holder.infoPage = activity.getLayoutInflater().inflate(R.layout.friends_info, parent, false);
             holder.nickName = (TextView) holder.infoPage.findViewById(R.id.item_title);
-            holder.emailTextView = (TextView) holder.infoPage.findViewById(R.id.item_description);
+            holder.itemDescription = (TextView) holder.infoPage.findViewById(R.id.item_description);
 //            holder.image = (ImageView) holder.infoPage.findViewById(R.id.item_image);
 
 //            for (int id : IDS_INTEREST)
 //                holder.interests.add((TextView) holder.infoPage.findViewById(id));
-            holder.choose = (Button) holder.infoPage.findViewById(R.id.item_buttom);
+            holder.choose = (Button) holder.infoPage.findViewById(R.id.item_select);
+            holder.close = (Button) holder.infoPage.findViewById(R.id.item_back);
 
             convertView.setTag(holder);
         } else {
@@ -69,10 +72,19 @@ public class ResultsAdapter extends BaseFlipAdapter {
                     holder.rightAvatar.setImageBitmap(((BaseItem) result2).getBit());
                     setTitle(holder, (BaseItem) result2, 1);
                 }
+                else {
+                    holder.rightItem.setVisibility(View.GONE);
+                }
                 break;
             default:
                 fillHolder(holder, position == 0 ? (BaseItem) result1 : (BaseItem) result2);
                 holder.infoPage.setTag(holder);
+                holder.close.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        closeListener.onClickClose();
+                    }
+                });
                 return holder.infoPage;
         }
 
@@ -102,7 +114,7 @@ public class ResultsAdapter extends BaseFlipAdapter {
         setClick(holder, item);
 
         holder.nickName.setText(item.title);
-        holder.emailTextView.setText(item.description);
+        holder.itemDescription.setText(item.description);
 
     }
 
@@ -111,18 +123,15 @@ public class ResultsAdapter extends BaseFlipAdapter {
 
         ImageView leftAvatar;
         ImageView rightAvatar;
+        RelativeLayout rightItem;
         View infoPage;
-        ImageView hexColorView;
         TextView titleLeft;
         TextView titleRight;
 
-        TextView nameTextView;
-
-        TextView emailTextView;
-        List<TextView> interests = new ArrayList<>();
+        TextView itemDescription;
         TextView nickName;
-        //        ImageView image;
         Button choose;
+        Button close;
     }
 
     public void setClick(MoviesViewHolder holder, BaseItem item) {

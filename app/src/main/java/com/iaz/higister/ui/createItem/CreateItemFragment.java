@@ -17,9 +17,12 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +56,10 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
     ImageView listLogoImage;
     @BindView(R.id.logo_placeholder)
     LinearLayout listLogoImagePlaceholder;
+    @BindView(R.id.base_item_layout)
+    LinearLayout baseItemLayout;
+    @BindView(R.id.list_type_spinner)
+    Spinner listTypeSpinner;
     @BindView(R.id.text_input_list_name)
     TextInputLayout listNameLayout;
     @BindView(R.id.text_input_list_desc)
@@ -99,59 +106,75 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
 
         if (listItem != null) {
 
-            if (listItem.getBaseItem() != null && listItem.getBaseItem().imageUrl != null) {
-                Glide.with(this)
-                        .load(listItem.getBaseItem().imageUrl)
-                        .listener(new RequestListener<Drawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                return false;
-                            }
+            if (listItem.getBaseItem() != null) {
 
-                            @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                listLogoImagePlaceholder.setVisibility(View.GONE);
-                                return false;
-                            }
-                        })
-                        .into(listLogoImage);
+                if (listItem.getBaseItem().imageUrl != null) {
+                    Glide.with(this)
+                            .load(listItem.getBaseItem().imageUrl)
+                            .listener(new RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                    listLogoImagePlaceholder.setVisibility(View.GONE);
+                                    return false;
+                                }
+                            })
+                            .into(listLogoImage);
+                }
+
+                if (listItem.getBaseItem().title != null)
+                    itemTitle.setText(listItem.getBaseItem().title);
+
+                if (listItem.getBaseItem().description != null)
+                itemDescription.setText(listItem.getBaseItem().description);
+            }
+            else {
+                baseItemLayout.setVisibility(View.GONE);
             }
 
-            itemTitle.setText(listItem.getName());
-            itemDescription.setText(listItem.getDescription());
+            if (listItem.getName() != null)
+                listNameLayout.getEditText().setText(listItem.getName());
+
+            if (listItem.getDescription() != null)
+                listDescriptionLayout.getEditText().setText(listItem.getDescription());
+
         }
 
         listNameLayout.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-                activity.listName = s.toString();
+            public void afterTextChanged(Editable editable) {
+                activity.listItem.setName(editable.toString());
             }
         });
 
         listDescriptionLayout.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-                activity.listDescription = s.toString();
+            public void afterTextChanged(Editable editable) {
+                activity.listItem.setDescription(editable.toString());
             }
         });
 
@@ -182,6 +205,8 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
             photoDialog.show();
 
         });
+
+        bindSpinnerLabel();
     }
 
     @Override
@@ -226,6 +251,51 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
         return activity;
     }
 
+    private void bindSpinnerLabel() {
 
+        String[] stringArray = getResources().getStringArray(R.array.list_type);
+
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(activity, R.layout.item_list_type, stringArray) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                return view;
+            }
+        };
+
+        listTypeSpinner.setAdapter(arrayAdapter);
+        listTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0)
+                    listItem.setType(position);
+                else
+                    listItem.setType(position-1);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        if (listItem != null) {
+            listTypeSpinner.setSelection(listItem.getType() + 1);
+
+            if (listItem.getBaseItem() != null) {
+                listTypeSpinner.setSelection(listItem.getBaseItem().getMyType() + 1);
+                listTypeSpinner.setEnabled(false);
+            }
+        }
+    }
 
 }

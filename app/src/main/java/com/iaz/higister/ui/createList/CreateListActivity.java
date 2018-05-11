@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -72,6 +73,10 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
     TextInputLayout listDescriptionLayout;
     @BindView(R.id.list_type_spinner)
     Spinner listTypeSpinner;
+    @BindView(R.id.checkbox_list_isVisible)
+    CheckBox isListVisible;
+    @BindView(R.id.checkbox_list_commentsEnabled)
+    CheckBox areCommentsEnabled;
     @BindView(R.id.activity_create_list_next_button)
     TextView nextButton;
 
@@ -105,6 +110,9 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
             list = getIntent().getExtras().getParcelable("list");
 
         if (list != null) {
+
+            getSupportActionBar().setTitle("Edit UserList");
+
             listNameLayout.getEditText().setText(list.getName());
             listDescriptionLayout.getEditText().setText(list.getDescription());
 
@@ -113,7 +121,11 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
                         .load(list.getListPictureUri())
                         .into(listLogoImage);
             }
-            getSupportActionBar().setTitle("Edit UserList");
+
+            isListVisible.setChecked(list.isVisibleForEveryone());
+            areCommentsEnabled.setChecked(list.isCommentsEnabled());
+
+            nextButton.setText("UPDATE LIST INFO");
         } else {
             getSupportActionBar().setTitle("Create UserList");
         }
@@ -205,10 +217,16 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
                 list.setDescription(listDescriptionLayout.getEditText().getText().toString());
 //                mCreateListPresenter.saveList(list);
 
-                list.setListPictureUri(uri);
+                if (uri != null)
+                    list.setListPictureUri(uri);
+
                 list.setCreatorId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                list.setCreatorName("Tester");
+                //TODO
 
                 list.setType(typeSelected);
+                list.setVisibleForEveryone(isListVisible.isChecked());
+                list.setCommentsEnabled(areCommentsEnabled.isChecked());
 
                 if (list.uid == null) {
                     Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);

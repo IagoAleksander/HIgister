@@ -23,6 +23,7 @@ public class UserList implements Parcelable{
     private boolean commentsEnabled;
     private String listPictureUri;
     private String creatorId;
+    private String creatorName;
     private ArrayList<String> favoritedBy = new ArrayList<>();
     private ArrayList<String> comments = new ArrayList<>();
 
@@ -40,6 +41,7 @@ public class UserList implements Parcelable{
         setCommentsEnabled(in.readByte() != 0);
         setListPictureUri(in.readString());
         setCreatorId(in.readString());
+        setCreatorName(in.readString());
         setListItems(in.createTypedArrayList(ListItem.CREATOR));
         setFavoritedBy(in.createStringArrayList());
         in.readStringList(getComments());
@@ -60,6 +62,7 @@ public class UserList implements Parcelable{
         dest.writeByte(isCommentsEnabled() ? (byte) 1 : (byte) 0);
         dest.writeString(getListPictureUri());
         dest.writeString(getCreatorId());
+        dest.writeString(getCreatorName());
         dest.writeTypedList(getListItems());
         dest.writeStringList(getFavoritedBy());
         dest.writeStringList(getComments());
@@ -133,6 +136,14 @@ public class UserList implements Parcelable{
 
     public void setCreatorId(String creatorId) {
         this.creatorId = creatorId;
+    }
+
+    public String getCreatorName() {
+        return creatorName;
+    }
+
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
     }
 
     public ArrayList<String> getFavoritedBy() {

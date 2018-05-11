@@ -3,6 +3,8 @@ package com.iaz.higister.ui.search;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,6 +28,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 import com.iaz.higister.util.Constants;
+import com.iaz.higister.util.ViewUtil;
 import com.yalantis.flipviewpager.utils.FlipSettings;
 
 import java.io.BufferedInputStream;
@@ -124,25 +127,6 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
 
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-
-//                Log.d ("height", ""+dx);
-//                if (activity.textLayout.getVisibility() == View.VISIBLE) {
-//                activity.textLayout.setVisibility(View.GONE);
-//                activity.textView.setVisibility(View.VISIBLE);
-
-//                    activity.canChange = false;
-//                }
-//                else {
-//                    activity.canChange = true;
-//                }
-            }
-        });
-
         activity.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -205,8 +189,10 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
                                 @Override
                                 public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
                                     counterList.put(item.getMyType(), counterList.get(item.getMyType()) + 1);
-//
-                                    item.setBit(resource);
+
+                                    Bitmap resourceWithBorder = ViewUtil.addWhiteBorder(resource, 3);
+
+                                    item.setBit(resourceWithBorder);
                                     if (counterList.get(item.getMyType()) == itens.size()) {
                                         Timber.d("sucesso");
                                         itemsCollection.put(item.getMyType(), itens);
@@ -296,7 +282,7 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
                 if (activity.list.getType() != 0) {
                     return 1;
                 } else {
-                    return 8;
+                    return 7;
                 }
             }
 

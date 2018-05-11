@@ -117,14 +117,7 @@ public class CreateItemPresenter extends BasePresenter<CreateItemMvpView> {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
                         && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
 
-                    ContentValues values = new ContentValues();
-                    values.put(MediaStore.Images.Media.TITLE, "New picture");
-                    values.put(MediaStore.Images.Media.DESCRIPTION, "From your camera");
-                    Uri imageUri = activity.getContentResolver().insert(
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                    activity.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                    getPhoto();
                     getMvpView().dismissDialog();
                 } else {
                     getMvpView().showSnackBar("É necessário permitir o acesso à camera");

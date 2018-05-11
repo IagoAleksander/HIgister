@@ -41,6 +41,7 @@ public class ListItem implements Parcelable{
         dest.writeString(getName());
         dest.writeString(getDescription());
         dest.writeInt(getType());
+        //TODO
         dest.writeTypedObject(getBaseItem(), PARCELABLE_WRITE_RETURN_VALUE);
 
     }

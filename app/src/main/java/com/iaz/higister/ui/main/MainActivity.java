@@ -1,5 +1,7 @@
 package com.iaz.higister.ui.main;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -8,6 +10,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +25,8 @@ import android.widget.TextView;
 
 
 import com.bumptech.glide.Glide;
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.User;
 import com.iaz.higister.ui.base.BaseActivity;
@@ -29,6 +34,8 @@ import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.util.AppBarStateChangeListener;
 import com.iaz.higister.util.SectionsPagerAdapter;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
+import com.truizlop.fabreveallayout.CircularExpandingView;
+import com.truizlop.fabreveallayout.FABRevealLayout;
 
 import java.util.ArrayList;
 
@@ -82,6 +89,9 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 
     @BindView(R.id.search_text)
     EditText searchText;
+
+    @BindView(R.id.circular)
+    CircularExpandingView circular;
 
 //    @BindView(R.id.tabs)
 //    TabLayout mTabLayout;
@@ -143,6 +153,9 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
             }
         });
 
+//        fabRevealLayout.revealSecondaryView();
+//        fabRevealLayout.revealSecondaryView();
+
 //        mTabLayout.setupWithViewPager(mViewPager);
 //        mTabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.accent));
 //        mTabLayout.setSelectedTabIndicatorHeight(7);
@@ -202,8 +215,8 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        getMenuInflater().inflate(R.menu.menu_edit, menu);
 //
-////        MenuItem editButton = menu.findItem(R.id.action_edit);
-////        editButton.setVisible(mViewPager.getCurrentItem() == 0);
+////        MenuItem editButtonLayout = menu.findItem(R.id.action_edit);
+////        editButtonLayout.setVisible(mViewPager.getCurrentItem() == 0);
 //
 //        return true;
 //    }
@@ -235,6 +248,8 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
         if (user.getProfilePictureUri() != null)
             callGlide(Uri.parse(user.getProfilePictureUri()));
 
+        getSupportActionBar().setTitle(user.getName());
+        logUserToCrashlitics();
 //        setFab(PROFILE_TAB_INDEX);
 //        mViewPager.setCurrentItem(PROFILE_TAB_INDEX);
     }
@@ -252,7 +267,6 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
                     ((ProfileFragment) fragment).swapBetweenDisplayAndEditProfileInfos();
                 }
             });
-            getSupportActionBar().setTitle("My Profile");
         } else if (position == LISTS_TAB_INDEX) {
             fab.setVisibility(View.VISIBLE);
             fab.setImageResource(R.drawable.ic_add);
@@ -260,27 +274,25 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
                 Intent intent = new Intent(MainActivity.this, CreateListActivity.class);
                 MainActivity.this.startActivity(intent);
             });
-            getSupportActionBar().setTitle("My Lists");
         } else if (position == FAVOURITES_TAB_INDEX) {
             fab.setVisibility(View.GONE);
-            getSupportActionBar().setTitle("Favorited Lists");
         } else if (position == FEED_TAB_INDEX) {
             fab.setVisibility(View.GONE);
-            getSupportActionBar().setTitle("My Feed");
         } else if (position == SEARCH_TAB_INDEX) {
             fab.setVisibility(View.VISIBLE);
             fab.setImageResource(R.drawable.ic_search_white_24dp);
             fab.setOnClickListener(v -> {
 
-                if (searchLayout.getVisibility() == View.GONE)
-                    searchLayout.setVisibility(View.VISIBLE);
+                if (searchLayout.getVisibility() == View.GONE) {
+                    circular.setVisibility(View.VISIBLE);
+                    animate();
+                }
                 else {
                     if (fragment != null && fragment instanceof MyListsFragment) {
                         ((MyListsFragment) fragment).mListsPresenter.search(searchText.getText().toString());
                     }
                 }
             });
-            getSupportActionBar().setTitle("Search");
         }
     }
 
@@ -300,33 +312,37 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
         }
     }
 
-//    private void myNewGraphReq(String friendlistId) {
-//        final String graphPath = "/"+friendlistId+"/members/";
-//        AccessToken token = AccessToken.getCurrentAccessToken();
-//        GraphRequest request = new GraphRequest(token, graphPath, null, HttpMethod.GET, new GraphRequest.Callback() {
-//            @Override
-//            public void onCompleted(GraphResponse graphResponse) {
-//                JSONObject object = graphResponse.getJSONObject();
-//                try {
-//                    JSONArray arrayOfUsersInFriendList= object.getJSONArray("data");
-//                /* Do something with the user list */
-//                /* ex: get first user in list, "name" */
-//                    JSONObject user = arrayOfUsersInFriendList.getJSONObject(0);
-//                    String usersName = user.getString("name");
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        Bundle param = new Bundle();
-//        param.putString("fields", "name");
-//        request.setParameters(param);
-//        request.executeAsync();
-//    }
-
     @Override
     public void onBackPressed()
     {
         moveTaskToBack(true);
     }
+
+    public void animate() {
+        circular.setColor(ContextCompat.getColor(MainActivity.this, R.color.primary_light));
+        Animator expandAnimator = circular.expand();
+
+        expandAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+
+                circular.setVisibility(View.GONE);
+                circular.contract();
+                searchLayout.setVisibility(View.VISIBLE);
+            }
+        });
+        expandAnimator.start();
+    }
+
+    private void logUserToCrashlitics() {
+        Crashlytics.setUserIdentifier(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        if (FirebaseAuth.getInstance().getCurrentUser().getEmail() != null)
+        Crashlytics.setUserEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+
+        if (user != null)
+            Crashlytics.setUserName(user.getName());
+    }
+
 }

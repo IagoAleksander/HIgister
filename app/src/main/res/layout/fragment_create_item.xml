@@ -5,16 +5,18 @@
     android:layout_height="match_parent"
     android:background="@color/primary">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/item_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/appbar"
         android:layout_margin="16dp"
-        android:layout_below="@id/appbar">
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <RelativeLayout
             android:id="@+id/listLogoImageLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="96dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="16dp">
 
@@ -53,46 +55,46 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@id/listLogoImageView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
                 android:text="Click to change"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white" />
 
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/base_item_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/listLogoImageLayout"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/item_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:maxLines="3"/>
+                android:maxLines="3"
+                android:textColor="@color/white" />
 
             <TextView
                 android:id="@+id/item_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:textColor="@color/white"
+                android:ellipsize="end"
                 android:maxLines="7"
-                android:ellipsize="end"/>
+                android:textColor="@color/white" />
 
         </LinearLayout>
-    </RelativeLayout>
+    </LinearLayout>
 
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         android:layout_below="@id/item_header"
-        android:layout_above="@+id/bottom_bar">
+        android:fitsSystemWindows="true">
+
 
         <LinearLayout
             android:id="@+id/constraint_layout"
@@ -100,11 +102,44 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/text_input_area"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp">
+
+                <Spinner
+                    android:id="@+id/list_type_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginStart="4dp"
+                    android:background="@color/white" />
+
+                <!--<TextView-->
+                <!--android:id="@+id/text_view_area_error"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginStart="4dp"-->
+                <!--android:layout_marginTop="4dp"-->
+                <!--android:text="@string/label_area_error"-->
+                <!--android:textColor="@color/md_red_500"-->
+                <!--android:textSize="12sp"-->
+                <!--android:visibility="gone" />-->
+
+            </android.support.design.widget.TextInputLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingTop="4dp">
 
                 <android.support.design.widget.TextInputLayout
                     android:id="@+id/text_input_list_name"
@@ -147,22 +182,6 @@
                         android:textSize="16sp" />
 
                 </android.support.design.widget.TextInputLayout>
-
-                <CheckBox
-                    android:id="@+id/checkbox_list_isVisible"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Visible to others"
-                    android:textColor="@color/white" />
-
-                <CheckBox
-                    android:id="@+id/checkbox_list_commentsEnabled"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Comments enabled"
-                    android:textColor="@color/white" />
 
             </LinearLayout>
 

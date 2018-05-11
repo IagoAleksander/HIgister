@@ -8,8 +8,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,6 +46,8 @@ public class CreateItemActivity extends BaseActivity {
     FrameLayout frameLayout;
     @BindView(R.id.next_button)
     TextView nextButton;
+    @BindView(R.id.previous_button)
+    TextView previousButton;
 
     UserList list;
     int position;
@@ -87,8 +94,16 @@ public class CreateItemActivity extends BaseActivity {
 
             if (position == -1) {
                 getSupportActionBar().setTitle("Create List Item");
+                previousButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        finish();
+                    }
+                });
             } else {
                 getSupportActionBar().setTitle("Edit List Item");
+                previousButton.setVisibility(View.GONE);
+                nextButton.setText("Save");
             }
 
             Fragment newFragment = CreateItemFragment.newInstance(listItem);
@@ -103,11 +118,10 @@ public class CreateItemActivity extends BaseActivity {
 
                 position = list.getListItems().size() - 1;
 
-                list.getListItems().get(position).setName(listName);
-                list.getListItems().get(position).setDescription(listDescription);
-
                 if (list.getListItems().size() == 1) {
                     list.setCreatorId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    list.setCreatorName("Tester");
+                    //TODO nome do criador
 
                     listRepository.saveList(list, new ListRepository.OnListSaved() {
                         @Override
@@ -138,9 +152,6 @@ public class CreateItemActivity extends BaseActivity {
                     });
                 }
             } else {
-
-                list.getListItems().get(position).setName(listName);
-                list.getListItems().get(position).setDescription(listDescription);
 
                 listRepository.updateItem(list, position, new ListRepository.OnItemUpdated() {
                     @Override
