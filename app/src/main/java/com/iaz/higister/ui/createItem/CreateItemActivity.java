@@ -129,6 +129,7 @@ public class CreateItemActivity extends BaseActivity {
                             Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
                             intent.putExtra("list", list);
                             CreateItemActivity.this.startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                         }
 
                         @Override
@@ -143,6 +144,7 @@ public class CreateItemActivity extends BaseActivity {
                             Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
                             intent.putExtra("list", list);
                             CreateItemActivity.this.startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                         }
 
                         @Override
@@ -159,6 +161,7 @@ public class CreateItemActivity extends BaseActivity {
                         Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
                         intent.putExtra("list", list);
                         CreateItemActivity.this.startActivity(intent);
+                        overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                     }
 
                     @Override

@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +36,6 @@ import com.iaz.higister.util.AppBarStateChangeListener;
 import com.iaz.higister.util.SectionsPagerAdapter;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.truizlop.fabreveallayout.CircularExpandingView;
-import com.truizlop.fabreveallayout.FABRevealLayout;
 
 import java.util.ArrayList;
 
@@ -93,6 +93,9 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
     @BindView(R.id.circular)
     CircularExpandingView circular;
 
+    @BindView(R.id.insert_text_layout)
+    CardView insertTextLayout;
+
 //    @BindView(R.id.tabs)
 //    TabLayout mTabLayout;
 
@@ -107,7 +110,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
@@ -133,7 +136,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 
         fm = getSupportFragmentManager();
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(fm, this);
+        mSectionsPagerAdapter = new SectionsPagerAdapter(fm, this, 0);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setOffscreenPageLimit(4);
 
@@ -256,7 +259,6 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 
     public void setFab (int position) {
 
-        searchLayout.setVisibility(View.GONE);
         Fragment fragment = fm.findFragmentByTag("android:switcher:" + R.id.container + ":" +position);
 
         if (position == PROFILE_TAB_INDEX) {
@@ -267,29 +269,41 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
                     ((ProfileFragment) fragment).swapBetweenDisplayAndEditProfileInfos();
                 }
             });
+            insertTextLayout.setVisibility(View.GONE);
+            searchLayout.setVisibility(View.GONE);
         } else if (position == LISTS_TAB_INDEX) {
             fab.setVisibility(View.VISIBLE);
             fab.setImageResource(R.drawable.ic_add);
             fab.setOnClickListener(v -> {
                 Intent intent = new Intent(MainActivity.this, CreateListActivity.class);
                 MainActivity.this.startActivity(intent);
+                fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
             });
+            insertTextLayout.setVisibility(View.GONE);
+            searchLayout.setVisibility(View.GONE);
         } else if (position == FAVOURITES_TAB_INDEX) {
             fab.setVisibility(View.GONE);
+            insertTextLayout.setVisibility(View.GONE);
+            searchLayout.setVisibility(View.GONE);
         } else if (position == FEED_TAB_INDEX) {
             fab.setVisibility(View.GONE);
+            insertTextLayout.setVisibility(View.GONE);
+            searchLayout.setVisibility(View.GONE);
         } else if (position == SEARCH_TAB_INDEX) {
             fab.setVisibility(View.VISIBLE);
             fab.setImageResource(R.drawable.ic_search_white_24dp);
+            circular.setVisibility(View.VISIBLE);
+            animate();
             fab.setOnClickListener(v -> {
 
+                insertTextLayout.setVisibility(View.GONE);
                 if (searchLayout.getVisibility() == View.GONE) {
                     circular.setVisibility(View.VISIBLE);
                     animate();
                 }
                 else {
                     if (fragment != null && fragment instanceof MyListsFragment) {
-                        ((MyListsFragment) fragment).mListsPresenter.search(searchText.getText().toString());
+                        ((MyListsFragment) fragment).mListsPresenter.search(searchText.getText().toString(), 8);
                     }
                 }
             });
@@ -330,6 +344,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
                 circular.setVisibility(View.GONE);
                 circular.contract();
                 searchLayout.setVisibility(View.VISIBLE);
+                insertTextLayout.setVisibility(View.VISIBLE);
             }
         });
         expandAnimator.start();

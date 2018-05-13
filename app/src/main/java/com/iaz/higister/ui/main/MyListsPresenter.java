@@ -1,20 +1,10 @@
 package com.iaz.higister.ui.main;
 
-import android.support.annotation.NonNull;
-import android.util.Log;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.iaz.higister.data.DataManager;
-import com.iaz.higister.data.model.FavoritedList;
 import com.iaz.higister.data.model.User;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.data.repository.ListRepository;
+import com.iaz.higister.data.repository.UserRepository;
 import com.iaz.higister.injection.ConfigPersistent;
 import com.iaz.higister.ui.base.BasePresenter;
 
@@ -46,17 +36,32 @@ public class MyListsPresenter extends BasePresenter<MyListsMvpView> {
         if (mDisposable != null) mDisposable.dispose();
     }
 
-    public void search(String filter) {
-        getMvpView().getFragment().listRepository.filterResult(filter, new ListRepository.OnUpdateLists() {
-            @Override
-            public void onSuccess(ArrayList<UserList> userLists) {
-                getMvpView().getFragment().updateData(userLists);
-            }
+    public void search(String filter, int type) {
+        if (type == 8)  {
+            getMvpView().getFragment().userRepository.filterResult(filter, new UserRepository.OnGetUsers() {
+                @Override
+                public void onSuccess(ArrayList<User> peopleList) {
+                    getMvpView().getFragment().updateDataPeople(peopleList);
+                }
 
-            @Override
-            public void onFailed(Exception e) {
+                @Override
+                public void onFailure(String exception) {
 
-            }
-        });
+                }
+            });
+        }
+        else {
+            getMvpView().getFragment().listRepository.filterResult(filter, new ListRepository.OnUpdateLists() {
+                @Override
+                public void onSuccess(ArrayList<UserList> userLists) {
+                    getMvpView().getFragment().updateDataLists(userLists);
+                }
+
+                @Override
+                public void onFailed(Exception e) {
+
+                }
+            });
+        }
     }
 }

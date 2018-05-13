@@ -63,8 +63,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"
                                 android:adjustViewBounds="true"
-                                android:src="@drawable/large_movie_poster"
-                                android:background="@color/primary_light"/>
+                                android:src="@drawable/large_movie_poster" />
 
                         </LinearLayout>
                     </RelativeLayout>
@@ -123,11 +122,12 @@
         <LinearLayout
             android:id="@+id/constraint_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingBottom="96dp">
+            android:paddingBottom="64dp">
 
             <LinearLayout
+                android:id="@+id/list_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
@@ -192,9 +192,8 @@
                     android:layout_height="match_parent"
                     android:background="@color/primary"
                     android:gravity="center"
-                    android:paddingEnd="80dp"
-                    android:paddingStart="80dp"
-                    android:paddingTop="50dp"
+                    android:padding="80dp"
+                    android:layout_gravity="center"
                     android:text="Add at least one item to finish list creation"
                     android:textColor="@color/accent"
                     android:textSize="20sp" />

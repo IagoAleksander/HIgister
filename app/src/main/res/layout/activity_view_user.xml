@@ -169,12 +169,12 @@
                 app:stl_defaultTabBackground="?attr/selectableItemBackground"
                 app:stl_defaultTabTextAllCaps="true"
                 app:stl_defaultTabTextColor="@color/white"
-                app:stl_defaultTabTextHorizontalPadding="16dp"
+                app:stl_defaultTabTextHorizontalPadding="12dp"
                 app:stl_defaultTabTextMinWidth="0dp"
                 app:stl_defaultTabTextSize="12sp"
                 app:stl_distributeEvenly="true"
-                app:stl_dividerColor="#4D000000"
-                app:stl_dividerThickness="0dp"
+                app:stl_dividerColor="#40C4FF"
+                app:stl_dividerThickness="1dp"
                 app:stl_drawDecorationAfterTab="false"
                 app:stl_indicatorAlwaysInCenter="false"
                 app:stl_indicatorColor="#40C4FF"
@@ -182,7 +182,7 @@
                 app:stl_indicatorGravity="bottom"
                 app:stl_indicatorInFront="false"
                 app:stl_indicatorInterpolation="smart"
-                app:stl_indicatorThickness="4dp"
+                app:stl_indicatorThickness="2dp"
                 app:stl_indicatorWidth="auto"
                 app:stl_indicatorWithoutPadding="false"
                 app:stl_overlineColor="#4D000000"
@@ -253,26 +253,6 @@
         </LinearLayout>
 
     </android.support.design.widget.CoordinatorLayout>
-
-    <com.truizlop.fabreveallayout.CircularExpandingView
-        android:id="@+id/circular"
-        android:layout_width="match_parent"
-        android:layout_height="95dp"
-        android:layout_alignParentBottom="true"/>
-
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="20dp"
-        android:tint="@color/white"
-        android:visibility="gone"
-        app:backgroundTint="@color/accent"
-        app:fabSize="normal" />
 </RelativeLayout>
 
 

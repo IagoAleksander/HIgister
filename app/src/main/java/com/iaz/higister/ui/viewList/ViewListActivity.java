@@ -82,7 +82,8 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     LinearLayout commentsContainer;
     @BindView(R.id.add_comment_button)
     Button addCommentButton;
-
+    @BindView(R.id.list_layout)
+    LinearLayout listLayout;
     @BindView(R.id.add_item_text_layout)
     CardView addItemTextLayout;
     @BindView(R.id.bottom_bar)
@@ -145,6 +146,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
                     goToCarousel.putStringArrayListExtra("photos", listOfPaths);
                     goToCarousel.putExtra("startPosition", 0);
                     getApplicationContext().startActivity(goToCarousel);
+                    overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
 
                 });
             }
@@ -198,6 +200,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
             else {
                 addCommentButton.setVisibility(View.GONE);
                 commentsLayout.setVisibility(View.GONE);
+                listLayout.setVisibility(View.GONE);
                 addItemTextLayout.setVisibility(View.VISIBLE);
             }
 
@@ -214,6 +217,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
         }
         else {
             finish();
+            overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
         }
 
     }
@@ -226,7 +230,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
             case android.R.id.home:
                 Intent intent = new Intent(this, MainActivity.class);
                 this.startActivity(intent);
-//                overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
                 break;
 //            case R.id.action_next:
 //                goToNextSection();
@@ -380,6 +384,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     {
         Intent intent = new Intent(this, MainActivity.class);
         this.startActivity(intent);
+        overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
     }
 
 }

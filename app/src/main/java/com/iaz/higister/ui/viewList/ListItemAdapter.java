@@ -79,6 +79,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListIt
             intent.putParcelableArrayListExtra("listItems", list.getListItems());
             intent.putExtra("position", holder.getAdapterPosition());
             activity.startActivity(intent);
+            activity.overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
         });
 
         if (list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
@@ -89,6 +90,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListIt
                 intent.putExtra("list", list);
                 intent.putExtra("position", holder.getAdapterPosition());
                 activity.startActivity(intent);
+                activity.overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
             });
 
             holder.removeButton.setVisibility(View.VISIBLE);

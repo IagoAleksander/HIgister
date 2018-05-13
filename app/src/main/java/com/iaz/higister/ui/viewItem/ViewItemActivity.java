@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.ListItem;
 import com.iaz.higister.ui.base.BaseActivity;
+import com.iaz.higister.ui.main.MainActivity;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
 
 import java.util.ArrayList;
@@ -124,7 +125,6 @@ public class ViewItemActivity extends BaseActivity {
                 }
 
 
-
             }
 
             @Override
@@ -142,11 +142,8 @@ public class ViewItemActivity extends BaseActivity {
         switch (id) {
             case android.R.id.home:
                 finish();
-//                overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
                 break;
-//            case R.id.action_next:
-//                goToNextSection();
-//                break;
             default:
                 return true;
         }
@@ -175,6 +172,13 @@ public class ViewItemActivity extends BaseActivity {
             return ViewItemFragment.newInstance(listItems.get(position));
         }
 
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        finish();
+        overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
     }
 
 }

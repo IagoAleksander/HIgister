@@ -1,13 +1,5 @@
 package com.iaz.higister.data;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import timber.log.Timber;
-
 import com.iaz.higister.data.model.BaseItem;
 import com.iaz.higister.data.model.ComicVine.ComicVineResponse;
 import com.iaz.higister.data.model.ComicVine.Results;
@@ -25,8 +17,16 @@ import com.iaz.higister.data.remote.ComicsService;
 import com.iaz.higister.data.remote.MoviesService;
 import com.iaz.higister.data.remote.MusicsService;
 import com.iaz.higister.ui.search.RecyclerViewFragment2;
-import com.iaz.higister.ui.search.SearchActivity;
 import com.iaz.higister.util.Constants;
+
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import timber.log.Timber;
+
+import static com.iaz.higister.util.Constants.BOOKS;
 
 /**
  * Created by alksander on 01/03/2018.
@@ -64,6 +64,7 @@ public class BackendManager {
                     @Override
                     public void onFailure(Call<OmdbResponse> call, Throwable t) {
                         Timber.d(t.toString());
+                        activity.showItems(new ArrayList<>(), type);
                     }
                 }
 
@@ -103,6 +104,7 @@ public class BackendManager {
                     @Override
                     public void onFailure(Call<MyAnimeListResponse> call, Throwable t) {
                         Timber.d(t.toString());
+                        activity.showItems(new ArrayList<>(), type);
                     }
                 }
 
@@ -128,12 +130,13 @@ public class BackendManager {
                             }
                         }
 
-                        activity.showItems(results, Constants.BOOKS);
+                        activity.showItems(results, BOOKS);
                     }
 
                     @Override
                     public void onFailure(Call<GoodreadsResponse> call, Throwable t) {
                         Timber.d(t.toString());
+                        activity.showItems(new ArrayList<BaseItem>(), BOOKS);
                     }
                 }
 
@@ -165,6 +168,7 @@ public class BackendManager {
                     @Override
                     public void onFailure(Call<LastFmResponse> call, Throwable t) {
                         Timber.d(t.toString());
+                        activity.showItems(new ArrayList<BaseItem>(), Constants.MUSICS);
                     }
                 }
 
@@ -196,6 +200,7 @@ public class BackendManager {
                     @Override
                     public void onFailure(Call<ComicVineResponse> call, Throwable t) {
                         Timber.d(t.toString());
+                        activity.showItems(new ArrayList<BaseItem>(), Constants.COMICS);
                     }
                 }
 

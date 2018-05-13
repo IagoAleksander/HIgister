@@ -12,6 +12,8 @@ import com.iaz.higister.ui.main.ProfileFragment;
 import com.iaz.higister.ui.splash.SplashActivity;
 import com.iaz.higister.ui.viewItem.ViewItemActivity;
 import com.iaz.higister.ui.viewList.ViewListActivity;
+import com.iaz.higister.ui.viewUser.UserListsFragment;
+import com.iaz.higister.ui.viewUser.ViewUserActivity;
 
 /**
  * This component inject dependencies to all Activities across the application
@@ -37,5 +39,7 @@ public interface ActivityComponent {
     void inject(CreateItemActivity createItemActivity);
 
     void inject(ViewItemActivity viewItemActivity);
+
+    void inject(UserListsFragment listsFragment);
 
 }

@@ -14,7 +14,6 @@ import com.iaz.higister.ui.createItem.CreateItemActivity;
 import com.yalantis.flipviewpager.adapter.BaseFlipAdapter;
 import com.yalantis.flipviewpager.utils.FlipSettings;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.iaz.higister.R;
@@ -42,13 +41,13 @@ public class ResultsAdapter extends BaseFlipAdapter {
 
         if (convertView == null) {
             holder = new MoviesViewHolder();
-            convertView = activity.getLayoutInflater().inflate(R.layout.friends_merge_page, parent, false);
+            convertView = activity.getLayoutInflater().inflate(R.layout.item_result_merge_page, parent, false);
             holder.leftAvatar = (ImageView) convertView.findViewById(R.id.first);
             holder.rightAvatar = (ImageView) convertView.findViewById(R.id.second);
             holder.rightItem = (RelativeLayout) convertView.findViewById(R.id.second_item);
             holder.titleLeft = (TextView) convertView.findViewById(R.id.titleLeft);
             holder.titleRight = (TextView) convertView.findViewById(R.id.titleRight);
-            holder.infoPage = activity.getLayoutInflater().inflate(R.layout.friends_info, parent, false);
+            holder.infoPage = activity.getLayoutInflater().inflate(R.layout.item_result_info, parent, false);
             holder.nickName = (TextView) holder.infoPage.findViewById(R.id.item_title);
             holder.itemDescription = (TextView) holder.infoPage.findViewById(R.id.item_description);
 //            holder.image = (ImageView) holder.infoPage.findViewById(R.id.item_image);

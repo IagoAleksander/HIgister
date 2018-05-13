@@ -90,7 +90,7 @@ public class LogInFragment extends AuthFragment{
 
     @Override
     public int authLayout() {
-        return R.layout.login_fragment;
+        return R.layout.fragment_login;
     }
 
     @Override

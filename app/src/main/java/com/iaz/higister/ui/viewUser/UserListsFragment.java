@@ -1,25 +1,20 @@
-package com.iaz.higister.ui.main;
+package com.iaz.higister.ui.viewUser;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.higister.R;
-import com.iaz.higister.data.model.User;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.data.repository.ListRepository;
 import com.iaz.higister.data.repository.UserRepository;
-import com.iaz.higister.util.SpacesItemDecoration;
 
 import java.util.ArrayList;
 
@@ -32,10 +27,10 @@ import butterknife.ButterKnife;
  * Created by alksander on 05/03/2018.
  */
 
-public class MyListsFragment extends Fragment implements MyListsMvpView {
+public class UserListsFragment extends Fragment implements UserListsMvpView {
 
     @Inject
-    MyListsPresenter mListsPresenter;
+    UserListsPresenter mListsPresenter;
 
     @BindView(R.id.recyclerView)
     RecyclerView mRecyclerView;
@@ -43,21 +38,20 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
     @BindView(R.id.lists_header_text)
     TextView listsHeaderText;
 
-    MainActivity activity;
+    ViewUserActivity activity;
 
-    public MyListsAdapter mListAdapter;
-    public PeopleAdapter mPeopleAdapter;
+    public UserListsAdapter mListAdapter;
     String type;
 
     ListRepository listRepository = new ListRepository();
     UserRepository userRepository = new UserRepository();
 
-    public static MyListsFragment newInstance(String type) {
-        MyListsFragment myListsFragment = new MyListsFragment();
+    public static UserListsFragment newInstance(String type) {
+        UserListsFragment userListsFragment = new UserListsFragment();
         Bundle args = new Bundle();
         args.putString("type", type);
-        myListsFragment.setArguments(args);
-        return myListsFragment;
+        userListsFragment.setArguments(args);
+        return userListsFragment;
     }
 
     // Store instance variables based on arguments passed
@@ -65,7 +59,7 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         type = getArguments().getString("type");
-        activity = (MainActivity) getActivity();
+        activity = (ViewUserActivity) getActivity();
     }
 
     @Override
@@ -81,14 +75,14 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        activity = (MainActivity) getActivity();
+        activity = (ViewUserActivity) getActivity();
         activity.activityComponent().inject(this);
 
         mListsPresenter.attachView(this);
 
 
         if (type.equals("created")) {
-            listRepository.receiveListsOfUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), new ListRepository.OnUpdateLists() {
+            listRepository.receiveListsOfUser(activity.user.uid, new ListRepository.OnUpdateLists() {
                 @Override
                 public void onSuccess(ArrayList<UserList> userLists) {
                     updateDataLists(userLists);
@@ -100,19 +94,11 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
                 }
             });
 
-            listsHeaderText.setText("My created lists:");
-        }
-        else if (type.equals("favorited")) {
-            listRepository.receiveFavoritesOfUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), new ListRepository.OnUpdateLists() {
+            listsHeaderText.setVisibility(View.GONE);
+        } else if (type.equals("favorited")) {
+            listRepository.receiveFavoritesOfUser(activity.user.uid, new ListRepository.OnUpdateLists() {
                 @Override
                 public void onSuccess(ArrayList<UserList> userLists) {
-
-                    activity.favoritedListsId.clear();
-
-                    for (UserList list : userLists) {
-                        activity.favoritedListsId.add(list.uid);
-                    }
-
                     updateDataLists(userLists);
 
                 }
@@ -123,31 +109,13 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
                 }
             });
 
-            listsHeaderText.setText("My favorited lists:");
-        }
-       else if (type.equals("feed")) {
-            listRepository.receiveFeed(new ListRepository.OnUpdateLists() {
-                @Override
-                public void onSuccess(ArrayList<UserList> userLists) {
-                    updateDataLists(userLists);
-                }
-
-                @Override
-                public void onFailed(Exception e) {
-                    Log.e("receiveMyLists: ", "failed", e);
-                }
-            });
-
-            listsHeaderText.setText("My feed:");
-        }
-        else {
-            listsHeaderText.setText("Search Lists:");
+            listsHeaderText.setVisibility(View.GONE);
         }
 
     }
 
     @Override
-    public MyListsFragment getFragment() {
+    public UserListsFragment getFragment() {
         return this;
     }
 
@@ -155,31 +123,13 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
     public void updateDataLists(ArrayList<UserList> lists) {
 
         if (mListAdapter == null) {
-            mListAdapter = new MyListsAdapter(getFragment(), lists, type);
-        }
-        else {
+            mListAdapter = new UserListsAdapter(this, lists, type);
+        } else {
             mListAdapter.setLists(lists);
             mListAdapter.notifyDataSetChanged();
         }
 
         mRecyclerView.setAdapter(mListAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25,
-                getResources().getDisplayMetrics());
-        mRecyclerView.addItemDecoration(new SpacesItemDecoration(space));
-    }
-
-    public void updateDataPeople(ArrayList<User> peopleList) {
-
-        if (mPeopleAdapter == null) {
-            mPeopleAdapter = new PeopleAdapter(this, peopleList);
-        }
-        else {
-            mPeopleAdapter.setPeople(peopleList);
-            mPeopleAdapter.notifyDataSetChanged();
-        }
-
-        mRecyclerView.setAdapter(mPeopleAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 }

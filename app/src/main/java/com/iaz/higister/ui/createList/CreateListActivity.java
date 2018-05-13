@@ -232,6 +232,7 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
                     Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
                     intent.putExtra("list", list);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                 } else {
                     listRepository.updateList(list, new ListRepository.OnListUpdated() {
                         @Override
@@ -239,6 +240,7 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
                             Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
                             intent.putExtra("list", list);
                             startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                         }
 
                         @Override

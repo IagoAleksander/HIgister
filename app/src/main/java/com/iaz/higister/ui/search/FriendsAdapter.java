@@ -1,14 +1,11 @@
 package com.iaz.higister.ui.search;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.iaz.higister.ui.createItem.CreateItemActivity;
 import com.yalantis.flipviewpager.adapter.BaseFlipAdapter;
 import com.yalantis.flipviewpager.utils.FlipSettings;
 
@@ -35,10 +32,10 @@ public class FriendsAdapter extends BaseFlipAdapter {
 
             if (convertView == null) {
                 holder = new FriendsHolder();
-                convertView = activity.getLayoutInflater().inflate(R.layout.friends_merge_page, parent, false);
+                convertView = activity.getLayoutInflater().inflate(R.layout.item_result_merge_page, parent, false);
                 holder.leftAvatar = (ImageView) convertView.findViewById(R.id.first);
                 holder.rightAvatar = (ImageView) convertView.findViewById(R.id.second);
-                holder.infoPage = activity.getLayoutInflater().inflate(R.layout.friends_info, parent, false);
+                holder.infoPage = activity.getLayoutInflater().inflate(R.layout.item_result_info, parent, false);
                 holder.nickName = (TextView) holder.infoPage.findViewById(R.id.item_title);
 
 

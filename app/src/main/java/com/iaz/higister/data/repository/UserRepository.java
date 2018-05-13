@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -17,6 +18,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.iaz.higister.data.model.User;
+import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.util.CompressorUtil;
 import com.iaz.higister.util.Constants;
 
@@ -33,9 +35,11 @@ public class UserRepository {
 
     private FirebaseFirestore db;
     private FirebaseStorage storage;
-    User user ;
+    User user;
     private EventListener eventListener;
     private ListenerRegistration listenerRegistration;
+
+    private ArrayList<User> allUsers = new ArrayList<>();
 
     public UserRepository() {
 
@@ -66,12 +70,58 @@ public class UserRepository {
                 user = documentSnapshot.toObject(User.class);
 
                 onUpdateProfile.onSuccess(user);
-            }
-            else {
+            } else {
                 onUpdateProfile.onFailure("usuário nao existe");
             }
         })
                 .addOnFailureListener(e -> Log.w("updateProfile", "Error writing document", e));
+    }
+
+    public void filterResult(String filter, OnGetUsers onGetUsers) {
+
+        receiveAllUsers(new OnGetUsers() {
+            @Override
+            public void onSuccess(ArrayList<User> peopleList) {
+                ArrayList<User> resulList = new ArrayList<>();
+
+                for (User list : peopleList) {
+                    if (list.getName().toLowerCase().contains(filter.toLowerCase())) {
+                        resulList.add(list);
+                    }
+                }
+                onGetUsers.onSuccess(resulList);
+            }
+
+            @Override
+            public void onFailure(String exception) {
+
+            }
+        });
+    }
+
+    public void receiveAllUsers(OnGetUsers onGetUsers) {
+        allUsers.clear();
+
+        CollectionReference colRef = db.collection("users");
+
+        colRef.get()
+                .addOnSuccessListener(documentSnapshots -> {
+                    Log.d("receiveAllUsers: ", "success");
+                    User tempUser;
+
+                    for (DocumentSnapshot doc : documentSnapshots) {
+                        tempUser = doc.toObject(User.class);
+
+                        if (tempUser != null
+                                && !doc.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                            tempUser.uid = doc.getId();
+                            allUsers.add(tempUser);
+                        }
+                    }
+                    onGetUsers.onSuccess(allUsers);
+
+                })
+                .addOnFailureListener(e -> {});
     }
 
     public void saveProfileImageOnStorage(String uri, final OnImageUpload onImageUpload) {
@@ -129,6 +179,12 @@ public class UserRepository {
 
     public interface OnUpdateProfile {
         void onSuccess(User user);
+
+        void onFailure(String exception);
+    }
+
+    public interface OnGetUsers {
+        void onSuccess(ArrayList<User> user);
 
         void onFailure(String exception);
     }

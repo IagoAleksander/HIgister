@@ -74,12 +74,9 @@ public class GalleryActivity extends AppCompatActivity {
             thumbnailsContainer.setVisibility(View.GONE);
         }
 
-        _closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Close clicked");
-                finish();
-            }
+        _closeButton.setOnClickListener(v -> {
+            Log.d(TAG, "Close clicked");
+            finish();
         });
     }
 

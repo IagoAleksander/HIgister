@@ -16,6 +16,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.iaz.higister.data.model.FavoritedList;
 import com.iaz.higister.data.model.UserList;
+import com.iaz.higister.ui.main.MainActivity;
 import com.iaz.higister.util.CompressorUtil;
 import com.iaz.higister.util.Constants;
 
@@ -171,11 +172,11 @@ public class ListRepository {
 
     }
 
-    public void receiveLists(OnUpdateLists onUpdateLists) {
+    public void receiveListsOfUser(String uid, OnUpdateLists onUpdateLists) {
 
         createdListsId.clear();
 
-        CollectionReference colRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+        CollectionReference colRef = db.collection("users").document(uid)
                 .collection("createdLists");
 
         colRef.get()
@@ -221,11 +222,11 @@ public class ListRepository {
         }
     }
 
-    public void receiveFavorites(OnUpdateLists onUpdateLists) {
+    public void receiveFavoritesOfUser(String uid, OnUpdateLists onUpdateLists) {
 
         favoritedListsId.clear();
 
-        CollectionReference colRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+        CollectionReference colRef = db.collection("users").document(uid)
                 .collection("favoritedLists");
 
         colRef.get()
@@ -275,27 +276,28 @@ public class ListRepository {
         }
     }
 
-    public void addListener(Activity activity, String type, OnUpdateLists onUpdateLists) {
+    public void addListener(Activity activity, String type, String userId, OnUpdateLists onUpdateLists) {
 
         if (type.equals("created")) {
-            CollectionReference colRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+            CollectionReference colRef = db.collection("users").document(userId)
                     .collection("createdLists");
 
             colRef.addSnapshotListener(activity, (documentSnapshots, e) ->
-                    receiveLists(onUpdateLists));
+                    receiveListsOfUser(userId, onUpdateLists));
 
         } else if (type.equals("favorited")) {
-            CollectionReference colRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+            CollectionReference colRef = db.collection("users").document(userId)
                     .collection("favoritedLists");
 
             colRef.addSnapshotListener(activity, (documentSnapshots, e) -> {
-                receiveFavorites(onUpdateLists);
+                receiveFavoritesOfUser(userId, onUpdateLists);
             });
         } else if (type.equals("feed")) {
             CollectionReference colRef = db.collection("lists");
 
             colRef.addSnapshotListener(activity, (documentSnapshots, e) -> receiveFeed(onUpdateLists));
         }
+
     }
 
     public void receiveFeed(OnUpdateLists onUpdateLists) {

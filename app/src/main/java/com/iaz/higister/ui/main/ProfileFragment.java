@@ -141,7 +141,7 @@ public class ProfileFragment extends Fragment implements ProfileMvpView {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View mView = inflater.inflate(R.layout.profile_fragment, container, false);
+        View mView = inflater.inflate(R.layout.fragment_profile, container, false);
         return mView;
     }
 

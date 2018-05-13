@@ -95,7 +95,7 @@ public class SignUpFragment extends AuthFragment{
 
     @Override
     public int authLayout() {
-        return R.layout.sign_up_fragment;
+        return R.layout.fragment_sign_up;
     }
 
     @Override

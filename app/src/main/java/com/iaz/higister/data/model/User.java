@@ -1,6 +1,10 @@
 package com.iaz.higister.data.model;
 
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.firebase.firestore.Exclude;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,20 +14,24 @@ import java.util.Map;
  * Created by alksander on 17/03/2018.
  */
 
-public class User {
+public class User implements Parcelable {
+
+    @Exclude
+    public String uid;
 
     private String name;
     private int followersNumber;
-    private ArrayList<User> followers;
+    //    private ArrayList<User> followers;
     private int listsCreatedNumber;
-    private ArrayList<UserList> listsCreated;
+    //    private ArrayList<UserList> listsCreated;
     private int listsFavouritedNumber;
-//    public ArrayList<UserList> listsFavorited;
-private String description;
+    //    public ArrayList<UserList> listsFavorited;
+    private String description;
     private int age;
     private ArrayList<String> interests = new ArrayList<>();
     private String profilePictureUri;
 
+    public User() {}
 
     public String getName() {
         return name;
@@ -41,13 +49,13 @@ private String description;
         this.followersNumber = followersNumber;
     }
 
-    public ArrayList<User> getFollowers() {
-        return followers;
-    }
-
-    public void setFollowers(ArrayList<User> followers) {
-        this.followers = followers;
-    }
+//    public ArrayList<User> getFollowers() {
+//        return followers;
+//    }
+//
+//    public void setFollowers(ArrayList<User> followers) {
+//        this.followers = followers;
+//    }
 
     public int getListsCreatedNumber() {
         return listsCreatedNumber;
@@ -57,13 +65,13 @@ private String description;
         this.listsCreatedNumber = listsCreatedNumber;
     }
 
-    public ArrayList<UserList> getListsCreated() {
-        return listsCreated;
-    }
-
-    public void setListsCreated(ArrayList<UserList> listsCreated) {
-        this.listsCreated = listsCreated;
-    }
+//    public ArrayList<UserList> getListsCreated() {
+//        return listsCreated;
+//    }
+//
+//    public void setListsCreated(ArrayList<UserList> listsCreated) {
+//        this.listsCreated = listsCreated;
+//    }
 
     public int getListsFavouritedNumber() {
         return listsFavouritedNumber;
@@ -104,4 +112,47 @@ private String description;
     public void setProfilePictureUri(String profilePictureUri) {
         this.profilePictureUri = profilePictureUri;
     }
+
+    protected User(Parcel in) {
+        uid = in.readString();
+        setName(in.readString());
+        setFollowersNumber(in.readInt());
+        setListsCreatedNumber(in.readInt());
+        setListsFavouritedNumber(in.readInt());
+        setDescription(in.readString());
+        setAge(in.readInt());
+        in.readStringList(interests);
+        setProfilePictureUri(in.readString());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(uid);
+        dest.writeString(getName());
+        dest.writeInt(getFollowersNumber());
+        dest.writeInt(getListsCreatedNumber());
+        dest.writeInt(getListsFavouritedNumber());
+        dest.writeString(getDescription());
+        dest.writeInt(getAge());
+        dest.writeStringList(interests);
+        dest.writeString(getProfilePictureUri());
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 }

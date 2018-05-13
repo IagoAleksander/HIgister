@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.main;
+package com.iaz.higister.ui.viewUser;
 
 import com.iaz.higister.data.model.User;
 import com.iaz.higister.data.model.UserList;
@@ -6,11 +6,9 @@ import com.iaz.higister.ui.base.MvpView;
 
 import java.util.ArrayList;
 
-public interface MyListsMvpView extends MvpView {
+public interface UserListsMvpView extends MvpView {
 
-    MyListsFragment getFragment();
+    UserListsFragment getFragment();
 
     void updateDataLists(ArrayList<UserList> lists);
-    void updateDataPeople(ArrayList<User> peopleList);
-
 }

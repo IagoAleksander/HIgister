@@ -53,7 +53,7 @@ public class TempTempMainActivity extends BaseActivity implements TempMainMvpVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityComponent().inject(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
         ButterKnife.bind(this);
 
         mRecyclerView.setAdapter(mRibotsAdapter);
