@@ -36,6 +36,7 @@ public class ListRepository {
     private ArrayList<UserList> favoritedLists = new ArrayList<>();
     private ArrayList<UserList> feedLists = new ArrayList<>();
     private ArrayList<UserList> allLists = new ArrayList<>();
+    public ArrayList<String> likedListsId = new ArrayList<>();
 
     public ListRepository() {
 
@@ -222,7 +223,7 @@ public class ListRepository {
         }
     }
 
-    public void receiveFavoritesOfUser(String uid, OnUpdateLists onUpdateLists) {
+    public void receiveFavoritesOfUser(String uid, OnUpdateLists onUpdateLists, String changeOn) {
 
         favoritedListsId.clear();
 
@@ -234,16 +235,16 @@ public class ListRepository {
                     Log.d("receiveFavoritedLists: ", "success");
 
                     for (DocumentSnapshot doc : documentSnapshots) {
-                        if (doc.exists())
+                        if (doc.exists() && !favoritedListsId.contains(doc.getId()))
                             favoritedListsId.add(doc.getId());
                     }
 
-                    populateFavorites(onUpdateLists);
+                    populateFavorites(onUpdateLists, changeOn);
                 })
                 .addOnFailureListener(onUpdateLists::onFailed);
     }
 
-    public void populateFavorites(OnUpdateLists onUpdateLists) {
+    public void populateFavorites(OnUpdateLists onUpdateLists, String changeOn) {
         favoritedLists.clear();
 
         for (String id : favoritedListsId) {
@@ -260,7 +261,22 @@ public class ListRepository {
 
                             if (tempList != null && tempList.isVisibleForEveryone()) {
                                 tempList.uid = documentSnapshot.getId();
-                                favoritedLists.add(tempList);
+
+                                boolean contains = false;
+                                for (UserList list : favoritedLists) {
+                                    if (list.uid.equals(tempList.uid)) {
+                                        contains = true;
+                                        if (changeOn.equals("favorited")) {
+                                            list.setFavoritedBy(tempList.getFavoritedBy());
+                                        }
+                                        else {
+                                            list.setLikedBy(tempList.getLikedBy());
+                                        }
+                                    }
+                                }
+
+                                if (!contains)
+                                    favoritedLists.add(tempList);
 
                                 onUpdateLists.onSuccess(favoritedLists);
                             }
@@ -290,7 +306,14 @@ public class ListRepository {
                     .collection("favoritedLists");
 
             colRef.addSnapshotListener(activity, (documentSnapshots, e) -> {
-                receiveFavoritesOfUser(userId, onUpdateLists);
+                receiveFavoritesOfUser(userId, onUpdateLists, "favorited");
+            });
+
+            CollectionReference colRef2 = db.collection("users").document(userId)
+                    .collection("likedLists");
+
+            colRef2.addSnapshotListener(activity, (documentSnapshots, e) -> {
+                receiveFavoritesOfUser(userId, onUpdateLists, "liked");
             });
         } else if (type.equals("feed")) {
             CollectionReference colRef = db.collection("lists");
@@ -303,6 +326,7 @@ public class ListRepository {
     public void receiveFeed(OnUpdateLists onUpdateLists) {
 
         feedLists.clear();
+        favoritedListsId.clear();
 
         CollectionReference colRef = db.collection("lists");
 
@@ -319,6 +343,10 @@ public class ListRepository {
                                 && tempList.isVisibleForEveryone()) {
                             tempList.uid = doc.getId();
                             feedLists.add(tempList);
+
+                            if (tempList.getLikedBy().contains(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                likedListsId.add(tempList.uid);
+                            }
                         }
                     }
 
@@ -435,6 +463,55 @@ public class ListRepository {
         db.collection("lists").document(list.uid).set(data, SetOptions.merge());
     }
 
+    public void likeList(UserList userList, OnListLiked onListLiked) {
+        CollectionReference colRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .collection("likedLists");
+
+        FavoritedList likedList = new FavoritedList();
+        likedList.setCreatorId(userList.getCreatorId());
+
+        colRef.document(userList.uid).set(likedList)
+                .addOnSuccessListener(aVoid -> onListLiked.onSuccess(userList.uid))
+                .addOnFailureListener(e -> onListLiked.onFailed(e));
+
+        setLikedBy(userList);
+    }
+
+    public void setLikedBy(UserList list) {
+
+        if (!list.getLikedBy().contains(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+            list.getLikedBy().add(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("likedBy", list.getLikedBy());
+
+
+        db.collection("lists").document(list.uid).set(data, SetOptions.merge());
+    }
+
+    public void unlikeList(UserList userList, OnListRemoved onListRemoved) {
+        DocumentReference docRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .collection("likedLists").document(userList.uid);
+
+        docRef.delete()
+                .addOnSuccessListener(aVoid -> onListRemoved.onSuccess(userList.uid))
+                .addOnFailureListener(e -> onListRemoved.onFailed(e.toString()));
+
+        setUnlikedBy(userList);
+    }
+
+    public void setUnlikedBy(UserList list) {
+
+        if (list.getLikedBy().contains(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+            list.getLikedBy().remove(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("likedBy", list.getLikedBy());
+
+
+        db.collection("lists").document(list.uid).set(data, SetOptions.merge());
+    }
+
     public void removeList(UserList userList, OnListRemoved onListRemoved) {
         DocumentReference docRef = db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .collection("createdLists").document(userList.uid);
@@ -482,6 +559,12 @@ public class ListRepository {
     }
 
     public interface OnListFavorited {
+        void onSuccess(String uid);
+
+        void onFailed(Exception e);
+    }
+
+    public interface OnListLiked {
         void onSuccess(String uid);
 
         void onFailed(Exception e);

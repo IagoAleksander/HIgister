@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * Created by alksander on 17/03/2018.
  */
 
-public class UserList implements Parcelable{
+public class UserList implements Parcelable {
 
     @Exclude
     public String uid;
@@ -25,12 +25,14 @@ public class UserList implements Parcelable{
     private String creatorId;
     private String creatorName;
     private ArrayList<String> favoritedBy = new ArrayList<>();
+    private ArrayList<String> likedBy = new ArrayList<>();
     private ArrayList<String> comments = new ArrayList<>();
 
     @Exclude
     private ArrayList<ListItem> listItems = new ArrayList<>();
 
-    public UserList() {}
+    public UserList() {
+    }
 
     protected UserList(Parcel in) {
         uid = in.readString();
@@ -44,6 +46,7 @@ public class UserList implements Parcelable{
         setCreatorName(in.readString());
         setListItems(in.createTypedArrayList(ListItem.CREATOR));
         setFavoritedBy(in.createStringArrayList());
+        setLikedBy(in.createStringArrayList());
         in.readStringList(getComments());
     }
 
@@ -65,6 +68,7 @@ public class UserList implements Parcelable{
         dest.writeString(getCreatorName());
         dest.writeTypedList(getListItems());
         dest.writeStringList(getFavoritedBy());
+        dest.writeStringList(getLikedBy());
         dest.writeStringList(getComments());
 
     }
@@ -152,6 +156,14 @@ public class UserList implements Parcelable{
 
     public void setFavoritedBy(ArrayList<String> favoritedBy) {
         this.favoritedBy = favoritedBy;
+    }
+
+    public ArrayList<String> getLikedBy() {
+        return likedBy;
+    }
+
+    public void setLikedBy(ArrayList<String> likedBy) {
+        this.likedBy = likedBy;
     }
 
     public ArrayList<String> getComments() {

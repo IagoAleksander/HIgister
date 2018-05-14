@@ -107,7 +107,7 @@ public class UserListsFragment extends Fragment implements UserListsMvpView {
                 public void onFailed(Exception e) {
                     Log.e("receiveMyLists: ", "failed", e);
                 }
-            });
+            }, "favorited");
 
             listsHeaderText.setVisibility(View.GONE);
         }

@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import timber.log.Timber;
 import com.iaz.higister.Application;
+import com.iaz.higister.data.repository.ListRepository;
 import com.iaz.higister.injection.component.ActivityComponent;
 import com.iaz.higister.injection.component.ConfigPersistentComponent;
 import com.iaz.higister.injection.component.DaggerConfigPersistentComponent;

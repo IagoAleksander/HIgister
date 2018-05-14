@@ -59,6 +59,7 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                 new ListRepository.OnUpdateLists() {
                     @Override
                     public void onSuccess(ArrayList<UserList> userLists) {
+
                         mLists = userLists;
 
 
@@ -221,6 +222,68 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                             }
                         }
                     });
+                    if (mLists.get(position).getLikedBy().contains(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        holder.likeButton.setLiked(true);
+                        holder.likeButton.setOnLikeListener(new OnLikeListener() {
+                            @Override
+                            public void liked(LikeButton likeButton) {
+
+                            }
+
+                            @Override
+                            public void unLiked(LikeButton likeButton) {
+                                if (canClick) {
+                                    canClick = false;
+
+                                    listRepository.unlikeList(mLists.get(position), new ListRepository.OnListRemoved() {
+                                                @Override
+                                                public void onSuccess(String listUid) {
+                                                    canClick = true;
+//                                                    notifyDataSetChanged();
+                                                }
+
+                                                @Override
+                                                public void onFailed(String exception) {
+                                                    canClick = true;
+                                                    likeButton.setLiked(true);
+                                                }
+                                            }
+                                    );
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        holder.likeButton.setLiked(false);
+                        holder.likeButton.setOnLikeListener(new OnLikeListener() {
+                            @Override
+                            public void liked(LikeButton likeButton) {
+                                if (canClick) {
+                                    canClick = false;
+                                    listRepository.likeList(mLists.get(position), new ListRepository.OnListLiked() {
+                                        @Override
+                                        public void onSuccess(String listUid) {
+                                            canClick = true;
+//                                            notifyDataSetChanged();
+                                        }
+
+                                        @Override
+                                        public void onFailed(Exception e) {
+                                            canClick = true;
+                                            Log.d("onFavoriteList", e.getMessage());
+
+                                            likeButton.setLiked(false);
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void unLiked(LikeButton likeButton) {
+
+                            }
+                        });
+                    }
                     break;
                 default:
 
@@ -302,12 +365,6 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                             });
 
                         } else {
-
-                            holder.editButtonLayout.setVisibility(View.GONE);
-                            holder.removeButton.setVisibility(View.GONE);
-                            holder.favoriteButtonLayout.setVisibility(View.VISIBLE);
-                            holder.likeButtonLayout.setVisibility(View.VISIBLE);
-
                             holder.favoriteButton.setLiked(false);
                             holder.favoriteButton.setOnLikeListener(new OnLikeListener() {
                                 @Override
@@ -344,6 +401,68 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                                 }
                             });
 
+                        }
+                        if (mLists.get(position).getLikedBy().contains(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                            holder.likeButton.setLiked(true);
+                            holder.likeButton.setOnLikeListener(new OnLikeListener() {
+                                @Override
+                                public void liked(LikeButton likeButton) {
+
+                                }
+
+                                @Override
+                                public void unLiked(LikeButton likeButton) {
+                                    if (canClick) {
+                                        canClick = false;
+
+                                        listRepository.unlikeList(mLists.get(position), new ListRepository.OnListRemoved() {
+                                                    @Override
+                                                    public void onSuccess(String listUid) {
+                                                        canClick = true;
+//                                                        notifyDataSetChanged();
+                                                    }
+
+                                                    @Override
+                                                    public void onFailed(String exception) {
+                                                        canClick = true;
+                                                        likeButton.setLiked(true);
+                                                    }
+                                                }
+                                        );
+                                    }
+                                }
+                            });
+                        }
+                        else {
+                            holder.likeButton.setLiked(false);
+                            holder.likeButton.setOnLikeListener(new OnLikeListener() {
+                                @Override
+                                public void liked(LikeButton likeButton) {
+                                    if (canClick) {
+                                        canClick = false;
+                                        listRepository.likeList(mLists.get(position), new ListRepository.OnListLiked() {
+                                            @Override
+                                            public void onSuccess(String listUid) {
+                                                canClick = true;
+//                                                notifyDataSetChanged();
+                                            }
+
+                                            @Override
+                                            public void onFailed(Exception e) {
+                                                canClick = true;
+                                                Log.d("onFavoriteList", e.getMessage());
+
+                                                likeButton.setLiked(false);
+                                            }
+                                        });
+                                    }
+                                }
+
+                                @Override
+                                public void unLiked(LikeButton likeButton) {
+
+                                }
+                            });
                         }
                     }
 

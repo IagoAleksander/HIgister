@@ -101,8 +101,7 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
             });
 
             listsHeaderText.setText("My created lists:");
-        }
-        else if (type.equals("favorited")) {
+        } else if (type.equals("favorited")) {
             listRepository.receiveFavoritesOfUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), new ListRepository.OnUpdateLists() {
                 @Override
                 public void onSuccess(ArrayList<UserList> userLists) {
@@ -110,7 +109,8 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
                     activity.favoritedListsId.clear();
 
                     for (UserList list : userLists) {
-                        activity.favoritedListsId.add(list.uid);
+                        if (!activity.favoritedListsId.contains(list.uid))
+                            activity.favoritedListsId.add(list.uid);
                     }
 
                     updateDataLists(userLists);
@@ -121,11 +121,10 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
                 public void onFailed(Exception e) {
                     Log.e("receiveMyLists: ", "failed", e);
                 }
-            });
+            }, "favorited");
 
             listsHeaderText.setText("My favorited lists:");
-        }
-       else if (type.equals("feed")) {
+        } else if (type.equals("feed")) {
             listRepository.receiveFeed(new ListRepository.OnUpdateLists() {
                 @Override
                 public void onSuccess(ArrayList<UserList> userLists) {
@@ -139,8 +138,7 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
             });
 
             listsHeaderText.setText("My feed:");
-        }
-        else {
+        } else {
             listsHeaderText.setText("Search Lists:");
         }
 
@@ -156,8 +154,7 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
         if (mListAdapter == null) {
             mListAdapter = new MyListsAdapter(getFragment(), lists, type);
-        }
-        else {
+        } else {
             mListAdapter.setLists(lists);
             mListAdapter.notifyDataSetChanged();
         }
@@ -173,8 +170,7 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
         if (mPeopleAdapter == null) {
             mPeopleAdapter = new PeopleAdapter(this, peopleList);
-        }
-        else {
+        } else {
             mPeopleAdapter.setPeople(peopleList);
             mPeopleAdapter.notifyDataSetChanged();
         }
