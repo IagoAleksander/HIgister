@@ -40,6 +40,7 @@ import com.iaz.higister.ui.gallery.GalleryActivity;
 import com.iaz.higister.ui.main.MainActivity;
 import com.iaz.higister.ui.search.SearchActivity;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
+import com.iaz.higister.util.DialogFactory;
 import com.iaz.higister.util.ViewUtil;
 
 import java.util.ArrayList;
@@ -146,15 +147,13 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
                     goToCarousel.putStringArrayListExtra("photos", listOfPaths);
                     goToCarousel.putExtra("startPosition", 0);
                     getApplicationContext().startActivity(goToCarousel);
-                    overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
 
                 });
             }
 
             if (list.uid != null) {
                 mViewListPresenter.getListItems(list.uid);
-            }
-            else {
+            } else {
                 updateData(new ArrayList<>());
             }
 
@@ -166,38 +165,31 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
                     if (!list.isCommentsEnabled()) {
                         addCommentButton.setVisibility(View.GONE);
                     }
-                }
-                else if (!list.isCommentsEnabled()) {
+                } else if (!list.isCommentsEnabled()) {
                     addCommentButton.setVisibility(View.GONE);
                     commentsLayout.setVisibility(View.GONE);
                     //TODO change button
                 }
-                addCommentButton.setOnClickListener(view -> new MaterialDialog.Builder(ViewListActivity.this)
-                        .title("Add new comment")
-                        .cancelable(true)
-                        .negativeText("cancel")
-                        .input("Insert a new comment", "", new MaterialDialog.InputCallback() {
-                            @Override
-                            public void onInput(MaterialDialog dialog, CharSequence input) {
-                                list.getComments().add(FirebaseAuth.getInstance().getCurrentUser().getUid() + ":" + input.toString());
-                                listRepository.updateListInfo(list, new ListRepository.OnListUpdated() {
-                                    @Override
-                                    public void onSuccess() {
 
-                                        commentsContainer.removeAllViews();
-                                        populateCommentsLayout();
-                                    }
+                MaterialDialog.Builder dialog = DialogFactory.newMaterialDialogWithInput(ViewListActivity.this, text -> {
+                    list.getComments().add(FirebaseAuth.getInstance().getCurrentUser().getUid() + ":" + text);
+                    listRepository.updateListInfo(list, new ListRepository.OnListUpdated() {
+                        @Override
+                        public void onSuccess() {
 
-                                    @Override
-                                    public void onFailed(Exception exception) {
+                            commentsContainer.removeAllViews();
+                            populateCommentsLayout();
+                        }
 
-                                    }
-                                });
-                            }
-                        }).show());
+                        @Override
+                        public void onFailed(Exception exception) {
 
-            }
-            else {
+                        }
+                    });
+                });
+                addCommentButton.setOnClickListener(view -> dialog.show());
+
+            } else {
                 addCommentButton.setVisibility(View.GONE);
                 commentsLayout.setVisibility(View.GONE);
                 listLayout.setVisibility(View.GONE);
@@ -210,12 +202,10 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
                     intent.putExtra("list", list);
                     startActivity(intent);
                 });
-            }
-            else {
+            } else {
                 bottomBar.setVisibility(View.GONE);
             }
-        }
-        else {
+        } else {
             finish();
             overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
         }
@@ -249,8 +239,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
 
         if (mListItemAdapter == null) {
             mListItemAdapter = new ListItemAdapter(this, list);
-        }
-        else {
+        } else {
             mListItemAdapter.setListItem(listItems);
             mListItemAdapter.notifyDataSetChanged();
         }
@@ -261,13 +250,13 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     }
 
     public void populateCommentsLayout() {
-        for(int i = 0; i < list.getComments().size(); i++) {
+        for (int i = 0; i < list.getComments().size(); i++) {
 
             String entry = list.getComments().get(i);
 
             int index = entry.indexOf(":");
             String key = entry.substring(0, index);
-            String value = entry.substring(index+1, entry.length());
+            String value = entry.substring(index + 1, entry.length());
 
             int finalI = i;
             userRepository.receiveProfileInfo(key, new UserRepository.OnUpdateProfile() {
@@ -330,7 +319,6 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
                             .into(userImage);
 
 
-
                 }
 
                 @Override
@@ -380,8 +368,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
         this.startActivity(intent);
         overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);

@@ -1,5 +1,8 @@
 package com.iaz.higister.ui.createItem;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,13 +13,18 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.dd.CircularProgressButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.ListItem;
@@ -24,7 +32,9 @@ import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.data.repository.ListRepository;
 import com.iaz.higister.ui.base.BaseActivity;
 import com.iaz.higister.ui.viewList.ViewListActivity;
+import com.iaz.higister.util.CustomDeletePageDialog;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
+import com.iaz.higister.util.DialogFactory;
 
 import javax.inject.Inject;
 
@@ -55,6 +65,8 @@ public class CreateItemActivity extends BaseActivity {
 
     public String listName;
     public String listDescription;
+
+    private Dialog mDialog;
 
     private CustomPhotoPickerDialog photoDialog;
     private static final int CONTENT_VIEW_ID = 10101010;
@@ -113,6 +125,7 @@ public class CreateItemActivity extends BaseActivity {
 
         nextButton.setOnClickListener(v -> {
 
+
             if (position == -1) {
                 list.getListItems().add(listItem);
 
@@ -123,50 +136,69 @@ public class CreateItemActivity extends BaseActivity {
                     list.setCreatorName("Tester");
                     //TODO nome do criador
 
+                    mDialog = DialogFactory.newDialog(CreateItemActivity.this, "Creating new list...");
+                    mDialog.show();
                     listRepository.saveList(list, new ListRepository.OnListSaved() {
                         @Override
                         public void onSuccess(UserList userList) {
-                            Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
-                            intent.putExtra("list", list);
-                            CreateItemActivity.this.startActivity(intent);
-                            overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                            DialogFactory.finalizeDialogOnClick(mDialog, true, "List created with success. Click to proceed", () -> {
+                                Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
+                                intent.putExtra("list", list);
+                                CreateItemActivity.this.startActivity(intent);
+                                overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                            });
                         }
 
                         @Override
                         public void onFailed(Exception exception) {
                             Log.d("saveList: ", exception.getMessage());
+                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list creation", () -> {
+                            });
                         }
                     });
                 } else {
+
+                    mDialog = DialogFactory.newDialog(CreateItemActivity.this, "Creating new list item...");
+                    mDialog.show();
                     listRepository.saveItem(list, list.getListItems().size() - 1, new ListRepository.OnItemSaved() {
                         @Override
                         public void onSuccess() {
-                            Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
-                            intent.putExtra("list", list);
-                            CreateItemActivity.this.startActivity(intent);
-                            overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                            DialogFactory.finalizeDialogOnClick(mDialog, true, "List item created with success. Click to proceed", () -> {
+                                Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
+                                intent.putExtra("list", list);
+                                CreateItemActivity.this.startActivity(intent);
+                                overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                            });
                         }
 
                         @Override
                         public void onFailed(Exception exception) {
                             Log.d("saveItem: ", exception.getMessage());
+                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list item creation", () -> {
+                            });
                         }
                     });
                 }
             } else {
 
+                mDialog = DialogFactory.newDialog(CreateItemActivity.this, "Updating list item...");
+                mDialog.show();
                 listRepository.updateItem(list, position, new ListRepository.OnItemUpdated() {
                     @Override
                     public void onSuccess() {
-                        Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
-                        intent.putExtra("list", list);
-                        CreateItemActivity.this.startActivity(intent);
-                        overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                        DialogFactory.finalizeDialogOnClick(mDialog, true, "List item updated with success. Click to proceed", () -> {
+                            Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
+                            intent.putExtra("list", list);
+                            CreateItemActivity.this.startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                        });
                     }
 
                     @Override
                     public void onFailed(Exception exception) {
                         Log.d("updateItem: ", exception.getMessage());
+                        DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list item update", () -> {
+                        });
                     }
                 });
             }
@@ -205,5 +237,8 @@ public class CreateItemActivity extends BaseActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         mCreateItemPresenter.activityResult(requestCode, resultCode, data);
     }
+
+
+
 
 }

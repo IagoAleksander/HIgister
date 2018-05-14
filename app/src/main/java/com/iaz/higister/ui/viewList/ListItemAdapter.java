@@ -1,6 +1,7 @@
 package com.iaz.higister.ui.viewList;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,6 +26,7 @@ import com.iaz.higister.data.model.ListItem;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.ui.createItem.CreateItemActivity;
 import com.iaz.higister.ui.viewItem.ViewItemActivity;
+import com.iaz.higister.util.DialogFactory;
 
 import static com.iaz.higister.util.Constants.*;
 
@@ -32,8 +34,9 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListIt
 
     private UserList list;
     private ViewListActivity activity;
+    private Dialog mDialog;
 
-    public ListItemAdapter(Activity activity, UserList list) {
+    ListItemAdapter(Activity activity, UserList list) {
         this.list = list;
 
         if (activity instanceof ViewListActivity)
@@ -94,22 +97,30 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListIt
             });
 
             holder.removeButton.setVisibility(View.VISIBLE);
-            holder.removeButton.setOnClickListener(v ->
-                    activity.mViewListPresenter.removeListItem(list, holder.getAdapterPosition(), new ViewListPresenter.OnListItemRemoved() {
-                        @Override
-                        public void onSuccess() {
-                            Log.d("removeListItem: ", "success");
+            holder.removeButton.setOnClickListener(v -> {
+
+                mDialog = DialogFactory.newDialog(activity, "Removing item...");
+                mDialog.show();
+                activity.mViewListPresenter.removeListItem(list, holder.getAdapterPosition(), new ViewListPresenter.OnListItemRemoved() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d("removeListItem: ", "success");
+                        DialogFactory.finalizeDialog(mDialog, true, "Item removed with success", () -> {
                             list.getListItems().remove(holder.getAdapterPosition());
                             notifyDataSetChanged();
-                        }
+                        });
 
-                        @Override
-                        public void onFailed(Exception e) {
-                            Log.e("removeListItem: ", "failed", e);
-                        }
-                    }));
-        }
-        else {
+                    }
+
+                    @Override
+                    public void onFailed(Exception e) {
+                        Log.e("removeListItem: ", "failed", e);
+                        DialogFactory.finalizeDialog(mDialog, false, "Sorry, an error occurred on item removal", () -> {
+                        });
+                    }
+                });
+            });
+        } else {
             holder.editButtonLayout.setVisibility(View.GONE);
             holder.removeButton.setVisibility(View.GONE);
         }

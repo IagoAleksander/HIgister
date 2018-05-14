@@ -1,5 +1,6 @@
 package com.iaz.higister.ui.main;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +22,7 @@ import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.data.repository.ListRepository;
 import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.ui.viewList.ViewListActivity;
+import com.iaz.higister.util.DialogFactory;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 
@@ -46,43 +48,44 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
     boolean canClick = true;
 
     ListRepository listRepository = new ListRepository();
+    private Dialog mDialog;
 
-    public MyListsAdapter(MyListsFragment fragment, ArrayList<UserList> lists, String type) {
+    MyListsAdapter(MyListsFragment fragment, ArrayList<UserList> lists, String type) {
         mLists = lists;
         this.fragment = fragment;
         this.type = type;
 
         listRepository.addListener(fragment.activity, type, FirebaseAuth.getInstance().getCurrentUser().getUid(),
                 new ListRepository.OnUpdateLists() {
-            @Override
-            public void onSuccess(ArrayList<UserList> userLists) {
-                mLists = userLists;
+                    @Override
+                    public void onSuccess(ArrayList<UserList> userLists) {
+                        mLists = userLists;
 
 
-                if (type.equals("created") &&  fragment.activity != null && fragment.activity.user != null) {
-                    fragment.activity.user.setListsCreatedNumber(userLists.size());
-                    fragment.activity.updateUserInfo();
-                } else if (type.equals("favorited") &&  fragment.activity != null) {
-                    fragment.activity.favoritedListsId.clear();
+                        if (type.equals("created") && fragment.activity != null && fragment.activity.user != null) {
+                            fragment.activity.user.setListsCreatedNumber(userLists.size());
+                            fragment.activity.updateUserInfo();
+                        } else if (type.equals("favorited") && fragment.activity != null) {
+                            fragment.activity.favoritedListsId.clear();
 
-                    for (UserList list : userLists) {
-                        fragment.activity.favoritedListsId.add(list.uid);
+                            for (UserList list : userLists) {
+                                fragment.activity.favoritedListsId.add(list.uid);
+                            }
+
+                            if (fragment.activity.user == null)
+                                fragment.activity.user = new User();
+
+                            fragment.activity.user.setListsFavouritedNumber(userLists.size());
+                            fragment.activity.updateUserInfo();
+                        }
+                        notifyDataSetChanged();
                     }
 
-                    if (fragment.activity.user == null)
-                        fragment.activity.user = new User();
+                    @Override
+                    public void onFailed(Exception e) {
 
-                    fragment.activity.user.setListsFavouritedNumber(userLists.size());
-                    fragment.activity.updateUserInfo();
-                }
-                notifyDataSetChanged();
-            }
-
-            @Override
-            public void onFailed(Exception e) {
-
-            }
-        });
+                    }
+                });
     }
 
     public void setLists(ArrayList<UserList> lists) {
@@ -154,16 +157,23 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                     holder.removeButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+
+                            mDialog = DialogFactory.newDialog(fragment.activity, "Removing list...");
+                            mDialog.show();
+
                             listRepository.removeList(mLists.get(position), new ListRepository.OnListRemoved() {
                                 @Override
                                 public void onSuccess(String listUid) {
-//                            mLists.remove(position);
-                                    notifyDataSetChanged();
+                                    DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () ->
+                                            notifyDataSetChanged()
+                                    );
                                 }
 
                                 @Override
                                 public void onFailed(String exception) {
                                     Log.d("onRemoveList", exception);
+                                    DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
+                                    });
                                 }
                             });
                         }
@@ -227,18 +237,23 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                             fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                         });
 
+                        mDialog = DialogFactory.newDialog(fragment.activity, "Removing list...");
+                        mDialog.show();
 
                         holder.removeButton.setOnClickListener(v ->
                                 listRepository.removeList(mLists.get(position), new ListRepository.OnListRemoved() {
                                     @Override
                                     public void onSuccess(String listUid) {
-//                            mLists.remove(position);
-                                        notifyDataSetChanged();
+                                        DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () -> {
+                                            notifyDataSetChanged();
+                                        });
                                     }
 
                                     @Override
                                     public void onFailed(String exception) {
                                         Log.d("onRemoveList", exception);
+                                        DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
+                                        });
                                     }
                                 }));
                     } else {

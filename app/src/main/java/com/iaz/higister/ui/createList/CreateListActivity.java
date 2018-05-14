@@ -1,6 +1,7 @@
 package com.iaz.higister.ui.createList;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -32,10 +33,12 @@ import com.iaz.higister.R;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.data.repository.ListRepository;
 import com.iaz.higister.ui.base.BaseActivity;
+import com.iaz.higister.ui.createItem.CreateItemActivity;
 import com.iaz.higister.ui.viewList.ViewListActivity;
 import com.iaz.higister.util.AppBarStateChangeListener;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
 import com.bumptech.glide.Glide;
+import com.iaz.higister.util.DialogFactory;
 
 import javax.inject.Inject;
 
@@ -80,7 +83,7 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
     @BindView(R.id.activity_create_list_next_button)
     TextView nextButton;
 
-
+    private Dialog mDialog;
     private CustomPhotoPickerDialog photoDialog;
     UserList list;
 
@@ -234,18 +237,25 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                 } else {
+
+                    mDialog = DialogFactory.newDialog(CreateListActivity.this, "Updating list...");
+                    mDialog.show();
                     listRepository.updateList(list, new ListRepository.OnListUpdated() {
                         @Override
                         public void onSuccess() {
-                            Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
-                            intent.putExtra("list", list);
-                            startActivity(intent);
-                            overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                            DialogFactory.finalizeDialogOnClick(mDialog, true, "List updated with success. Click to proceed", () -> {
+                                Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
+                                intent.putExtra("list", list);
+                                CreateListActivity.this.startActivity(intent);
+                                overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                            });
                         }
 
                         @Override
                         public void onFailed(Exception e) {
                             Log.w("updateList: ", "failed", e);
+                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list update", () -> {
+                            });
                         }
                     });
 

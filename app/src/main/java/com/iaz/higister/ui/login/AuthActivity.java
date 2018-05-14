@@ -87,7 +87,7 @@ public class AuthActivity extends BaseActivity implements AuthMvpView {
     @Override
     public void onStart() {
         super.onStart();
-//        mAuthPresenter.addAuthStateListener();
+        mAuthPresenter.addAuthStateListener();
 
     }
 

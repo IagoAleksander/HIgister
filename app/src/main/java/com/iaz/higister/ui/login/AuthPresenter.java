@@ -1,5 +1,6 @@
 package com.iaz.higister.ui.login;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
@@ -19,6 +20,7 @@ import com.iaz.higister.data.repository.UserRepository;
 import com.iaz.higister.injection.ConfigPersistent;
 import com.iaz.higister.ui.base.BasePresenter;
 import com.iaz.higister.ui.main.MainActivity;
+import com.iaz.higister.util.DialogFactory;
 
 import javax.inject.Inject;
 
@@ -35,6 +37,7 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     UserRepository userRepository = new UserRepository();
+    private Dialog mDialog;
 
     @Inject
     public AuthPresenter(DataManager dataManager) {
@@ -55,15 +58,21 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
     public void setAutenticationListener() {
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = firebaseAuth -> {
-            FirebaseUser user = firebaseAuth.getCurrentUser();
+            FirebaseUser userF = firebaseAuth.getCurrentUser();
 
-            if (user != null) {
+            if (userF != null) {
 
-                userRepository.receiveProfileInfo(user.getUid(), new UserRepository.OnUpdateProfile() {
+                mDialog = DialogFactory.newDialog(getMvpView().getActivity(), "Please wait for login...");
+                mDialog.show();
+
+                userRepository.receiveProfileInfo(userF.getUid(), new UserRepository.OnUpdateProfile() {
                     @Override
                     public void onSuccess(User user) {
-                        Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
-                        getMvpView().getActivity().startActivity(intent);
+                        DialogFactory.finalizeDialog(mDialog, true, "Logged in", () -> {
+                            Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
+                            intent.putExtra("user", user);
+                            getMvpView().getActivity().startActivity(intent);
+                        });
                     }
 
                     @Override
@@ -73,19 +82,24 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                         userRepository.saveProfileInfo(getMvpView().getActivity(), new User(), new UserRepository.OnUpdateProfile() {
                             @Override
                             public void onSuccess(User user) {
-                                Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
-                                getMvpView().getActivity().startActivity(intent);
+                                DialogFactory.finalizeDialog(mDialog, true, "Logged in", () -> {
+                                    Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
+                                    intent.putExtra("user", user);
+                                    getMvpView().getActivity().startActivity(intent);
+                                });
                             }
 
                             @Override
                             public void onFailure(String exception) {
                                 Log.d("auth", "onCreateNewUser:failure");
+                                DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on login", () -> {
+                                });
                             }
                         });
                     }
                 });
                 // User is signed in
-                Log.d("auth", "onAuthStateChanged:signed_in:" + user.getUid());
+                Log.d("auth", "onAuthStateChanged:signed_in:" + userF.getUid());
             } else {
                 // User is signed out
                 Log.d("auth", "onAuthStateChanged:signed_out");

@@ -1,9 +1,14 @@
 package com.iaz.higister.ui.splash;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Base64;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -13,6 +18,10 @@ import com.iaz.higister.ui.login.AuthActivity;
 import com.sdsmdg.harjot.rotatingtext.RotatingTextWrapper;
 import com.sdsmdg.harjot.rotatingtext.models.Rotatable;
 import com.crashlytics.android.Crashlytics;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import io.fabric.sdk.android.Fabric;
 
 import javax.inject.Inject;

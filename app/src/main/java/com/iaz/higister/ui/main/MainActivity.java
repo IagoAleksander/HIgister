@@ -2,6 +2,7 @@ package com.iaz.higister.ui.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,9 +32,12 @@ import com.crashlytics.android.Crashlytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.User;
+import com.iaz.higister.data.repository.UserRepository;
 import com.iaz.higister.ui.base.BaseActivity;
 import com.iaz.higister.ui.createList.CreateListActivity;
+import com.iaz.higister.ui.viewList.ViewListActivity;
 import com.iaz.higister.util.AppBarStateChangeListener;
+import com.iaz.higister.util.DialogFactory;
 import com.iaz.higister.util.SectionsPagerAdapter;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.truizlop.fabreveallayout.CircularExpandingView;
@@ -103,9 +108,13 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
     FragmentManager fm;
 
     Uri uri;
+    private Dialog mDialog;
 
     public ArrayList<String> favoritedListsId = new ArrayList<>();
     public User user;
+
+    public boolean searchAlreadyClicked = false;
+    UserRepository userRepository = new UserRepository();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,8 +125,19 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
         setSupportActionBar(mToolbar);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            user = getIntent().getExtras().getParcelable("user");
+
+            if (user != null) {
+                updateUserInfo();
+            } else {
+                recoverProfileInfo();
+            }
+        }
+        else {
+            recoverProfileInfo();
+        }
 
         appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
             @Override
@@ -244,6 +264,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 //    }
 
     public void updateUserInfo() {
+
         followersCounter.setText(Integer.toString(user.getFollowersNumber()));
         createdListsCounter.setText(Integer.toString(user.getListsCreatedNumber()));
         favoritedListsCounter.setText(Integer.toString(user.getListsFavouritedNumber()));
@@ -251,15 +272,15 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
         if (user.getProfilePictureUri() != null)
             callGlide(Uri.parse(user.getProfilePictureUri()));
 
-        getSupportActionBar().setTitle(user.getName());
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(user.getName());
+        }
         logUserToCrashlitics();
-//        setFab(PROFILE_TAB_INDEX);
-//        mViewPager.setCurrentItem(PROFILE_TAB_INDEX);
     }
 
-    public void setFab (int position) {
+    public void setFab(int position) {
 
-        Fragment fragment = fm.findFragmentByTag("android:switcher:" + R.id.container + ":" +position);
+        Fragment fragment = fm.findFragmentByTag("android:switcher:" + R.id.container + ":" + position);
 
         if (position == PROFILE_TAB_INDEX) {
             fab.setVisibility(View.VISIBLE);
@@ -300,10 +321,10 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
                 if (searchLayout.getVisibility() == View.GONE) {
                     circular.setVisibility(View.VISIBLE);
                     animate();
-                }
-                else {
+                } else {
                     if (fragment != null && fragment instanceof MyListsFragment) {
                         ((MyListsFragment) fragment).mListsPresenter.search(searchText.getText().toString(), 8);
+                        searchAlreadyClicked = true;
                     }
                 }
             });
@@ -327,8 +348,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         moveTaskToBack(true);
     }
 
@@ -344,7 +364,8 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
                 circular.setVisibility(View.GONE);
                 circular.contract();
                 searchLayout.setVisibility(View.VISIBLE);
-                insertTextLayout.setVisibility(View.VISIBLE);
+                if (!searchAlreadyClicked)
+                    insertTextLayout.setVisibility(View.VISIBLE);
             }
         });
         expandAnimator.start();
@@ -354,10 +375,34 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
         Crashlytics.setUserIdentifier(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         if (FirebaseAuth.getInstance().getCurrentUser().getEmail() != null)
-        Crashlytics.setUserEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+            Crashlytics.setUserEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
         if (user != null)
             Crashlytics.setUserName(user.getName());
+    }
+
+    public void recoverProfileInfo() {
+        mDialog = DialogFactory.newDialog(this, "Loading profile...");
+        mDialog.show();
+
+        userRepository.receiveProfileInfo(FirebaseAuth.getInstance().getCurrentUser().getUid(), new UserRepository.OnUpdateProfile() {
+            @Override
+            public void onSuccess(User mUser) {
+                user = mUser;
+
+                DialogFactory.finalizeDialog(mDialog, true, "Profile updated with success", new DialogFactory.OnDialogButtonClicked() {
+                    @Override
+                    public void onClick() {
+                        updateUserInfo();
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure(String exception) {
+            }
+        });
     }
 
 }

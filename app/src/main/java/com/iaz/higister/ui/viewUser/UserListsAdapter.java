@@ -1,5 +1,6 @@
 package com.iaz.higister.ui.viewUser;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
@@ -19,8 +20,10 @@ import com.iaz.higister.R;
 import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.data.repository.ListRepository;
 import com.iaz.higister.ui.createList.CreateListActivity;
+import com.iaz.higister.ui.main.MyListsAdapter;
 import com.iaz.higister.ui.main.MyListsFragment;
 import com.iaz.higister.ui.viewList.ViewListActivity;
+import com.iaz.higister.util.DialogFactory;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 
@@ -46,8 +49,9 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
     boolean canClick = true;
 
     ListRepository listRepository = new ListRepository();
+    private Dialog mDialog;
 
-    public UserListsAdapter(UserListsFragment fragment, ArrayList<UserList> lists, String type) {
+    UserListsAdapter(UserListsFragment fragment, ArrayList<UserList> lists, String type) {
         mLists = lists;
         this.fragment = fragment;
         this.type = type;
@@ -135,19 +139,26 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
             });
 
 
-            holder.removeButton.setOnClickListener(v ->
-                    listRepository.removeList(mLists.get(position), new ListRepository.OnListRemoved() {
-                        @Override
-                        public void onSuccess(String listUid) {
-//                            mLists.remove(position);
+            holder.removeButton.setOnClickListener(v -> {
+                mDialog = DialogFactory.newDialog(fragment.activity, "Removing list...");
+                mDialog.show();
+                listRepository.removeList(mLists.get(position), new ListRepository.OnListRemoved() {
+                    @Override
+                    public void onSuccess(String listUid) {
+                        notifyDataSetChanged();
+                        DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () -> {
                             notifyDataSetChanged();
-                        }
+                        });
+                    }
 
-                        @Override
-                        public void onFailed(String exception) {
-                            Log.d("onRemoveList", exception);
-                        }
-                    }));
+                    @Override
+                    public void onFailed(String exception) {
+                        Log.d("onRemoveList", exception);
+                        DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
+                        });
+                    }
+                });
+            });
         } else {
             holder.favoriteButtonLayout.setVisibility(View.VISIBLE);
             holder.likeButtonLayout.setVisibility(View.VISIBLE);

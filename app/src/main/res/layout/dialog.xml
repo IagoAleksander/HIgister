@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#77000000"
+    android:minWidth="555dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:background="@color/primary_light"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/dialog_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="Saving..."
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="@dimen/text_large_body" />
+
+        <com.dd.CircularProgressButton
+            android:id="@+id/progress_bar"
+            android:layout_width="130dp"
+            android:layout_height="42dp"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:cpb_colorIndicatorBackground="@color/primary"
+            app:cpb_colorProgress="@color/primary_light"
+            app:cpb_cornerRadius="24dp"
+            app:cpb_selectorComplete="@drawable/complete_state_selector"
+            app:cpb_selectorIdle="@drawable/idle_state_selector"
+            app:cpb_iconComplete="@drawable/ic_check"
+            app:cpb_iconError="@drawable/ic_close" />
+
+    </LinearLayout>
+</RelativeLayout>

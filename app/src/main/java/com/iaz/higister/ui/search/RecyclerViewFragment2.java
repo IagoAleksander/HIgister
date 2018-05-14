@@ -1,5 +1,6 @@
 package com.iaz.higister.ui.search;
 
+import android.app.Dialog;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.BaseItem;
 import com.bumptech.glide.Glide;
@@ -28,6 +30,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 import com.iaz.higister.util.Constants;
+import com.iaz.higister.util.DialogFactory;
 import com.iaz.higister.util.ViewUtil;
 import com.yalantis.flipviewpager.utils.FlipSettings;
 
@@ -83,6 +86,8 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
     }
 
     int i = 0;
+    private Dialog mDialog;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -127,9 +132,12 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
 
-        activity.button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        activity.button.setOnClickListener(view1 -> {
+
+            if (activity.editText.getText().toString().length() > 2) {
+                mDialog = DialogFactory.newDialog(activity, "Searching...");
+                mDialog.show();
+
                 counterList.clear();
                 i = 0;
 //                counter = 0;
@@ -146,11 +154,14 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
                 } else {
                     mSearchPresenter.loadResults(activity.list.getType(), activity.editText.getText().toString());
                 }
+            } else {
+                MaterialDialog.Builder dialog = DialogFactory.newMaterialDialog(activity);
+                dialog.show();
+
             }
         });
 
         populateLabel();
-
     }
 
     @Override
@@ -240,6 +251,10 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
     }
 
     public void updateAdapter() {
+
+        DialogFactory.finalizeDialog(mDialog, true, "Search completed", () -> {
+
+        });
 
         for (Fragment frag : activity.getSupportFragmentManager().getFragments()) {
             if (frag instanceof RecyclerViewFragment2) {

@@ -63,7 +63,8 @@
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"
                                 android:adjustViewBounds="true"
-                                android:src="@drawable/large_movie_poster" />
+                                android:src="@drawable/large_movie_poster"
+                                android:background="@color/primary_light"/>
 
                         </LinearLayout>
                     </RelativeLayout>
