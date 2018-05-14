@@ -21,4 +21,8 @@
     <string name="confirm_hint">Confirm Password</string>
 
     <string name="test">"m\n o \n v \n i \n e "</string>
+
+    <string name="open_filter">"show\noptions"</string>
+    <string name="close_filter">"hide\noptions"</string>
+    <string name="hide_search">"hide\nsearch"</string>
 </resources>

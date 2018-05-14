@@ -7,7 +7,6 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/search_layout"
         android:background="@color/primary">
 
         <android.support.design.widget.AppBarLayout
@@ -43,6 +42,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
+                        android:layout_alignParentStart="true"
                         android:alpha="0.8"
                         android:orientation="horizontal"
                         android:paddingBottom="20dp"
@@ -223,27 +223,228 @@
                     android:textColor="@color/accent"
                     android:textSize="20sp" />
 
+
             </android.support.v7.widget.CardView>
 
             <LinearLayout
+                android:id="@+id/search_filter_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/primary_light"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="8dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center"
+                    android:text="Search by: "
+                    android:textColor="@color/accent"
+                    android:textSize="16sp" />
+
+                <RadioGroup
+                    android:id="@+id/toggle"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginRight="50dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/accent_out_line"
+                    android:checkedButton="@+id/lists"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/lists"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginLeft="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/toggle_widget_background"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:text="Lists"
+                        android:textColor="@color/white" />
+
+                    <RadioButton
+                        android:id="@+id/people"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginRight="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/toggle_widget_background"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:text="People"
+                        android:textColor="@color/white" />
+                </RadioGroup>
 
                 <LinearLayout
-                    android:id="@+id/search_layout"
+                    android:id="@+id/list_types"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingEnd="8dp"
+                    android:paddingStart="8dp"
+                    android:weightSum="3">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <CheckBox
+                            android:id="@+id/checkbox_movies"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Movies"
+                            android:textColor="@color/white"
+                            android:checked="true"/>
+
+                        <CheckBox
+                            android:id="@+id/checkbox_mangas"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Mangas"
+                            android:textColor="@color/white"
+                            android:checked="true"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <CheckBox
+                            android:id="@+id/checkbox_series"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="TV series"
+                            android:textColor="@color/white"
+                            android:checked="true"/>
+
+                        <CheckBox
+                            android:id="@+id/checkbox_books"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Books"
+                            android:textColor="@color/white"
+                            android:checked="true"/>
+
+                        <CheckBox
+                            android:id="@+id/checkbox_comics"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Comics"
+                            android:textColor="@color/white"
+                            android:checked="true"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:orientation="vertical">
+
+                        <CheckBox
+                            android:id="@+id/checkbox_animes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Animes"
+                            android:textColor="@color/white"
+                            android:checked="true"/>
+
+                        <CheckBox
+                            android:id="@+id/checkbox_music"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Music"
+                            android:textColor="@color/white"
+                            android:checked="true"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/search_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/primary_light"
+                android:orientation="vertical"
+                android:layout_gravity="bottom"
+                android:visibility="gone">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="95dp"
                     android:background="@color/primary_light">
 
-                    <ImageView
-                        android:id="@+id/close_search_layout_button"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                    <LinearLayout
+                        android:id="@+id/filter_search_layout_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginStart="10dp"
-                        android:src="@drawable/ic_keyboard_arrow_right" />
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/filter_search_button_image"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_keyboard_arrow_up" />
+
+                        <TextView
+                            android:id="@+id/filter_search_button_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_horizontal"
+                            android:text="@string/open_filter"
+                            android:textColor="@color/white"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/close_search_layout_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_keyboard_arrow_right" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center_horizontal"
+                            android:text="@string/hide_search"
+                            android:textColor="@color/white"
+                            android:textSize="10sp" />
+                    </LinearLayout>
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -256,19 +457,13 @@
                         android:background="@drawable/card_shape"
                         android:orientation="horizontal">
 
-                        <android.support.v7.widget.AppCompatSpinner
-                            android:id="@+id/spinner_search_types"
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dp"
-                            android:layout_centerVertical="true" />
-
                         <EditText
                             android:id="@+id/search_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_marginEnd="56dp"
-                            android:layout_marginStart="56dp"
+                            android:layout_marginStart="10dp"
                             android:hint="Click to Search"
                             android:imeOptions="actionSearch"
                             android:inputType="text"
@@ -282,48 +477,10 @@
 
 
                 </LinearLayout>
-
-                <!--<RadioGroup-->
-                    <!--android:checkedButton="@+id/offer"-->
-                    <!--android:id="@+id/toggle"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="30dp"-->
-                    <!--android:layout_marginBottom="10dp"-->
-                    <!--android:layout_marginLeft="50dp"-->
-                    <!--android:layout_marginRight="50dp"-->
-                    <!--android:layout_marginTop="10dp"-->
-                    <!--android:background="@drawable/accent_out_line"-->
-                    <!--android:orientation="horizontal">-->
-
-                    <!--<RadioButton-->
-                        <!--android:layout_marginTop="1dp"-->
-                        <!--android:layout_marginBottom="1dp"-->
-                        <!--android:layout_marginLeft="1dp"-->
-                        <!--android:id="@+id/search"-->
-                        <!--android:background="@drawable/toggle_widget_background"-->
-                        <!--android:layout_width="0dp"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:layout_weight="1"-->
-                        <!--android:button="@null"-->
-                        <!--android:gravity="center"-->
-                        <!--android:text="Lists"-->
-                        <!--android:textColor="@color/white" />-->
-
-                    <!--<RadioButton-->
-                        <!--android:layout_marginRight="1dp"-->
-                        <!--android:layout_marginTop="1dp"-->
-                        <!--android:layout_marginBottom="1dp"-->
-                        <!--android:id="@+id/offer"-->
-                        <!--android:layout_width="0dp"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:layout_weight="1"-->
-                        <!--android:background="@drawable/toggle_widget_background"-->
-                        <!--android:button="@null"-->
-                        <!--android:gravity="center"-->
-                        <!--android:text="People"-->
-                        <!--android:textColor="@color/white" />-->
-                <!--</RadioGroup>-->
             </LinearLayout>
+
+
+
         </LinearLayout>
 
     </android.support.design.widget.CoordinatorLayout>

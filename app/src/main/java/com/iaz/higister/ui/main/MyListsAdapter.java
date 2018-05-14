@@ -237,25 +237,27 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                             fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                         });
 
-                        mDialog = DialogFactory.newDialog(fragment.activity, "Removing list...");
-                        mDialog.show();
+                        holder.removeButton.setOnClickListener(v -> {
 
-                        holder.removeButton.setOnClickListener(v ->
-                                listRepository.removeList(mLists.get(position), new ListRepository.OnListRemoved() {
-                                    @Override
-                                    public void onSuccess(String listUid) {
-                                        DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () -> {
-                                            notifyDataSetChanged();
-                                        });
-                                    }
+                            mDialog = DialogFactory.newDialog(fragment.activity, "Removing list...");
+                            mDialog.show();
 
-                                    @Override
-                                    public void onFailed(String exception) {
-                                        Log.d("onRemoveList", exception);
-                                        DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
-                                        });
-                                    }
-                                }));
+                            listRepository.removeList(mLists.get(position), new ListRepository.OnListRemoved() {
+                                @Override
+                                public void onSuccess(String listUid) {
+                                    DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () -> {
+                                        notifyDataSetChanged();
+                                    });
+                                }
+
+                                @Override
+                                public void onFailed(String exception) {
+                                    Log.d("onRemoveList", exception);
+                                    DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
+                                    });
+                                }
+                            });
+                        });
                     } else {
                         holder.editButtonLayout.setVisibility(View.GONE);
                         holder.removeButton.setVisibility(View.GONE);

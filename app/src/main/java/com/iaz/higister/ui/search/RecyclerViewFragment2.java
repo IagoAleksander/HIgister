@@ -134,7 +134,7 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
 
         activity.button.setOnClickListener(view1 -> {
 
-            if (activity.editText.getText().toString().length() > 2) {
+            if (activity.editText.getText().toString().trim().length() > 2) {
                 mDialog = DialogFactory.newDialog(activity, "Searching...");
                 mDialog.show();
 

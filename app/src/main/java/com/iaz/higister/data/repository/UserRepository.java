@@ -84,9 +84,9 @@ public class UserRepository {
             public void onSuccess(ArrayList<User> peopleList) {
                 ArrayList<User> resulList = new ArrayList<>();
 
-                for (User list : peopleList) {
-                    if (list.getName().toLowerCase().contains(filter.toLowerCase())) {
-                        resulList.add(list);
+                for (User user : peopleList) {
+                    if (user.getName() != null && !user.getName().isEmpty() && user.getName().toLowerCase().contains(filter.toLowerCase())) {
+                        resulList.add(user);
                     }
                 }
                 onGetUsers.onSuccess(resulList);

@@ -353,7 +353,7 @@ public class ListRepository {
                 .addOnFailureListener(onUpdateLists::onFailed);
     }
 
-    public void filterResult(String filter, OnUpdateLists onUpdateLists) {
+    public void filterResult(String filter, ArrayList<Integer> listTypes, OnUpdateLists onUpdateLists) {
 
         receiveAllLists(new OnUpdateLists() {
             @Override
@@ -362,7 +362,7 @@ public class ListRepository {
                 ArrayList<UserList> resulList = new ArrayList<>();
 
                 for (UserList list : userLists) {
-                    if (list.getName().toLowerCase().contains(filter.toLowerCase())) {
+                    if (list.getName().toLowerCase().contains(filter.toLowerCase()) && listTypes.contains(list.getType())) {
                         resulList.add(list);
                     }
                 }

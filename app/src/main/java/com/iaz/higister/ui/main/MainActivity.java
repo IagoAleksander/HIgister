@@ -21,12 +21,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,11 +50,20 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.iaz.higister.util.Constants.ANIMES;
+import static com.iaz.higister.util.Constants.BOOKS;
+import static com.iaz.higister.util.Constants.COMICS;
 import static com.iaz.higister.util.Constants.FAVOURITES_TAB_INDEX;
 import static com.iaz.higister.util.Constants.LISTS_TAB_INDEX;
+import static com.iaz.higister.util.Constants.MANGAS;
+import static com.iaz.higister.util.Constants.MISC;
+import static com.iaz.higister.util.Constants.MOVIES;
+import static com.iaz.higister.util.Constants.MUSICS;
+import static com.iaz.higister.util.Constants.PEOPLE;
 import static com.iaz.higister.util.Constants.SEARCH_TAB_INDEX;
 import static com.iaz.higister.util.Constants.PROFILE_TAB_INDEX;
 import static com.iaz.higister.util.Constants.FEED_TAB_INDEX;
+import static com.iaz.higister.util.Constants.TV_SERIES;
 
 /**
  * Created by Iago Aleksander on 06/03/18.
@@ -86,11 +98,50 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
     @BindView(R.id.container)
     ViewPager mViewPager;
 
+    @BindView(R.id.search_filter_layout)
+    LinearLayout searchFilterLayout;
+
+    @BindView(R.id.filter_search_button_image)
+    ImageView searchFilterButtonImage;
+
+    @BindView(R.id.filter_search_button_text)
+    TextView searchFilterButtonText;
+
+    @BindView(R.id.toggle)
+    RadioGroup toggle;
+
+    @BindView(R.id.list_types)
+    LinearLayout listTypes;
+
+    @BindView(R.id.checkbox_movies)
+    CheckBox checkboxMovies;
+
+    @BindView(R.id.checkbox_series)
+    CheckBox checkboxSeries;
+
+    @BindView(R.id.checkbox_animes)
+    CheckBox checkboxAnimes;
+
+    @BindView(R.id.checkbox_mangas)
+    CheckBox checkboxMangas;
+
+    @BindView(R.id.checkbox_books)
+    CheckBox checkboxBooks;
+
+    @BindView(R.id.checkbox_music)
+    CheckBox checkboxMusic;
+
+    @BindView(R.id.checkbox_comics)
+    CheckBox checkboxComics;
+
     @BindView(R.id.search_layout)
     LinearLayout searchLayout;
 
+    @BindView(R.id.filter_search_layout_button)
+    LinearLayout filterButton;
+
     @BindView(R.id.close_search_layout_button)
-    ImageView closeSearchLayoutButton;
+    LinearLayout closeSearchLayoutButton;
 
     @BindView(R.id.search_text)
     EditText searchText;
@@ -176,17 +227,6 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
             }
         });
 
-//        fabRevealLayout.revealSecondaryView();
-//        fabRevealLayout.revealSecondaryView();
-
-//        mTabLayout.setupWithViewPager(mViewPager);
-//        mTabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.accent));
-//        mTabLayout.setSelectedTabIndicatorHeight(7);
-//
-//        mTabLayout.getTabAt(0).setText("Friends");
-//        mTabLayout.getTabAt(1).setText("Suggested Friends");
-//        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
         viewPagerTab.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
@@ -199,6 +239,20 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
             @Override
             public void onClick(View view) {
                 searchLayout.setVisibility(View.GONE);
+                setFilterLayout(true);
+            }
+        });
+
+        setFilterLayout(false);
+        toggle.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                if (toggle.indexOfChild(findViewById(toggle.getCheckedRadioButtonId())) == 0) {
+                    listTypes.setVisibility(View.VISIBLE);
+                }
+                else {
+                    listTypes.setVisibility(View.GONE);
+                }
             }
         });
     }
@@ -290,8 +344,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
                     ((ProfileFragment) fragment).swapBetweenDisplayAndEditProfileInfos();
                 }
             });
-            insertTextLayout.setVisibility(View.GONE);
-            searchLayout.setVisibility(View.GONE);
+            closeSearch();
         } else if (position == LISTS_TAB_INDEX) {
             fab.setVisibility(View.VISIBLE);
             fab.setImageResource(R.drawable.ic_add);
@@ -300,16 +353,13 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
                 MainActivity.this.startActivity(intent);
                 fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
             });
-            insertTextLayout.setVisibility(View.GONE);
-            searchLayout.setVisibility(View.GONE);
+            closeSearch();
         } else if (position == FAVOURITES_TAB_INDEX) {
             fab.setVisibility(View.GONE);
-            insertTextLayout.setVisibility(View.GONE);
-            searchLayout.setVisibility(View.GONE);
+            closeSearch();
         } else if (position == FEED_TAB_INDEX) {
             fab.setVisibility(View.GONE);
-            insertTextLayout.setVisibility(View.GONE);
-            searchLayout.setVisibility(View.GONE);
+            closeSearch();
         } else if (position == SEARCH_TAB_INDEX) {
             fab.setVisibility(View.VISIBLE);
             fab.setImageResource(R.drawable.ic_search_white_24dp);
@@ -323,8 +373,18 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
                     animate();
                 } else {
                     if (fragment != null && fragment instanceof MyListsFragment) {
-                        ((MyListsFragment) fragment).mListsPresenter.search(searchText.getText().toString(), 8);
-                        searchAlreadyClicked = true;
+                        if (searchText.getText().toString().trim().length() > 2) {
+                            if (toggle.indexOfChild(findViewById(toggle.getCheckedRadioButtonId())) == 0) {
+                                ((MyListsFragment) fragment).mListsPresenter.search(searchText.getText().toString().trim(), createArrayTypes());
+                            } else {
+                                ((MyListsFragment) fragment).mListsPresenter.search(searchText.getText().toString().trim(), null);
+                            }
+                            searchAlreadyClicked = true;
+                        }
+                        else {
+                            MaterialDialog.Builder dialog = DialogFactory.newMaterialDialog(MainActivity.this);
+                            dialog.show();
+                        }
                     }
                 }
             });
@@ -403,6 +463,71 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
             public void onFailure(String exception) {
             }
         });
+    }
+
+    public void closeSearch() {
+        insertTextLayout.setVisibility(View.GONE);
+        searchLayout.setVisibility(View.GONE);
+
+        setFilterLayout(true);
+    }
+
+    public void setFilterLayout(boolean wasOpen) {
+        if (wasOpen) {
+
+            searchFilterLayout.setVisibility(View.GONE);
+            searchFilterButtonImage.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_keyboard_arrow_up));
+            searchFilterButtonText.setText(getResources().getString(R.string.open_filter));
+            filterButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    appBarLayout.setExpanded(false);
+                    setFilterLayout(false);
+                }
+            });
+        }
+        else {
+            searchFilterLayout.setVisibility(View.VISIBLE);
+            searchFilterButtonImage.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_keyboard_arrow_down));
+            searchFilterButtonText.setText(getResources().getString(R.string.close_filter));
+            insertTextLayout.setVisibility(View.GONE);
+            filterButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    appBarLayout.setExpanded(true);
+                    setFilterLayout(true);
+                }
+            });
+        }
+    }
+
+    public ArrayList<Integer> createArrayTypes() {
+
+        ArrayList<Integer> typesSelected = new ArrayList<>();
+
+        if (checkboxMovies.isChecked()) {
+            typesSelected.add(MOVIES);
+        }
+        if (checkboxSeries.isChecked()) {
+            typesSelected.add(TV_SERIES);
+        }
+        if (checkboxAnimes.isChecked()) {
+            typesSelected.add(ANIMES);
+        }
+        if (checkboxMangas.isChecked()) {
+            typesSelected.add(MANGAS);
+        }
+        if (checkboxBooks.isChecked()) {
+            typesSelected.add(BOOKS);
+        }
+        if (checkboxMusic.isChecked()) {
+            typesSelected.add(MUSICS);
+        }
+        if (checkboxComics.isChecked()) {
+            typesSelected.add(COMICS);
+        }
+
+        return typesSelected;
     }
 
 }

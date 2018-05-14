@@ -36,8 +36,8 @@ public class MyListsPresenter extends BasePresenter<MyListsMvpView> {
         if (mDisposable != null) mDisposable.dispose();
     }
 
-    public void search(String filter, int type) {
-        if (type == 8)  {
+    public void search(String filter, ArrayList<Integer> listTypes) {
+        if (listTypes == null)  {
             getMvpView().getFragment().userRepository.filterResult(filter, new UserRepository.OnGetUsers() {
                 @Override
                 public void onSuccess(ArrayList<User> peopleList) {
@@ -51,7 +51,7 @@ public class MyListsPresenter extends BasePresenter<MyListsMvpView> {
             });
         }
         else {
-            getMvpView().getFragment().listRepository.filterResult(filter, new ListRepository.OnUpdateLists() {
+            getMvpView().getFragment().listRepository.filterResult(filter, listTypes, new ListRepository.OnUpdateLists() {
                 @Override
                 public void onSuccess(ArrayList<UserList> userLists) {
                     getMvpView().getFragment().updateDataLists(userLists);

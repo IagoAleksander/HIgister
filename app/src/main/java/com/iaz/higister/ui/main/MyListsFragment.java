@@ -162,11 +162,11 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
             mListAdapter.notifyDataSetChanged();
         }
 
-        mRecyclerView.setAdapter(mListAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25,
                 getResources().getDisplayMetrics());
         mRecyclerView.addItemDecoration(new SpacesItemDecoration(space));
+        mRecyclerView.setAdapter(mListAdapter);
     }
 
     public void updateDataPeople(ArrayList<User> peopleList) {
