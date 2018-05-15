@@ -1,15 +1,18 @@
 package com.iaz.higister.ui.viewList;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,6 +45,10 @@ import com.iaz.higister.ui.search.SearchActivity;
 import com.iaz.higister.util.CustomPhotoPickerDialog;
 import com.iaz.higister.util.DialogFactory;
 import com.iaz.higister.util.ViewUtil;
+import com.like.LikeButton;
+import com.like.OnLikeListener;
+
+import net.cachapa.expandablelayout.ExpandableLayout;
 
 import java.util.ArrayList;
 
@@ -91,9 +98,31 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     RelativeLayout bottomBar;
     @BindView(R.id.add_new_item_button)
     TextView addNewItemButton;
+    @BindView(R.id.description_layout)
+    LinearLayout descriptionLayout;
+    @BindView(R.id.description_button_text)
+    TextView descriptionButtonText;
+    @BindView(R.id.description_button_image)
+    ImageView descriptionButtonImage;
+    @BindView(R.id.expandable_layout)
+    ExpandableLayout expandableLayout;
+
+    @BindView(R.id.favorite_button_layout)
+    LinearLayout favoriteButtonLayout;
+    @BindView(R.id.favorite_button)
+    LikeButton favoriteButton;
+    @BindView(R.id.like_button_layout)
+    LinearLayout likeButtonLayout;
+    @BindView(R.id.like_button)
+    LikeButton likeButton;
+    @BindView(R.id.remove_button)
+    Button removeButton;
 
     UserList list;
     User user;
+    boolean canClick = true;
+
+    Dialog mDialog;
 
     private CustomPhotoPickerDialog photoDialog;
 
@@ -121,9 +150,21 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
         if (getIntent() != null)
             list = getIntent().getExtras().getParcelable("list");
 
+        descriptionLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDescriptiion();
+            }
+        });
+
         if (list != null) {
             listName.setText(list.getName());
-            listDescription.setText(list.getDescription());
+
+            if (list.getDescription() != null && !list.getDescription().isEmpty())
+                listDescription.setText(list.getDescription());
+            else {
+                descriptionLayout.setVisibility(View.GONE);
+            }
             populateLabel(list.getType());
 
             if (list.getListPictureUri() != null) {
@@ -205,6 +246,133 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
             } else {
                 bottomBar.setVisibility(View.GONE);
             }
+
+            if (!list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+
+                favoriteButtonLayout.setVisibility(View.VISIBLE);
+                likeButtonLayout.setVisibility(View.VISIBLE);
+
+                favoriteButton.setLiked(list.getFavoritedBy().contains(FirebaseAuth.getInstance().getCurrentUser().getUid()));
+
+                favoriteButton.setOnLikeListener(new OnLikeListener() {
+                    @Override
+                    public void liked(LikeButton likeButton) {
+                        if (canClick) {
+                            canClick = false;
+                            listRepository.favoriteList(list, new ListRepository.OnListFavorited() {
+                                @Override
+                                public void onSuccess(String listUid) {
+                                    canClick = true;
+                                }
+
+                                @Override
+                                public void onFailed(Exception e) {
+                                    canClick = true;
+                                    Log.d("onFavoriteList", e.getMessage());
+
+                                    likeButton.setLiked(false);
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void unLiked(LikeButton likeButton) {
+                        if (canClick) {
+                            canClick = false;
+
+                            listRepository.unfavoriteList(list, new ListRepository.OnListRemoved() {
+                                        @Override
+                                        public void onSuccess(String listUid) {
+                                            canClick = true;
+                                        }
+
+                                        @Override
+                                        public void onFailed(String exception) {
+                                            canClick = true;
+                                            likeButton.setLiked(true);
+                                        }
+                                    }
+                            );
+                        }
+                    }
+                });
+
+
+                likeButton.setLiked(list.getLikedBy().contains(FirebaseAuth.getInstance().getCurrentUser().getUid()));
+                likeButton.setOnLikeListener(new OnLikeListener() {
+                    @Override
+                    public void liked(LikeButton likeButton) {
+                        if (canClick) {
+                            canClick = false;
+                            listRepository.likeList(list, new ListRepository.OnListLiked() {
+                                @Override
+                                public void onSuccess(String listUid) {
+                                    canClick = true;
+                                }
+
+                                @Override
+                                public void onFailed(Exception e) {
+                                    canClick = true;
+                                    Log.d("onFavoriteList", e.getMessage());
+
+                                    likeButton.setLiked(false);
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void unLiked(LikeButton likeButton) {
+                        if (canClick) {
+                            canClick = false;
+
+                            listRepository.unlikeList(list, new ListRepository.OnListRemoved() {
+                                        @Override
+                                        public void onSuccess(String listUid) {
+                                            canClick = true;
+//                                                        notifyDataSetChanged();
+                                        }
+
+                                        @Override
+                                        public void onFailed(String exception) {
+                                            canClick = true;
+                                            likeButton.setLiked(true);
+                                        }
+                                    }
+                            );
+                        }
+                    }
+                });
+            }
+            else if (list.uid != null){
+                removeButton.setVisibility(View.VISIBLE);
+                removeButton.setOnClickListener(v -> {
+
+                    mDialog = DialogFactory.newDialog(ViewListActivity.this, "Removing list...");
+                    mDialog.show();
+
+                    listRepository.removeList(list, new ListRepository.OnListRemoved() {
+                        @Override
+                        public void onSuccess(String listUid) {
+                            DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () -> {
+                                Intent intent = new Intent(ViewListActivity.this, MainActivity.class);
+                                ViewListActivity.this.startActivity(intent);
+                                overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                            });
+                        }
+
+                        @Override
+                        public void onFailed(String exception) {
+                            Log.d("onRemoveList", exception);
+                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
+                            });
+                        }
+                    });
+                });
+            }
+
+
         } else {
             finish();
             overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
@@ -372,6 +540,21 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
         Intent intent = new Intent(this, MainActivity.class);
         this.startActivity(intent);
         overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+    }
+
+    private void showDescriptiion() {
+        expandableLayout.expand();
+        descriptionButtonImage.setImageDrawable(ContextCompat.getDrawable(ViewListActivity.this, R.drawable.ic_keyboard_arrow_up));
+        descriptionButtonText.setText(getResources().getString(R.string.show_description));
+        descriptionLayout.setOnClickListener(view -> hideDescriptiion());
+
+    }
+
+    private void hideDescriptiion() {
+        expandableLayout.collapse();
+        descriptionButtonImage.setImageDrawable(ContextCompat.getDrawable(ViewListActivity.this, R.drawable.ic_keyboard_arrow_down));
+        descriptionButtonText.setText(getResources().getString(R.string.hide_description));
+        descriptionLayout.setOnClickListener(view -> showDescriptiion());
     }
 
 }

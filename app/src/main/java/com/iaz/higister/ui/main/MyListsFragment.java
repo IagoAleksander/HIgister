@@ -86,61 +86,8 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
         mListsPresenter.attachView(this);
 
-
-        if (type.equals("created")) {
-            listRepository.receiveListsOfUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), new ListRepository.OnUpdateLists() {
-                @Override
-                public void onSuccess(ArrayList<UserList> userLists) {
-                    updateDataLists(userLists);
-                }
-
-                @Override
-                public void onFailed(Exception e) {
-                    Log.e("receiveMyLists: ", "failed", e);
-                }
-            });
-
-            listsHeaderText.setText("My created lists:");
-        } else if (type.equals("favorited")) {
-            listRepository.receiveFavoritesOfUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), new ListRepository.OnUpdateLists() {
-                @Override
-                public void onSuccess(ArrayList<UserList> userLists) {
-
-                    activity.favoritedListsId.clear();
-
-                    for (UserList list : userLists) {
-                        if (!activity.favoritedListsId.contains(list.uid))
-                            activity.favoritedListsId.add(list.uid);
-                    }
-
-                    updateDataLists(userLists);
-
-                }
-
-                @Override
-                public void onFailed(Exception e) {
-                    Log.e("receiveMyLists: ", "failed", e);
-                }
-            }, "favorited");
-
-            listsHeaderText.setText("My favorited lists:");
-        } else if (type.equals("feed")) {
-            listRepository.receiveFeed(new ListRepository.OnUpdateLists() {
-                @Override
-                public void onSuccess(ArrayList<UserList> userLists) {
-                    updateDataLists(userLists);
-                }
-
-                @Override
-                public void onFailed(Exception e) {
-                    Log.e("receiveMyLists: ", "failed", e);
-                }
-            });
-
-            listsHeaderText.setText("My feed:");
-        } else {
-            listsHeaderText.setText("Search Lists:");
-        }
+        initLists();
+//        initListeners();
 
     }
 
@@ -177,5 +124,102 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
         mRecyclerView.setAdapter(mPeopleAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        initLists();
+        initListeners();
+    }
+
+    public void initLists() {
+        if (type.equals("created")) {
+//            listRepository.receiveListsOfUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), new ListRepository.OnUpdateLists() {
+//                @Override
+//                public void onSuccess(ArrayList<UserList> userLists) {
+//                    updateDataLists(userLists);
+//                }
+//
+//                @Override
+//                public void onFailed(Exception e) {
+//                    Log.e("receiveMyLists: ", "failed", e);
+//                }
+//            });
+
+            listsHeaderText.setText("My created lists");
+        } else if (type.equals("favorited")) {
+//            listRepository.receiveFavoritesOfUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), new ListRepository.OnUpdateLists() {
+//                @Override
+//                public void onSuccess(ArrayList<UserList> userLists) {
+//
+//                    activity.favoritedListsId.clear();
+//
+//                    for (UserList list : userLists) {
+//                        if (!activity.favoritedListsId.contains(list.uid))
+//                            activity.favoritedListsId.add(list.uid);
+//                    }
+//
+//                    updateDataLists(userLists);
+//
+//                }
+//
+//                @Override
+//                public void onFailed(Exception e) {
+//                    Log.e("receiveMyLists: ", "failed", e);
+//                }
+//            }, "favorited");
+
+            listsHeaderText.setText("My favorited lists");
+        } else if (type.equals("feed")) {
+//            listRepository.receiveFeed(new ListRepository.OnUpdateLists() {
+//                @Override
+//                public void onSuccess(ArrayList<UserList> userLists) {
+//                    updateDataLists(userLists);
+//                }
+//
+//                @Override
+//                public void onFailed(Exception e) {
+//                    Log.e("receiveMyLists: ", "failed", e);
+//                }
+//            });
+
+            listsHeaderText.setText("My feed");
+        } else {
+            listsHeaderText.setText("Search Lists");
+        }
+    }
+
+    public void initListeners() {
+        listRepository.addListener(activity, type, FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                new ListRepository.OnUpdateLists() {
+                    @Override
+                    public void onSuccess(ArrayList<UserList> userLists) {
+
+                        if (type.equals("created") && activity != null && activity.user != null) {
+                            activity.user.setListsCreatedNumber(userLists.size());
+                            activity.updateUserInfo();
+                        } else if (type.equals("favorited") && activity != null) {
+                            activity.favoritedListsId.clear();
+
+                            for (UserList list : userLists) {
+                                if (!activity.favoritedListsId.contains(list.uid))
+                                    activity.favoritedListsId.add(list.uid);
+                            }
+
+                            if (activity.user == null)
+                                activity.user = new User();
+
+                            activity.user.setListsFavouritedNumber(userLists.size());
+                            activity.updateUserInfo();
+                        }
+                        updateDataLists(userLists);
+                    }
+
+                    @Override
+                    public void onFailed(Exception e) {
+
+                    }
+                });
     }
 }

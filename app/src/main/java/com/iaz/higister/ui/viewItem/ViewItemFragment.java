@@ -50,6 +50,10 @@ public class ViewItemFragment extends Fragment implements ViewItemMvpView {
 
     @BindView(R.id.item_title)
     TextView itemTitle;
+    @BindView(R.id.separator)
+    View separator;
+    @BindView(R.id.item_extra_info_header)
+    TextView itemExtraInfoHeader;
     @BindView(R.id.item_extra_info)
     TextView itemExtraInfo;
     @BindView(R.id.item_list_name)
@@ -130,10 +134,21 @@ public class ViewItemFragment extends Fragment implements ViewItemMvpView {
 
                 if (listItem.getBaseItem().description != null && !listItem.getBaseItem().description.isEmpty())
                     itemExtraInfo.setText(listItem.getBaseItem().description);
+                else {
+                    itemExtraInfoHeader.setVisibility(View.GONE);
+                    separator.setVisibility(View.GONE);
+                }
             }
 
-            itemListTitle.setText(listItem.getName());
-            itemListDescription.setText(listItem.getDescription());
+            if (listItem.getName() != null && !listItem.getName().isEmpty())
+                itemListTitle.setText(listItem.getName());
+            else
+                itemListTitle.setVisibility(View.GONE);
+
+            if (listItem.getDescription() != null && !listItem.getDescription().isEmpty())
+                itemListDescription.setText(listItem.getDescription());
+            else
+                itemListDescription.setVisibility(View.GONE);
         }
     }
 

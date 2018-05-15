@@ -20,23 +20,27 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="210dp"
+                android:layout_height="wrap_content"
                 android:background="@color/primary_light"
                 app:layout_collapseMode="pin">
 
                 <RelativeLayout
+                    android:id="@+id/header_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:layout_margin="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:paddingTop="16dp"
                     android:scaleX="-1">
 
                     <TextView
                         android:id="@+id/label_text"
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
-                        android:layout_alignBottom="@id/listLogoLayout"
-                        android:layout_alignTop="@id/listLogoLayout"
+                        android:layout_alignBottom="@+id/listLogoLayout"
+                        android:layout_alignTop="@+id/listLogoLayout"
                         android:background="@color/accent_dark"
                         android:paddingStart="5dp"
                         android:paddingTop="5dp"
@@ -63,13 +67,13 @@
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"
                                 android:adjustViewBounds="true"
-                                android:src="@drawable/large_movie_poster"
-                                android:background="@color/primary_light"/>
+                                android:background="@color/primary_light"
+                                android:src="@drawable/large_movie_poster" />
 
                         </LinearLayout>
                     </RelativeLayout>
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignBottom="@id/listLogoLayout"
@@ -84,19 +88,131 @@
                             android:id="@+id/list_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:paddingTop="10dp"
                             android:scaleX="-1"
                             android:textColor="@color/white"
                             android:textSize="18sp" />
+
+                        <LinearLayout
+                            android:id="@+id/buttons_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:id="@+id/favorite_button_layout"
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
+                                android:layout_gravity="center"
+                                android:background="@color/saffron"
+                                android:gravity="center"
+                                android:visibility="gone">
+
+                                <com.like.LikeButton
+                                    android:id="@+id/favorite_button"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:layout_margin="1dp"
+                                    android:background="@color/primary_light"
+                                    android:scaleX="-1"
+                                    app:icon_size="25dp"
+                                    app:icon_type="Star" />
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:id="@+id/like_button_layout"
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="4dp"
+                                android:background="@color/accent_dark"
+                                android:gravity="center"
+                                android:scaleX="-1"
+                                android:visibility="gone">
+
+                                <com.like.LikeButton
+                                    android:id="@+id/like_button"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:layout_margin="1dp"
+                                    android:background="@color/primary_light"
+                                    app:icon_size="25dp"
+                                    app:icon_type="Thumb" />
+                            </LinearLayout>
+
+                            <Button
+                                android:id="@+id/remove_button"
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
+                                android:layout_gravity="center"
+                                android:background="@color/red"
+                                android:drawableBottom="@drawable/ic_action_trash"
+                                android:scaleX="-1"
+                                android:text="remove"
+                                android:visibility="gone" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/description_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:orientation="vertical"
+                            android:scaleX="-1">
+
+                            <TextView
+                                android:id="@+id/description_button_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:text="@string/show_description"
+                                android:textColor="@color/white"
+                                android:textSize="10sp" />
+
+                            <ImageView
+                                android:id="@+id/description_button_image"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_keyboard_arrow_down" />
+                        </LinearLayout>
+
+
+                    </RelativeLayout>
+
+                    <View
+                        android:id="@+id/separator"
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp"
+                        android:layout_below="@+id/listLogoLayout" />
+
+                    <net.cachapa.expandablelayout.ExpandableLayout
+                        android:id="@+id/expandable_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/separator"
+                        android:scaleX="-1"
+                        app:el_duration="1000"
+                        app:el_expanded="false"
+                        app:el_parallax="0.5">
 
                         <TextView
                             android:id="@+id/list_description"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:scaleX="-1"
-                            android:textColor="@color/white"
-                            android:textSize="12sp" />
+                            android:paddingBottom="12dp"
+                            android:textColor="@color/white" />
 
-                    </LinearLayout>
+                    </net.cachapa.expandablelayout.ExpandableLayout>
 
                 </RelativeLayout>
 
@@ -112,6 +228,7 @@
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
+
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/scroll_view"
@@ -156,7 +273,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="10dp"
-                            android:text="Comments:"
+                            android:text="Comments"
                             android:textColor="#A9B6BC"
                             android:textSize="@dimen/text_title" />
 
@@ -191,10 +308,10 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_gravity="center"
                     android:background="@color/primary"
                     android:gravity="center"
                     android:padding="80dp"
-                    android:layout_gravity="center"
                     android:text="Add at least one item to finish list creation"
                     android:textColor="@color/accent"
                     android:textSize="20sp" />
