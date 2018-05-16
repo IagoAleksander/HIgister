@@ -113,7 +113,7 @@
                                 android:maxLines="2"
                                 android:ellipsize="end"
                                 android:textSize="11sp"
-                                android:text="list description description descriptasshdjdscbkjasdbasd"/>
+                                android:text="list bio bio descriptasshdjdscbkjasdbasd"/>
 
                         </LinearLayout>
 

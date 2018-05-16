@@ -177,23 +177,25 @@ public class ListRepository {
 
         createdListsId.clear();
 
-        CollectionReference colRef = db.collection("users").document(uid)
-                .collection("createdLists");
+        if (uid != null && !uid.isEmpty()) {
+            CollectionReference colRef = db.collection("users").document(uid)
+                    .collection("createdLists");
 
-        colRef.get()
-                .addOnSuccessListener(documentSnapshots -> {
-                    Log.d("receiveMyLists: ", "success");
-                    FavoritedList tempListId;
+            colRef.get()
+                    .addOnSuccessListener(documentSnapshots -> {
+                        Log.d("receiveMyLists: ", "success");
+                        FavoritedList tempListId;
 
-                    for (DocumentSnapshot doc : documentSnapshots) {
-                        tempListId = doc.toObject(FavoritedList.class);
-                        tempListId.uid = doc.getId();
-                        createdListsId.add(tempListId);
-                    }
+                        for (DocumentSnapshot doc : documentSnapshots) {
+                            tempListId = doc.toObject(FavoritedList.class);
+                            tempListId.uid = doc.getId();
+                            createdListsId.add(tempListId);
+                        }
 
-                    populateLists(onUpdateLists);
-                })
-                .addOnFailureListener(onUpdateLists::onFailed);
+                        populateLists(onUpdateLists);
+                    })
+                    .addOnFailureListener(onUpdateLists::onFailed);
+        }
 
     }
 

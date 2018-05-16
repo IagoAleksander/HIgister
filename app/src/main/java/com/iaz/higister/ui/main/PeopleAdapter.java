@@ -83,6 +83,20 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.PeopleView
                 intent.putStringArrayListExtra("myFavoritedListsId", fragment.activity.favoritedListsId);
                 fragment.getActivity().startActivity(intent);
             });
+            String createdCounter = "";
+            String favoritedCounter = "";
+            try {
+                createdCounter = Integer.toString(currentPerson.getListsCreatedNumber());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                favoritedCounter = Integer.toString(currentPerson.getListsCreatedNumber());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            holder.listsCreatedCounter.setText(createdCounter);
+            holder.listsFavoritedCounter.setText(favoritedCounter);
         }
 
     }
@@ -102,6 +116,15 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.PeopleView
 
         @BindView(R.id.person_name_text)
         TextView personNameText;
+
+        @BindView(R.id.lists_created_counter)
+        TextView listsCreatedCounter;
+
+        @BindView(R.id.likes_received_counter)
+        TextView likesReceivedCunter;
+
+        @BindView(R.id.lists_favorited_counter)
+        TextView listsFavoritedCounter;
 
         public PeopleViewHolder(View itemView) {
             super(itemView);

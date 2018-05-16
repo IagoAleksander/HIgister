@@ -108,8 +108,7 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
             Glide.with(fragment)
                     .load(mLists.get(position).getListPictureUri())
                     .into(holder.image);
-        }
-        else {
+        } else {
             holder.image.setImageDrawable(ResourcesCompat.getDrawable(fragment.getResources(), R.drawable.large_movie_poster, null));
         }
 
@@ -121,10 +120,25 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
         });
 
         if (mLists.get(position).getCreatorName() != null && !mLists.get(position).getCreatorName().isEmpty()) {
-            holder.creatorNameText.setText(String.format("By %s", mLists.get(position).getCreatorName()));
-            holder.creatorNameText.setVisibility(View.VISIBLE);
+            if (mLists.get(position).getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                holder.creatorNameText.setText("By me");
+                holder.creatorsLayout.setVisibility(View.VISIBLE);
+            } else {
+                holder.creatorNameText.setText(String.format("By %s", mLists.get(position).getCreatorName()));
+                holder.creatorsLayout.setVisibility(View.VISIBLE);
+
+                holder.creatorsLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(fragment.getActivity(), ViewUserActivity.class);
+                        intent.putExtra("userId", mLists.get(position).getCreatorId());
+                        intent.putStringArrayListExtra("myFavoritedListsId", fragment.activity.favoritedListsId);
+                        fragment.getActivity().startActivity(intent);
+                    }
+                });
+            }
         } else
-            holder.creatorNameText.setVisibility(View.GONE);
+            holder.creatorsLayout.setVisibility(View.GONE);
 
 
         if (mLists.get(position).getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
@@ -268,8 +282,7 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
                         }
                     }
                 });
-            }
-            else {
+            } else {
                 holder.likeButton.setLiked(false);
                 holder.likeButton.setOnLikeListener(new OnLikeListener() {
                     @Override
@@ -303,12 +316,12 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
 
         }
 
-    populateLabel(holder, mLists.get(position).
+        populateLabel(holder, mLists.get(position).
 
-    getType());
+                getType());
 
 
-}
+    }
 
     @Override
     public int getItemCount() {
@@ -353,53 +366,56 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
         }
     }
 
-class ListViewHolder extends RecyclerView.ViewHolder {
+    class ListViewHolder extends RecyclerView.ViewHolder {
 
-    @BindView(R.id.label_layout)
-    RelativeLayout labelLayout;
+        @BindView(R.id.label_layout)
+        RelativeLayout labelLayout;
 
-    @BindView(R.id.label_text)
-    TextView labelText;
+        @BindView(R.id.label_text)
+        TextView labelText;
 
-    @BindView(R.id.list_item)
-    RelativeLayout listItem;
-    //        @BindView(R.id.view_hex_color) View hexColorView;
-    @BindView(R.id.list_name)
-    TextView listNameTextView;
+        @BindView(R.id.list_item)
+        RelativeLayout listItem;
+        //        @BindView(R.id.view_hex_color) View hexColorView;
+        @BindView(R.id.list_name)
+        TextView listNameTextView;
 
-    @BindView(R.id.list_description)
-    TextView listDescriptionTextView;
+        @BindView(R.id.list_description)
+        TextView listDescriptionTextView;
 
-    @BindView(R.id.item_image)
-    ImageView image;
+        @BindView(R.id.item_image)
+        ImageView image;
 
-    @BindView(R.id.edit_button_layout)
-    LinearLayout editButtonLayout;
+        @BindView(R.id.edit_button_layout)
+        LinearLayout editButtonLayout;
 
-    @BindView(R.id.edit_button)
-    Button editButton;
+        @BindView(R.id.edit_button)
+        Button editButton;
 
-    @BindView(R.id.favorite_button_layout)
-    LinearLayout favoriteButtonLayout;
+        @BindView(R.id.favorite_button_layout)
+        LinearLayout favoriteButtonLayout;
 
-    @BindView(R.id.favorite_button)
-    LikeButton favoriteButton;
+        @BindView(R.id.favorite_button)
+        LikeButton favoriteButton;
 
-    @BindView(R.id.like_button_layout)
-    LinearLayout likeButtonLayout;
+        @BindView(R.id.like_button_layout)
+        LinearLayout likeButtonLayout;
 
-    @BindView(R.id.like_button)
-    LikeButton likeButton;
+        @BindView(R.id.like_button)
+        LikeButton likeButton;
 
-    @BindView(R.id.remove_button)
-    Button removeButton;
+        @BindView(R.id.remove_button)
+        Button removeButton;
 
-    @BindView(R.id.creator_name_text)
-    TextView creatorNameText;
+        @BindView(R.id.creator_name_text)
+        TextView creatorNameText;
 
-    public ListViewHolder(View itemView) {
-        super(itemView);
-        ButterKnife.bind(this, itemView);
+        @BindView(R.id.creators_layout)
+        LinearLayout creatorsLayout;
+
+        public ListViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
     }
-}
 }

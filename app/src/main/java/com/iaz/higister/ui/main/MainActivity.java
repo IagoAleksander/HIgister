@@ -3,10 +3,13 @@ package com.iaz.higister.ui.main;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -16,8 +19,9 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -34,11 +38,11 @@ import com.bumptech.glide.Glide;
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.higister.R;
+import com.iaz.higister.data.model.Profile;
 import com.iaz.higister.data.model.User;
 import com.iaz.higister.data.repository.UserRepository;
 import com.iaz.higister.ui.base.BaseActivity;
 import com.iaz.higister.ui.createList.CreateListActivity;
-import com.iaz.higister.ui.viewList.ViewListActivity;
 import com.iaz.higister.util.AppBarStateChangeListener;
 import com.iaz.higister.util.DialogFactory;
 import com.iaz.higister.util.SectionsPagerAdapter;
@@ -56,10 +60,8 @@ import static com.iaz.higister.util.Constants.COMICS;
 import static com.iaz.higister.util.Constants.FAVOURITES_TAB_INDEX;
 import static com.iaz.higister.util.Constants.LISTS_TAB_INDEX;
 import static com.iaz.higister.util.Constants.MANGAS;
-import static com.iaz.higister.util.Constants.MISC;
 import static com.iaz.higister.util.Constants.MOVIES;
 import static com.iaz.higister.util.Constants.MUSICS;
-import static com.iaz.higister.util.Constants.PEOPLE;
 import static com.iaz.higister.util.Constants.SEARCH_TAB_INDEX;
 import static com.iaz.higister.util.Constants.PROFILE_TAB_INDEX;
 import static com.iaz.higister.util.Constants.FEED_TAB_INDEX;
@@ -288,34 +290,36 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
         return tab;
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_edit, menu);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_profile, menu);
 //
-////        MenuItem editButtonLayout = menu.findItem(R.id.action_edit);
-////        editButtonLayout.setVisible(mViewPager.getCurrentItem() == 0);
-//
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//
-//        switch (id) {
-//            case android.R.id.home:
+        MenuItem editButtonLayout = menu.findItem(R.id.action_profile);
+        editButtonLayout.setVisible(true);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case android.R.id.home:
 //                finish();
-////                overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
-//                break;
-//            case R.id.action_edit:
-//                finish();
-//                break;
-//            default:
-//                return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+//                overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                break;
+            case R.id.action_profile:
+                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                intent.putExtra("user", user);
+                MainActivity.this.startActivity(intent);
+                break;
+            default:
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     public void updateUserInfo() {
 
@@ -330,22 +334,18 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
             getSupportActionBar().setTitle(user.getName());
         }
         logUserToCrashlitics();
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("userName", user.getName());
+        editor.apply();
     }
 
     public void setFab(int position) {
 
         Fragment fragment = fm.findFragmentByTag("android:switcher:" + R.id.container + ":" + position);
 
-        if (position == PROFILE_TAB_INDEX) {
-            fab.setVisibility(View.VISIBLE);
-            fab.setImageResource(R.drawable.ic_edit);
-            fab.setOnClickListener(v -> {
-                if (fragment != null && fragment instanceof ProfileFragment) {
-                    ((ProfileFragment) fragment).swapBetweenDisplayAndEditProfileInfos();
-                }
-            });
-            closeSearch();
-        } else if (position == LISTS_TAB_INDEX) {
+        if (position == LISTS_TAB_INDEX) {
             fab.setVisibility(View.VISIBLE);
             fab.setImageResource(R.drawable.ic_add);
             fab.setOnClickListener(v -> {

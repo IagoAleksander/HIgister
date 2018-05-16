@@ -5,7 +5,14 @@
     <item
         android:id="@+id/action_edit"
         android:icon="@drawable/ic_edit"
-        android:title="Editar"
+        android:title="Edit"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_save"
+        android:icon="@drawable/ic_action_save_white"
+        android:title="Save"
         android:visible="false"
         app:showAsAction="ifRoom" />
 

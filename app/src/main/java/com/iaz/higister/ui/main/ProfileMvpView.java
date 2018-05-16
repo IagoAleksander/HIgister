@@ -7,7 +7,7 @@ import com.iaz.higister.ui.base.MvpView;
 
 public interface ProfileMvpView extends MvpView {
 
-    ProfileFragment getFragment();
+    ProfileActivity getActivity();
 
     void updateData(User user);
     void showSnackBar(String msg);

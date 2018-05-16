@@ -69,7 +69,13 @@ public class UserRepository {
             if (documentSnapshot.exists()) {
                 user = documentSnapshot.toObject(User.class);
 
-                onUpdateProfile.onSuccess(user);
+                if (user != null) {
+                    user.uid = documentSnapshot.getId();
+                    onUpdateProfile.onSuccess(user);
+                }
+                else {
+                    onUpdateProfile.onFailure("usuário nao existe");
+                }
             } else {
                 onUpdateProfile.onFailure("usuário nao existe");
             }

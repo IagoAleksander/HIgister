@@ -95,6 +95,11 @@
             android:label="@string/app_name" >
         </activity>
 
+        <activity
+            android:name="com.iaz.higister.ui.main.ProfileActivity"
+            android:label="@string/app_name" >
+        </activity>
+
         <activity android:name="com.iaz.higister.ui.gallery.GalleryActivity" />
 
         <service android:name="com.iaz.higister.data.SyncService"/>

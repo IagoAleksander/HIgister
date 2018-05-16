@@ -1,14 +1,11 @@
 package com.iaz.higister.data.model;
 
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.firebase.firestore.Exclude;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by alksander on 17/03/2018.
@@ -26,7 +23,7 @@ public class User implements Parcelable {
     //    private ArrayList<UserList> listsCreated;
     private int listsFavouritedNumber;
     //    public ArrayList<UserList> listsFavorited;
-    private String description;
+    private String bio;
     private int age;
     private ArrayList<String> interests = new ArrayList<>();
     private String profilePictureUri;
@@ -81,12 +78,12 @@ public class User implements Parcelable {
         this.listsFavouritedNumber = listsFavouritedNumber;
     }
 
-    public String getDescription() {
-        return description;
+    public String getBio() {
+        return bio;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 
     public int getAge() {
@@ -119,7 +116,7 @@ public class User implements Parcelable {
         setFollowersNumber(in.readInt());
         setListsCreatedNumber(in.readInt());
         setListsFavouritedNumber(in.readInt());
-        setDescription(in.readString());
+        setBio(in.readString());
         setAge(in.readInt());
         in.readStringList(interests);
         setProfilePictureUri(in.readString());
@@ -137,7 +134,7 @@ public class User implements Parcelable {
         dest.writeInt(getFollowersNumber());
         dest.writeInt(getListsCreatedNumber());
         dest.writeInt(getListsFavouritedNumber());
-        dest.writeString(getDescription());
+        dest.writeString(getBio());
         dest.writeInt(getAge());
         dest.writeStringList(interests);
         dest.writeString(getProfilePictureUri());

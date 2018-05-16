@@ -6,8 +6,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.iaz.higister.ui.main.MyListsFragment;
-import com.iaz.higister.ui.main.ProfileFragment;
-import com.iaz.higister.ui.viewItem.ViewItemFragment;
 import com.iaz.higister.ui.viewUser.UserListsFragment;
 
 import static com.iaz.higister.util.Constants.*;
@@ -44,7 +42,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                     new MyListsFragment();
                     return MyListsFragment.newInstance("search");
 //                case PROFILE_TAB_INDEX:
-//                    return new ProfileFragment();
+//                    return new ProfileActivity();
                 default:
                     return null;
             }

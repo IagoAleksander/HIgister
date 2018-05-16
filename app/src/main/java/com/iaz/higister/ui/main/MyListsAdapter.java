@@ -22,6 +22,7 @@ import com.iaz.higister.data.model.UserList;
 import com.iaz.higister.data.repository.ListRepository;
 import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.ui.viewList.ViewListActivity;
+import com.iaz.higister.ui.viewUser.ViewUserActivity;
 import com.iaz.higister.util.DialogFactory;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
@@ -101,10 +102,26 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
             });
 
             if (mLists.get(position).getCreatorName() != null && !mLists.get(position).getCreatorName().isEmpty()) {
-                holder.creatorNameText.setText(String.format("By %s", mLists.get(position).getCreatorName()));
-                holder.creatorNameText.setVisibility(View.VISIBLE);
+
+                if (mLists.get(position).getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                    holder.creatorNameText.setText("By me");
+                    holder.creatorsLayout.setVisibility(View.VISIBLE);
+                } else {
+                    holder.creatorNameText.setText(String.format("By %s", mLists.get(position).getCreatorName()));
+                    holder.creatorsLayout.setVisibility(View.VISIBLE);
+
+                    holder.creatorsLayout.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(fragment.getActivity(), ViewUserActivity.class);
+                            intent.putExtra("userId", mLists.get(position).getCreatorId());
+                            intent.putStringArrayListExtra("myFavoritedListsId", fragment.activity.favoritedListsId);
+                            fragment.getActivity().startActivity(intent);
+                        }
+                    });
+                }
             } else
-                holder.creatorNameText.setVisibility(View.GONE);
+                holder.creatorsLayout.setVisibility(View.GONE);
 
             switch (type) {
                 case "created":
@@ -485,6 +502,9 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
 
         @BindView(R.id.creator_name_text)
         TextView creatorNameText;
+
+        @BindView(R.id.creators_layout)
+        LinearLayout creatorsLayout;
 
         public ListViewHolder(View itemView) {
             super(itemView);

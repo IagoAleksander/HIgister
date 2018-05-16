@@ -1,5 +1,6 @@
 package com.iaz.higister.ui.viewUser;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +22,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.higister.R;
 import com.iaz.higister.data.model.User;
+import com.iaz.higister.data.repository.UserRepository;
 import com.iaz.higister.ui.base.BaseActivity;
 import com.iaz.higister.ui.createList.CreateListActivity;
 import com.iaz.higister.ui.main.MainActivity;
+import com.iaz.higister.ui.main.ProfileActivity;
 import com.iaz.higister.util.AppBarStateChangeListener;
+import com.iaz.higister.util.DialogFactory;
 import com.iaz.higister.util.SectionsPagerAdapter;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.truizlop.fabreveallayout.CircularExpandingView;
@@ -75,11 +81,14 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     FragmentManager fm;
+    private Dialog mDialog;
+    UserRepository userRepository = new UserRepository();
 
     Uri uri;
 
     public ArrayList<String> favoritedListsId = new ArrayList<>();
     public User user;
+    String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +104,18 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
 
         if (getIntent() != null && getIntent().getExtras() != null) {
             user = getIntent().getExtras().getParcelable("user");
+            userId = getIntent().getExtras().getString("userId");
             favoritedListsId = getIntent().getExtras().getStringArrayList("myFavoritedListsId");
+        }
+
+        mDialog = DialogFactory.newDialog(this, "Loading profile...");
+        mDialog.show();
+
+        if (user != null) {
+            initFrags();
+        }
+        else if (userId != null && !userId.isEmpty()){
+            recoverProfileInfo();
         }
 
         appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
@@ -110,23 +130,6 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
                 } else {
                     mUserInfoLayout.setVisibility(View.VISIBLE);
                 }
-            }
-        });
-
-        fm = getSupportFragmentManager();
-
-        mSectionsPagerAdapter = new SectionsPagerAdapter(fm, this, 1);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        final SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
-        viewPagerTab.setCustomTabView(this);
-        viewPagerTab.setViewPager(mViewPager);
-
-        viewPagerTab.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                View tab = viewPagerTab.getTabAt(position);
             }
         });
     }
@@ -160,8 +163,6 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
             callGlide(Uri.parse(user.getProfilePictureUri()));
 
         getSupportActionBar().setTitle(user.getName());
-//        setFab(PROFILE_TAB_INDEX);
-//        mViewPager.setCurrentItem(PROFILE_TAB_INDEX);
     }
 
     public void callGlide(Uri uri) {
@@ -181,6 +182,16 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_profile, menu);
+//
+        MenuItem editButtonLayout = menu.findItem(R.id.action_profile);
+        editButtonLayout.setVisible(true);
+
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
@@ -189,6 +200,11 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
                 Intent intent = new Intent(this, MainActivity.class);
                 this.startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                break;
+            case R.id.action_profile:
+                Intent intent2 = new Intent(ViewUserActivity.this, ProfileActivity.class);
+                intent2.putExtra("user", user);
+                ViewUserActivity.this.startActivity(intent2);
                 break;
             default:
                 return true;
@@ -203,6 +219,48 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         getApplicationContext().startActivity(intent);
         overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+    }
+
+    public void recoverProfileInfo() {
+
+        userRepository.receiveProfileInfo(userId, new UserRepository.OnUpdateProfile() {
+            @Override
+            public void onSuccess(User mUser) {
+                user = mUser;
+
+                DialogFactory.finalizeDialog(mDialog, true, "Profile updated with success", new DialogFactory.OnDialogButtonClicked() {
+                    @Override
+                    public void onClick() {
+                        updateUserInfo();
+                        initFrags();
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure(String exception) {
+            }
+        });
+    }
+
+    public void initFrags() {
+
+        fm = getSupportFragmentManager();
+        mSectionsPagerAdapter = new SectionsPagerAdapter(fm, this, 1);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        final SmartTabLayout viewPagerTab = (SmartTabLayout) findViewById(R.id.viewpagertab);
+        viewPagerTab.setCustomTabView(this);
+        viewPagerTab.setViewPager(mViewPager);
+
+        viewPagerTab.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                View tab = viewPagerTab.getTabAt(position);
+            }
+        });
     }
 
 }

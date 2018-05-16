@@ -82,6 +82,7 @@
                                 android:src="@drawable/ic_list" />
 
                             <TextView
+                                android:id="@+id/lists_created_counter"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"
@@ -105,6 +106,7 @@
                                 android:src="@drawable/ic_action_star_10" />
 
                             <TextView
+                                android:id="@+id/lists_favorited_counter"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"
@@ -128,6 +130,7 @@
                                 android:src="@drawable/ic_action_like" />
 
                             <TextView
+                                android:id="@+id/likes_received_counter"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center"

@@ -2,10 +2,13 @@ package com.iaz.higister.ui.createList;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TextInputLayout;
@@ -224,8 +227,9 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
                     list.setListPictureUri(uri);
 
                 list.setCreatorId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                list.setCreatorName("Tester");
-                //TODO
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                String userName = sharedPref.getString("userName", "---");
+                list.setCreatorName(userName);
 
                 list.setType(typeSelected);
                 list.setVisibleForEveryone(isListVisible.isChecked());

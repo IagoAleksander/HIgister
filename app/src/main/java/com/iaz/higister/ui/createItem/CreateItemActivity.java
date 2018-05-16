@@ -2,7 +2,10 @@ package com.iaz.higister.ui.createItem;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
@@ -131,10 +134,13 @@ public class CreateItemActivity extends BaseActivity {
 
                 position = list.getListItems().size() - 1;
 
+                list.setCreatorId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                String userName = sharedPref.getString("userName", "---");
+                list.setCreatorName(userName);
+
                 if (list.getListItems().size() == 1) {
-                    list.setCreatorId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    list.setCreatorName("Tester");
-                    //TODO nome do criador
 
                     mDialog = DialogFactory.newDialog(CreateItemActivity.this, "Creating new list...");
                     mDialog.show();
