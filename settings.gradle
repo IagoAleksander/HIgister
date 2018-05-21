@@ -1,1 +1,1 @@
-include ':app', ':flipviewpager', ':library'
+include ':app', ':circularProgressButton', ':flipviewpager'

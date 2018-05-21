@@ -1,10 +1,6 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="horizontal_margin">16dp</dimen>
-    <dimen name="vertical_margin">16dp</dimen>
 
-    <dimen name="text_headline">24sp</dimen>
-    <dimen name="text_large_title">22sp</dimen>
     <dimen name="text_title">20sp</dimen>
     <dimen name="text_large_body">18sp</dimen>
     <dimen name="text_body">16sp</dimen>
@@ -14,14 +10,12 @@
     <item name="match_parent" format="integer" type="dimen">-1</item>
     <item name="wrap_content" format="integer" type="dimen">-2</item>
 
-    <dimen name="auth_page_margin">24dp</dimen>
     <dimen name="folded_size">20sp</dimen>
     <dimen name="unfolded_size">40sp</dimen>
     <dimen name="option_size">56dp</dimen>
     <dimen name="option_size_google">64dp</dimen>
     <dimen name="text_padding">16dp</dimen>
     <dimen name="input_width">220dp</dimen>
-    <dimen name="label_size">20sp</dimen>
     <dimen name="folded_label_padding">22sp</dimen>
     <dimen name="logo_size">64dp</dimen>
     <dimen name="guideline_margin">56dp</dimen>

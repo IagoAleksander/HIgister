@@ -28,7 +28,6 @@ public abstract class BaseFlipAdapter extends RecyclerView.Adapter<BaseFlipAdapt
     private List items;
     private FlipSettings settings;
     private LayoutInflater inflater;
-    private BaseViewHolder baseViewHolder;
 
     public BaseFlipAdapter(Context context, List items, FlipSettings settings) {
         this.items = items;
@@ -36,15 +35,11 @@ public abstract class BaseFlipAdapter extends RecyclerView.Adapter<BaseFlipAdapt
         inflater = LayoutInflater.from(context);
     }
 
-    public void setItems(List items) {
-        this.items = items;
-    }
-
     @Override
     public BaseViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = inflater
                 .inflate(R.layout.flipper, viewGroup, false);
-        baseViewHolder = new BaseViewHolder(v);
+        BaseViewHolder baseViewHolder = new BaseViewHolder(v);
         baseViewHolder.mFlipViewPager = (FlipViewPager) v.findViewById(R.id.flip_view);
         return baseViewHolder;
     }
@@ -66,8 +61,6 @@ public abstract class BaseFlipAdapter extends RecyclerView.Adapter<BaseFlipAdapt
 
         flipViewPagerMap.put(position, baseViewHolder.mFlipViewPager);
         baseViewHolder.mFlipViewPager.setAdapter(new MergeAdapter(item1, item2, position), settings.getDefaultPage(), position, items.size());
-
-
     }
 
     @Override
@@ -125,23 +118,9 @@ public abstract class BaseFlipAdapter extends RecyclerView.Adapter<BaseFlipAdapt
         public void onClickClose() {
             flipViewPagerMap.get(position).flipToPage(1);
         }
-
-        @Override
-        public void onClickItemLeft() {
-//            if (baseViewHolder != null && baseViewHolder.mFlipViewPager != null && !baseViewHolder.mFlipViewPager.flipping)
-//                flipViewPagerMap.get(position).flipToPage(0);
-        }
-
-        @Override
-        public void onClickItemRight() {
-//            if (baseViewHolder != null && baseViewHolder.mFlipViewPager != null && !baseViewHolder.mFlipViewPager.flipping)
-//                flipViewPagerMap.get(position).flipToPage(2);
-        }
     }
 
     public interface CloseListener {
         void onClickClose();
-        void onClickItemLeft();
-        void onClickItemRight();
     }
 }

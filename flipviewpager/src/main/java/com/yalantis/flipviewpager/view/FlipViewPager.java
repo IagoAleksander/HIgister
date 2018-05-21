@@ -207,8 +207,7 @@ public class FlipViewPager extends FrameLayout {
 
         // Custom code ends here
         int action = ev.getAction() & MotionEvent.ACTION_MASK;
-//        if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
-        if (action == MotionEvent.ACTION_CANCEL) {
+        if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
             toggleFlip(false);
             mActivePointerId = INVALID_POINTER;
             recycleVelocity();
@@ -346,7 +345,6 @@ public class FlipViewPager extends FrameLayout {
                 break;
 
             case MotionEvent.ACTION_UP:
-
             case MotionEvent.ACTION_CANCEL:
                 if (flipping) {
                     mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
@@ -355,26 +353,19 @@ public class FlipViewPager extends FrameLayout {
                     mLeftEdgeEffect.onRelease();
                     mRightEdgeEffect.onRelease();
                 } else if ((action & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-//                    if (ev.getRawX() == mLastMotionX || ev.getRawY() == mLastMotionY) {
+                    if (ev.getRawX() == mLastMotionX || ev.getRawY() == mLastMotionY) {
                         AdapterView.OnItemClickListener clickListener = null;
                         if (getParent().getParent() instanceof ListView)
                             clickListener = ((ListView) getParent().getParent()).getOnItemClickListener();
 
-
-                        if (mCurrentPageIndex == 1 && isLeftClicked(ev)) {
-                            flipToPage(0);
-                            if (clickListener != null)
+                        if (clickListener != null) {
+                            if (mCurrentPageIndex == 1 && isLeftClicked(ev)) {
                                 clickListener.onItemClick(null, this, mRow * 2, -1);
-
-                        } else if (mCurrentPageIndex == 1 && isRightClicked(ev) && mMaxItems > (mRow * 2 + 1)) {
-                            flipToPage(2);
-                            if (clickListener != null)
+                            } else if (mCurrentPageIndex == 1 && isRightClicked(ev) && mMaxItems > (mRow * 2 + 1))
                                 clickListener.onItemClick(null, this, mRow * 2 + 1, -1);
-
                         }
-
                         return false;
-//                    }
+                    }
                 }
                 break;
             case MotionEvent.ACTION_POINTER_DOWN: {
