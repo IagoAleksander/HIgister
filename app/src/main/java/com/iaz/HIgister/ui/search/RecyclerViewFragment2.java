@@ -261,7 +261,7 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
             }
         }
 
-        Runtime.getRuntime().gc();
+//        Runtime.getRuntime().gc();
         activity.mViewPager.setAdapter(new FragmentStatePagerAdapter(activity.getSupportFragmentManager()) {
 
             @Override

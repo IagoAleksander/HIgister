@@ -447,7 +447,8 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_edit, menu);
 
-        if (user != null && user.uid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+        //TODO check if is correct
+        if (user != null && (user.uid == null || user.uid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))) {
             if (mEditProfileLayout.getVisibility() == View.VISIBLE) {
                 menu.findItem(R.id.action_edit).setVisible(false);
                 menu.findItem(R.id.action_save).setVisible(true);
@@ -471,7 +472,7 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
         switch (id) {
             case android.R.id.home:
                 if (user != null)
-                    if (user.uid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                    if (user.uid == null || user.uid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         getApplicationContext().startActivity(intent);
                         overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
