@@ -331,7 +331,7 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
         String[] stringArray = getResources().getStringArray(R.array.list_type);
 
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                this, R.layout.item_list_type, stringArray) {
+                this, R.layout.support_simple_spinner_dropdown_item, stringArray) {
             @Override
             public boolean isEnabled(int position) {
                 return position != 0;

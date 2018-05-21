@@ -255,7 +255,7 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
 
         String[] stringArray = getResources().getStringArray(R.array.list_type);
 
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(activity, R.layout.item_list_type, stringArray) {
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(activity, R.layout.support_simple_spinner_dropdown_item, stringArray) {
             @Override
             public boolean isEnabled(int position) {
                 return position != 0;
