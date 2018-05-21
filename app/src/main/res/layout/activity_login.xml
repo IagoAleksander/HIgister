@@ -5,7 +5,7 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.iaz.higister.ui.login.AuthActivity">
+    tools:context="com.iaz.HIgister.ui.login.AuthActivity">
 
     <ImageView
         android:id="@+id/scrolling_background"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
-    <com.iaz.higister.util.AnimatedViewPager
+    <com.iaz.HIgister.util.AnimatedViewPager
         android:id="@+id/pager"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -42,17 +42,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.95" />
-
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
-        android:layout_width="@dimen/option_size"
-        android:layout_height="@dimen/option_size"
-        app:layout_constraintRight_toLeftOf="@+id/second"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.93"/>
+        app:layout_constraintVertical_bias="0.95"
+        android:visibility="gone"/>
 
     <ImageView
         android:src="@drawable/google"
@@ -64,7 +55,8 @@
         app:layout_constraintTop_toTopOf="@+id/first"
         app:layout_constraintBottom_toBottomOf="@+id/first"
         app:layout_constraintVertical_bias="0.0"
-        android:tint="@android:color/white"/>
+        android:tint="@android:color/white"
+        android:visibility="gone"/>
 
     <ImageView
         android:src="@drawable/twitter"
@@ -75,7 +67,8 @@
         app:layout_constraintLeft_toRightOf="@+id/second"
         app:layout_constraintBottom_toBottomOf="@+id/second"
         app:layout_constraintTop_toTopOf="@+id/second"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        android:visibility="gone"/>
 
     <android.support.constraint.Guideline
         android:layout_width="wrap_content"
@@ -84,14 +77,25 @@
         app:layout_constraintGuide_begin="@dimen/guideline_margin"
         android:orientation="horizontal" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/carter_one_regular"
+        android:text="HIgister"
+        android:textColor="@color/white"
+        android:textSize="40sp"
+        app:layout_constraintTop_toTopOf="@+id/guideline"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
     <ImageView
         android:id="@+id/logo"
         android:focusable="true"
         android:src="@drawable/log"
         android:focusableInTouchMode="true"
+        android:layout_width="@dimen/logo_size"
+        android:layout_height="@dimen/logo_size"
         app:layout_constraintTop_toTopOf="@+id/guideline"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_width="@dimen/logo_size"
-        android:layout_height="@dimen/logo_size"/>
+        android:visibility="gone"/>
 </android.support.constraint.ConstraintLayout>

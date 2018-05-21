@@ -76,7 +76,7 @@ public class FlipViewPager extends FrameLayout {
 
     // Internal interface to store page position
     public interface OnChangePageListener {
-        public void onFlipped(int page);
+        void onFlipped(int page);
     }
 
     class PageItem {
@@ -356,24 +356,24 @@ public class FlipViewPager extends FrameLayout {
                     mRightEdgeEffect.onRelease();
                 } else if ((action & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
 //                    if (ev.getRawX() == mLastMotionX || ev.getRawY() == mLastMotionY) {
-                        AdapterView.OnItemClickListener clickListener = null;
-                        if (getParent().getParent() instanceof ListView)
-                            clickListener = ((ListView) getParent().getParent()).getOnItemClickListener();
+                    AdapterView.OnItemClickListener clickListener = null;
+                    if (getParent().getParent() instanceof ListView)
+                        clickListener = ((ListView) getParent().getParent()).getOnItemClickListener();
 
 
-                        if (mCurrentPageIndex == 1 && isLeftClicked(ev)) {
-                            flipToPage(0);
-                            if (clickListener != null)
-                                clickListener.onItemClick(null, this, mRow * 2, -1);
+                    if (mCurrentPageIndex == 1 && isLeftClicked(ev)) {
+                        flipToPage(0);
+                        if (clickListener != null)
+                            clickListener.onItemClick(null, this, mRow * 2, -1);
 
-                        } else if (mCurrentPageIndex == 1 && isRightClicked(ev) && mMaxItems > (mRow * 2 + 1)) {
-                            flipToPage(2);
-                            if (clickListener != null)
-                                clickListener.onItemClick(null, this, mRow * 2 + 1, -1);
+                    } else if (mCurrentPageIndex == 1 && isRightClicked(ev) && mMaxItems > (mRow * 2 + 1)) {
+                        flipToPage(2);
+                        if (clickListener != null)
+                            clickListener.onItemClick(null, this, mRow * 2 + 1, -1);
 
-                        }
+                    }
 
-                        return false;
+                    return false;
 //                    }
                 }
                 break;
