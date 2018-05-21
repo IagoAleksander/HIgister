@@ -7,7 +7,13 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.iaz.HIgister.ui.main.MyListsFragment;
 
-import static com.iaz.HIgister.util.Constants.*;
+import static com.iaz.HIgister.util.Constants.FAVOURITES_TAB_INDEX;
+import static com.iaz.HIgister.util.Constants.FEED_TAB_INDEX;
+import static com.iaz.HIgister.util.Constants.LISTS_TAB_INDEX;
+import static com.iaz.HIgister.util.Constants.MY_LISTS;
+import static com.iaz.HIgister.util.Constants.SEARCH_TAB_INDEX;
+import static com.iaz.HIgister.util.Constants.USER_FAVOURITES_TAB_INDEX;
+import static com.iaz.HIgister.util.Constants.USER_LISTS_TAB_INDEX;
 
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter {

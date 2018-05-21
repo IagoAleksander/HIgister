@@ -51,7 +51,18 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.iaz.HIgister.util.Constants.*;
+import static com.iaz.HIgister.util.Constants.ANIMES;
+import static com.iaz.HIgister.util.Constants.BOOKS;
+import static com.iaz.HIgister.util.Constants.COMICS;
+import static com.iaz.HIgister.util.Constants.FAVOURITES_TAB_INDEX;
+import static com.iaz.HIgister.util.Constants.FEED_TAB_INDEX;
+import static com.iaz.HIgister.util.Constants.LISTS_TAB_INDEX;
+import static com.iaz.HIgister.util.Constants.MANGAS;
+import static com.iaz.HIgister.util.Constants.MOVIES;
+import static com.iaz.HIgister.util.Constants.MUSICS;
+import static com.iaz.HIgister.util.Constants.PROFILE_TAB_INDEX;
+import static com.iaz.HIgister.util.Constants.SEARCH_TAB_INDEX;
+import static com.iaz.HIgister.util.Constants.TV_SERIES;
 
 /**
  * Created by Iago Aleksander on 06/03/18.

@@ -4,11 +4,9 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.HIgister.ui.base.BaseActivity;
 import com.iaz.HIgister.ui.login.AuthActivity;
@@ -28,18 +26,14 @@ import io.fabric.sdk.android.Fabric;
 
 public class SplashActivity extends BaseActivity implements SplashMvpView {
 
+    public static final String TAG = SplashActivity.class.getSimpleName();
     @Inject
     SplashPresenter mSplashPresenter;
-
     @BindView(R.id.switcher_header)
     TextView rotatingTextHeader;
-
     @BindView(R.id.custom_switcher)
     RotatingTextWrapper rotatingTextWrapper;
-
     private FirebaseAuth.AuthStateListener mAuthListener;
-
-    public static final String TAG = SplashActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +79,7 @@ public class SplashActivity extends BaseActivity implements SplashMvpView {
 
         rotatingTextHeader.setTypeface(typeface);
 
-        final Rotatable rotatable = new Rotatable(getResources().getColor(R.color.white), 2000, "","your movies", "your books", "your musics", "YOU...", "", "");
+        final Rotatable rotatable = new Rotatable(getResources().getColor(R.color.white), 2000, "", "your movies", "your books", "your musics", "YOU...", "", "");
         rotatable.setSize(35);
         rotatable.setAnimationDuration(500);
         rotatable.setTypeface(typeface);

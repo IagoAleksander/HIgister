@@ -27,7 +27,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
-import static com.iaz.HIgister.util.Constants.*;
+import static com.iaz.HIgister.util.Constants.BOOKS;
 
 
 /**

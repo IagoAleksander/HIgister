@@ -40,7 +40,7 @@ public abstract class BaseFlipAdapter extends RecyclerView.Adapter<BaseFlipAdapt
         View v = inflater
                 .inflate(R.layout.flipper, viewGroup, false);
         BaseViewHolder baseViewHolder = new BaseViewHolder(v);
-        baseViewHolder.mFlipViewPager = (FlipViewPager) v.findViewById(R.id.flip_view);
+        baseViewHolder.mFlipViewPager = v.findViewById(R.id.flip_view);
         return baseViewHolder;
     }
 

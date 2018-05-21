@@ -239,7 +239,9 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
                 addCommentButton.setVisibility(View.GONE);
                 commentsLayout.setVisibility(View.GONE);
                 listLayout.setVisibility(View.GONE);
-                addItemTextLayout.setVisibility(View.VISIBLE);
+
+                if (list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                    addItemTextLayout.setVisibility(View.VISIBLE);
             }
 
             if (list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {

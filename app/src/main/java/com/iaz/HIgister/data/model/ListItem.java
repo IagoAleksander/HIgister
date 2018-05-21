@@ -27,7 +27,7 @@ public class ListItem implements Parcelable{
         setName(in.readString());
         setDescription(in.readString());
         setType(in.readInt());
-        setBaseItem(in.readTypedObject(BaseItem.CREATOR));
+        setBaseItem(in.readParcelable(BaseItem.class.getClassLoader()));
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ListItem implements Parcelable{
         dest.writeString(getDescription());
         dest.writeInt(getType());
         //TODO
-        dest.writeTypedObject(getBaseItem(), PARCELABLE_WRITE_RETURN_VALUE);
+        dest.writeParcelable(getBaseItem(), PARCELABLE_WRITE_RETURN_VALUE);
 
     }
 
