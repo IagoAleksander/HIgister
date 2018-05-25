@@ -1,8 +1,8 @@
-package com.iaz.higister.injection.component;
+package com.iaz.higister2.injection.component;
 
-import com.iaz.higister.injection.ConfigPersistent;
-import com.iaz.higister.injection.module.ActivityModule;
-import com.iaz.higister.ui.base.BaseActivity;
+import com.iaz.higister2.injection.ConfigPersistent;
+import com.iaz.higister2.injection.module.ActivityModule;
+import com.iaz.higister2.ui.base.BaseActivity;
 
 import dagger.Component;
 

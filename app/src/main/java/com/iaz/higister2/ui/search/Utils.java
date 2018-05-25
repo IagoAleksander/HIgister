@@ -1,8 +1,8 @@
-package com.iaz.higister.ui.search;
+package com.iaz.higister2.ui.search;
 
 
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.Friend;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.Friend;
 
 import java.util.ArrayList;
 import java.util.List;

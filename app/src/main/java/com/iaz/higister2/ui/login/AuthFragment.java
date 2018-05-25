@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.login;
+package com.iaz.higister2.ui.login;
 
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -12,10 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.iaz.higister.R;
-import com.iaz.higister.util.Rotate;
-import com.iaz.higister.util.TextSizeTransition;
-import com.iaz.higister.util.VerticalTextView;
+import com.iaz.higister2.R;
+import com.iaz.higister2.util.Rotate;
+import com.iaz.higister2.util.TextSizeTransition;
+import com.iaz.higister2.util.VerticalTextView;
 import com.transitionseverywhere.ChangeBounds;
 import com.transitionseverywhere.TransitionManager;
 import com.transitionseverywhere.TransitionSet;

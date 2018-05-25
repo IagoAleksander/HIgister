@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.login;
+package com.iaz.higister2.ui.login;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 
-import com.iaz.higister.R;
-import com.iaz.higister.util.AnimatedViewPager;
+import com.iaz.higister2.R;
+import com.iaz.higister2.util.AnimatedViewPager;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
-package com.iaz.higister.ui.viewList;
+package com.iaz.higister2.ui.viewList;
 
-import com.iaz.higister.data.model.ListItem;
-import com.iaz.higister.ui.base.MvpView;
+import com.iaz.higister2.data.model.ListItem;
+import com.iaz.higister2.ui.base.MvpView;
 
 import java.util.ArrayList;
 

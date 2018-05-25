@@ -1,4 +1,4 @@
-package com.iaz.higister.util;
+package com.iaz.higister2.util;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.RelativeLayout;
 
-import com.iaz.higister.R;
+import com.iaz.higister2.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

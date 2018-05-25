@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.main;
+package com.iaz.higister2.ui.main;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,12 +12,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.User;
-import com.iaz.higister.data.model.UserList;
-import com.iaz.higister.data.repository.ListRepository;
-import com.iaz.higister.data.repository.UserRepository;
-import com.iaz.higister.util.SpacesItemDecoration;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.User;
+import com.iaz.higister2.data.model.UserList;
+import com.iaz.higister2.data.repository.ListRepository;
+import com.iaz.higister2.data.repository.UserRepository;
+import com.iaz.higister2.util.SpacesItemDecoration;
 
 import java.util.ArrayList;
 

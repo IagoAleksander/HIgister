@@ -1,9 +1,9 @@
-package com.iaz.higister.injection.module;
+package com.iaz.higister2.injection.module;
 
 import android.app.Activity;
 import android.content.Context;
 
-import com.iaz.higister.injection.ActivityContext;
+import com.iaz.higister2.injection.ActivityContext;
 
 import dagger.Module;
 import dagger.Provides;

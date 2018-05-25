@@ -51,12 +51,6 @@
         <item name="android:padding">@dimen/text_padding</item>
     </style>
 
-    <style name="Widget.Hint">
-        <item name="android:textSize">17sp</item>
-        <item name="android:textColor">@color/color_text</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
     <style name="AppBaseTheme" parent="@style/Theme.AppCompat.Light">
     </style>
 

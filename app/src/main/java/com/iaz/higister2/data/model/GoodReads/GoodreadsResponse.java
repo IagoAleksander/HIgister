@@ -1,4 +1,4 @@
-package com.iaz.higister.data.model.GoodReads;
+package com.iaz.higister2.data.model.GoodReads;
 
 public class GoodreadsResponse
 {

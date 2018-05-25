@@ -1,14 +1,14 @@
-package com.iaz.higister.ui.splash;
+package com.iaz.higister2.ui.splash;
 
 import android.content.Intent;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.iaz.higister.data.DataManager;
-import com.iaz.higister.injection.ConfigPersistent;
-import com.iaz.higister.ui.base.BasePresenter;
-import com.iaz.higister.ui.main.MainActivity;
+import com.iaz.higister2.data.DataManager;
+import com.iaz.higister2.injection.ConfigPersistent;
+import com.iaz.higister2.ui.base.BasePresenter;
+import com.iaz.higister2.ui.main.MainActivity;
 
 import javax.inject.Inject;
 

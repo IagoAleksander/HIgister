@@ -24,7 +24,7 @@
             android:orientation="vertical"
             android:layout_margin="8dp">
 
-            <com.iaz.higister.data.model.FontTextView
+            <com.iaz.higister2.data.model.FontTextView
                 android:id="@+id/item_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

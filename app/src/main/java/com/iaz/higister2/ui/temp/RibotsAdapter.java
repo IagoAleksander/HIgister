@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.temp;
+package com.iaz.higister2.ui.temp;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.Ribot;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.Ribot;
 
 import java.util.ArrayList;
 import java.util.List;

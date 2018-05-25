@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.login;
+package com.iaz.higister2.ui.login;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -14,11 +14,11 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.Toast;
 
-import com.iaz.higister.R;
-import com.iaz.higister.util.Rotate;
-import com.iaz.higister.util.TextSizeTransition;
-import com.iaz.higister.util.TextWatcherAdapter;
-import com.iaz.higister.util.ViewUtil;
+import com.iaz.higister2.R;
+import com.iaz.higister2.util.Rotate;
+import com.iaz.higister2.util.TextSizeTransition;
+import com.iaz.higister2.util.TextWatcherAdapter;
+import com.iaz.higister2.util.ViewUtil;
 import com.transitionseverywhere.ChangeBounds;
 import com.transitionseverywhere.Transition;
 import com.transitionseverywhere.TransitionManager;

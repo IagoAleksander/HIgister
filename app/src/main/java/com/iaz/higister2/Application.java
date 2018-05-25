@@ -1,4 +1,4 @@
-package com.iaz.higister;
+package com.iaz.higister2;
 
 import android.content.Context;
 import android.support.multidex.MultiDex;
@@ -7,10 +7,10 @@ import com.crashlytics.android.Crashlytics;
 
 import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
-import com.iaz.higister.injection.component.ApplicationComponent;
-import com.iaz.higister.injection.component.DaggerApplicationComponent;
-import com.iaz.higister.injection.module.ApplicationModule;
-import com.iaz.higister.util.ApplicationUtil;
+import com.iaz.higister2.injection.component.ApplicationComponent;
+import com.iaz.higister2.injection.component.DaggerApplicationComponent;
+import com.iaz.higister2.injection.module.ApplicationModule;
+import com.iaz.higister2.util.ApplicationUtil;
 
 public class Application extends android.app.Application {
 

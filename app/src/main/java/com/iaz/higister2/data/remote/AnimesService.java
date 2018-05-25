@@ -1,6 +1,6 @@
-package com.iaz.higister.data.remote;
+package com.iaz.higister2.data.remote;
 
-import com.iaz.higister.data.model.MyAnimeList.MyAnimeListResponse;
+import com.iaz.higister2.data.model.MyAnimeList.MyAnimeListResponse;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;

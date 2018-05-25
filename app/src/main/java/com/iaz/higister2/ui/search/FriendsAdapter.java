@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.search;
+package com.iaz.higister2.ui.search;
 
 import android.app.Activity;
 import android.view.View;
@@ -6,8 +6,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.Friend;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.Friend;
 import com.yalantis.flipviewpager.adapter.BaseFlipAdapter;
 import com.yalantis.flipviewpager.utils.FlipSettings;
 

@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.viewItem;
+package com.iaz.higister2.ui.viewItem;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,11 +16,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.ListItem;
-import com.iaz.higister.ui.gallery.GalleryActivity;
-import com.iaz.higister.util.CustomPhotoPickerDialog;
-import com.iaz.higister.util.ViewUtil;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.ListItem;
+import com.iaz.higister2.ui.gallery.GalleryActivity;
+import com.iaz.higister2.util.CustomPhotoPickerDialog;
+import com.iaz.higister2.util.ViewUtil;
 
 import java.util.ArrayList;
 

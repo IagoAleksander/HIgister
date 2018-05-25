@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.login;
+package com.iaz.higister2.ui.login;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -14,13 +14,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.iaz.higister.data.DataManager;
-import com.iaz.higister.data.model.User;
-import com.iaz.higister.data.repository.UserRepository;
-import com.iaz.higister.injection.ConfigPersistent;
-import com.iaz.higister.ui.base.BasePresenter;
-import com.iaz.higister.ui.main.MainActivity;
-import com.iaz.higister.util.DialogFactory;
+import com.iaz.higister2.data.DataManager;
+import com.iaz.higister2.data.model.User;
+import com.iaz.higister2.data.repository.UserRepository;
+import com.iaz.higister2.injection.ConfigPersistent;
+import com.iaz.higister2.ui.base.BasePresenter;
+import com.iaz.higister2.ui.main.MainActivity;
+import com.iaz.higister2.util.DialogFactory;
 
 import javax.inject.Inject;
 

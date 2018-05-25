@@ -1,4 +1,4 @@
-package com.iaz.higister.data.model.GoodReads;
+package com.iaz.higister2.data.model.GoodReads;
 
 /**
  * Created by alksander on 02/03/2018.

@@ -1,9 +1,9 @@
-package com.iaz.higister.data.local;
+package com.iaz.higister2.data.local;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.iaz.higister.injection.ApplicationContext;
+import com.iaz.higister2.injection.ApplicationContext;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

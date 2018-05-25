@@ -1,10 +1,10 @@
-package com.iaz.higister.ui.search;
+package com.iaz.higister2.ui.search;
 
-import com.iaz.higister.data.BackendManager;
-import com.iaz.higister.data.DataManager;
-import com.iaz.higister.injection.ConfigPersistent;
-import com.iaz.higister.ui.base.BasePresenter;
-import com.iaz.higister.util.Constants;
+import com.iaz.higister2.data.BackendManager;
+import com.iaz.higister2.data.DataManager;
+import com.iaz.higister2.injection.ConfigPersistent;
+import com.iaz.higister2.ui.base.BasePresenter;
+import com.iaz.higister2.util.Constants;
 
 import javax.inject.Inject;
 

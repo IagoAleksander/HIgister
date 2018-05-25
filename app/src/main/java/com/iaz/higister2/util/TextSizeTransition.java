@@ -1,4 +1,4 @@
-package com.iaz.higister.util;
+package com.iaz.higister2.util;
 /*
  * Copyright (C) 2016 The Android Open Source Project
  *

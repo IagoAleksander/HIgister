@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.login;
+package com.iaz.higister2.ui.login;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,9 +18,9 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.iaz.higister.R;
-import com.iaz.higister.ui.base.BaseActivity;
-import com.iaz.higister.util.AnimatedViewPager;
+import com.iaz.higister2.R;
+import com.iaz.higister2.ui.base.BaseActivity;
+import com.iaz.higister2.util.AnimatedViewPager;
 
 import java.util.List;
 

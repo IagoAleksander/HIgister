@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.main;
+package com.iaz.higister2.ui.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -35,14 +35,14 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.auth.FirebaseAuth;
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.User;
-import com.iaz.higister.data.repository.UserRepository;
-import com.iaz.higister.ui.base.BaseActivity;
-import com.iaz.higister.ui.createList.CreateListActivity;
-import com.iaz.higister.util.AppBarStateChangeListener;
-import com.iaz.higister.util.DialogFactory;
-import com.iaz.higister.util.SectionsPagerAdapter;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.User;
+import com.iaz.higister2.data.repository.UserRepository;
+import com.iaz.higister2.ui.base.BaseActivity;
+import com.iaz.higister2.ui.createList.CreateListActivity;
+import com.iaz.higister2.util.AppBarStateChangeListener;
+import com.iaz.higister2.util.DialogFactory;
+import com.iaz.higister2.util.SectionsPagerAdapter;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 import com.truizlop.fabreveallayout.CircularExpandingView;
 
@@ -51,18 +51,18 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.iaz.higister.util.Constants.ANIMES;
-import static com.iaz.higister.util.Constants.BOOKS;
-import static com.iaz.higister.util.Constants.COMICS;
-import static com.iaz.higister.util.Constants.FAVOURITES_TAB_INDEX;
-import static com.iaz.higister.util.Constants.FEED_TAB_INDEX;
-import static com.iaz.higister.util.Constants.LISTS_TAB_INDEX;
-import static com.iaz.higister.util.Constants.MANGAS;
-import static com.iaz.higister.util.Constants.MOVIES;
-import static com.iaz.higister.util.Constants.MUSICS;
-import static com.iaz.higister.util.Constants.PROFILE_TAB_INDEX;
-import static com.iaz.higister.util.Constants.SEARCH_TAB_INDEX;
-import static com.iaz.higister.util.Constants.TV_SERIES;
+import static com.iaz.higister2.util.Constants.ANIMES;
+import static com.iaz.higister2.util.Constants.BOOKS;
+import static com.iaz.higister2.util.Constants.COMICS;
+import static com.iaz.higister2.util.Constants.FAVOURITES_TAB_INDEX;
+import static com.iaz.higister2.util.Constants.FEED_TAB_INDEX;
+import static com.iaz.higister2.util.Constants.LISTS_TAB_INDEX;
+import static com.iaz.higister2.util.Constants.MANGAS;
+import static com.iaz.higister2.util.Constants.MOVIES;
+import static com.iaz.higister2.util.Constants.MUSICS;
+import static com.iaz.higister2.util.Constants.PROFILE_TAB_INDEX;
+import static com.iaz.higister2.util.Constants.SEARCH_TAB_INDEX;
+import static com.iaz.higister2.util.Constants.TV_SERIES;
 
 /**
  * Created by Iago Aleksander on 06/03/18.

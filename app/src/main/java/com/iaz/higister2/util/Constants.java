@@ -1,4 +1,4 @@
-package com.iaz.higister.util;
+package com.iaz.higister2.util;
 
 /**
  * Created by alksander on 12/03/2018.

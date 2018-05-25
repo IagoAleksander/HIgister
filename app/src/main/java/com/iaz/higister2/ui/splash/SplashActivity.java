@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.splash;
+package com.iaz.higister2.ui.splash;
 
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -8,9 +8,9 @@ import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.auth.FirebaseAuth;
-import com.iaz.higister.R;
-import com.iaz.higister.ui.base.BaseActivity;
-import com.iaz.higister.ui.login.AuthActivity;
+import com.iaz.higister2.R;
+import com.iaz.higister2.ui.base.BaseActivity;
+import com.iaz.higister2.ui.login.AuthActivity;
 import com.sdsmdg.harjot.rotatingtext.RotatingTextWrapper;
 import com.sdsmdg.harjot.rotatingtext.models.Rotatable;
 

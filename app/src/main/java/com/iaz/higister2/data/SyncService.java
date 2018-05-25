@@ -1,4 +1,4 @@
-package com.iaz.higister.data;
+package com.iaz.higister2.data;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -7,11 +7,11 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.IBinder;
 
-import com.iaz.higister.Application;
-import com.iaz.higister.data.model.Ribot;
-import com.iaz.higister.util.AndroidComponentUtil;
-import com.iaz.higister.util.NetworkUtil;
-import com.iaz.higister.util.RxUtil;
+import com.iaz.higister2.Application;
+import com.iaz.higister2.data.model.Ribot;
+import com.iaz.higister2.util.AndroidComponentUtil;
+import com.iaz.higister2.util.NetworkUtil;
+import com.iaz.higister2.util.RxUtil;
 
 import javax.inject.Inject;
 

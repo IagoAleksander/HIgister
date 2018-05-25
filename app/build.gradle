@@ -1,4 +1,18 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 apply from: '../config/quality/quality.gradle'
 apply plugin: 'com.github.triplet.play'
 //TODO uncomment line below after adding fabric api secret and key to fabric.properties
@@ -6,7 +20,7 @@ apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion "26.0.2"
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId 'com.iaz.higister'
@@ -24,6 +38,11 @@ android {
                 includeCompileClasspath = true
             }
         }
+
+        dexOptions {
+//            preDexLibraries = false
+            javaMaxHeapSize "4g"
+        }
     }
 
     signingConfigs {
@@ -31,10 +50,10 @@ android {
         // Run: export APP_KEY={password}
         // TODO Add your release keystore in /keystore folder
         release {
-            storeFile file('keystore/release.keystore')
-            keyAlias 'alias'
-            storePassword "$System.env.APP_KEY"
-            keyPassword "$System.env.APP_KEY"
+            storeFile file('keystore/prod')
+            keyAlias 'prod'
+            storePassword "Foxtrot,2"
+            keyPassword "Foxtrot,2"
         }
 
         debug {
@@ -49,11 +68,11 @@ android {
         release {
             signingConfig signingConfigs.release
 
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
-            ext.betaDistributionReleaseNotesFilePath =
-                    file('../crashlytics_release_notes.txt').absolutePath
+//            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//
+//            ext.betaDistributionReleaseNotesFilePath =
+//                    file('../crashlytics_release_notes.txt').absolutePath
         }
 
         debug {
@@ -77,8 +96,20 @@ android {
         warning 'InvalidPackage'
     }
     compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+afterEvaluate {
+    tasks.matching {
+        it.name.startsWith('dex')
+    }.each { dx ->
+        if (dx.additionalParameters == null) {
+            dx.additionalParameters = ['--multi-dex']
+        } else {
+            dx.additionalParameters += '--multi-dex'
+        }
     }
 }
 
@@ -112,40 +143,40 @@ dependencies {
     def mockito = "org.mockito:mockito-core:$MOCKITO_VERSION"
 
     // App Dependencies
-    compile "com.google.android.gms:play-services-gcm:$PLAY_SERVICES_VERSION"
-    compile "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
-    compile "com.android.support:recyclerview-v7:$SUPPORT_LIBRARY_VERSION"
-    compile "com.android.support:cardview-v7:$SUPPORT_LIBRARY_VERSION"
-    compile "com.android.support:support-annotations:$SUPPORT_LIBRARY_VERSION"
-    compile('com.squareup.sqlbrite2:sqlbrite:2.0.0') {
+    implementation "com.google.android.gms:play-services-gcm:$PLAY_SERVICES_VERSION"
+    implementation "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
+    implementation "com.android.support:recyclerview-v7:$SUPPORT_LIBRARY_VERSION"
+    implementation "com.android.support:cardview-v7:$SUPPORT_LIBRARY_VERSION"
+    implementation "com.android.support:support-annotations:$SUPPORT_LIBRARY_VERSION"
+    implementation('com.squareup.sqlbrite2:sqlbrite:2.0.0') {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    compile "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
-    compile "com.squareup.retrofit2:converter-gson:$RETROFIT_VERSION"
-    compile "com.squareup.retrofit2:adapter-rxjava2:$RETROFIT_VERSION"
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.2'
-    compile 'io.reactivex.rxjava2:rxjava:2.1.9'
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.7@aar') {
-        transitive = true;
+    implementation "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
+    implementation "com.squareup.retrofit2:converter-gson:$RETROFIT_VERSION"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$RETROFIT_VERSION"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
+    implementation('com.crashlytics.sdk.android:crashlytics:2.5.7@aar') {
+        transitive = true
     }
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.jakewharton.timber:timber:4.4.0'
-    compile "com.jakewharton:butterknife:$BUTTERKNIFE_VERSION"
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.jakewharton.timber:timber:4.4.0'
+    implementation "com.jakewharton:butterknife:$BUTTERKNIFE_VERSION"
     annotationProcessor "com.jakewharton:butterknife-compiler:$BUTTERKNIFE_VERSION"
 
     // Replace provided dependency below with official AutoValue once this issue is fixed
 
     // https://github.com/google/auto/issues/268
-    provided "com.jakewharton.auto.value:auto-value-annotations:$AUTO_VALUE_VERSION"
-    provided "com.ryanharter.auto.value:auto-value-gson:$AUTO_VALUE_GSON_VERSION"
+    compileOnly "com.jakewharton.auto.value:auto-value-annotations:$AUTO_VALUE_VERSION"
+    compileOnly "com.ryanharter.auto.value:auto-value-gson:$AUTO_VALUE_GSON_VERSION"
     annotationProcessor "com.google.auto.value:auto-value:$AUTO_VALUE_VERSION"
     annotationProcessor 'com.ryanharter.auto.value:auto-value-parcel:0.2.4-rc2'
     annotationProcessor "com.ryanharter.auto.value:auto-value-gson:$AUTO_VALUE_GSON_VERSION"
     annotationProcessor 'com.squareup:javapoet:1.9.0'
 
     // https://github.com/rharter/auto-value-parcel/issues/64
-    compile "com.google.dagger:dagger:$DAGGER_VERSION"
-    provided 'org.glassfish:javax.annotation:10.0-b28'
+    implementation "com.google.dagger:dagger:$DAGGER_VERSION"
+    compileOnly 'org.glassfish:javax.annotation:10.0-b28'
 
     //Required by Dagger2
     annotationProcessor daggerCompiler
@@ -153,64 +184,65 @@ dependencies {
     androidTestAnnotationProcessor daggerCompiler
 
     // Instrumentation test dependencies
-    androidTestCompile jUnit
-    androidTestCompile mockito
-    androidTestCompile "org.mockito:mockito-android:$MOCKITO_VERSION"
-    androidTestCompile "com.android.support:support-annotations:$SUPPORT_LIBRARY_VERSION"
-    androidTestCompile("com.android.support.test.espresso:espresso-contrib:$ESPRESSO_VERSION") {
-        exclude group: 'com.android.support', module: 'appcompat'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude group: 'com.android.support', module: 'recyclerview-v7'
-    }
-    androidTestCompile "com.android.support.test.espresso:espresso-core:$ESPRESSO_VERSION"
-    androidTestCompile "com.android.support.test:runner:$RUNNER_VERSION"
-    androidTestCompile "com.android.support.test:rules:$RUNNER_VERSION"
+//    androidTestCompile jUnit
+//    androidTestCompile mockito
+//    androidTestCompile "org.mockito:mockito-android:$MOCKITO_VERSION"
+    androidTestImplementation "com.android.support:support-annotations:$SUPPORT_LIBRARY_VERSION"
+//    androidTestCompile("com.android.support.test.espresso:espresso-contrib:$ESPRESSO_VERSION") {
+//        exclude group: 'com.android.support', module: 'appcompat'
+//        exclude group: 'com.android.support', module: 'support-v4'
+//        exclude group: 'com.android.support', module: 'recyclerview-v7'
+//    }
+//    androidTestCompile "com.android.support.test.espresso:espresso-core:$ESPRESSO_VERSION"
+//    androidTestCompile "com.android.support.test:runner:$RUNNER_VERSION"
+//    androidTestCompile "com.android.support.test:rules:$RUNNER_VERSION"
 
     // Unit tests dependencies
-    testCompile jUnit
-    testCompile mockito
-    testCompile "org.hamcrest:hamcrest-core:$HAMCREST_VERSION"
-    testCompile "org.hamcrest:hamcrest-library:$HAMCREST_VERSION"
-    testCompile "org.hamcrest:hamcrest-integration:$HAMCREST_VERSION"
-    testCompile 'org.robolectric:robolectric:3.3'
-    compile('com.squareup.retrofit2:converter-simplexml:2.3.0') {
+    implementation jUnit
+    implementation mockito
+    implementation "org.hamcrest:hamcrest-core:$HAMCREST_VERSION"
+    implementation "org.hamcrest:hamcrest-library:$HAMCREST_VERSION"
+    implementation "org.hamcrest:hamcrest-integration:$HAMCREST_VERSION"
+    implementation 'org.robolectric:robolectric:3.3'
+    implementation('com.squareup.retrofit2:converter-simplexml:2.3.0') {
         exclude group: 'xpp3', module: 'xpp3'
         exclude group: 'stax', module: 'stax-api'
         exclude group: 'stax', module: 'stax'
     }
-    compile 'com.sdsmdg.harjot:rotatingtext:1.0.2'
-    compile 'com.android.support.constraint:constraint-layout:1.1.0'
-    compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
-    compile "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
-    compile 'com.andkulikov:transitionseverywhere:1.7.9'
-    compile 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.1.0'
-    compile 'de.hdodenhof:circleimageview:2.2.0'
-    compile 'com.github.florent37:materialviewpager:1.2.3'
+    implementation 'com.sdsmdg.harjot:rotatingtext:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
+    implementation "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
+    implementation 'com.andkulikov:transitionseverywhere:1.7.9'
+    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.1.0'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation 'com.github.florent37:materialviewpager:1.2.3'
 
     //dependencies
-    compile 'com.flaviofaria:kenburnsview:1.0.7'
-    compile 'com.jpardogo.materialtabstrip:library:1.1.0'
-    compile 'com.github.bumptech.glide:glide:4.0.0'
-    compile 'com.ogaclejapan.smarttablayout:library:1.6.1@aar'
-    compile 'com.github.jkwiecien:EasyImage:2.0.2'
-    compile project(path: ':flipviewpager')
-    compile 'com.google.firebase:firebase-core:15.0.2'
-    compile 'com.google.firebase:firebase-auth:15.1.0'
-    compile 'com.google.firebase:firebase-firestore:16.0.0'
-    compile 'com.google.firebase:firebase-storage:15.0.2'
-    compile 'me.relex:circleindicator:1.2.2@aar'
+    implementation 'com.flaviofaria:kenburnsview:1.0.7'
+    implementation 'com.jpardogo.materialtabstrip:library:1.1.0'
+    implementation 'com.github.bumptech.glide:glide:4.0.0'
+    implementation 'com.ogaclejapan.smarttablayout:library:1.6.1@aar'
+    implementation 'com.github.jkwiecien:EasyImage:2.0.2'
+    implementation project(path: ':flipviewpager')
+    implementation 'com.google.firebase:firebase-core:15.0.2'
+    implementation 'com.google.firebase:firebase-auth:15.1.0'
+    implementation 'com.google.firebase:firebase-firestore:16.0.0'
+    implementation 'com.google.firebase:firebase-storage:15.0.2'
+    implementation 'me.relex:circleindicator:1.2.2@aar'
     implementation 'me.shaohui.advancedluban:library:1.3.5'
-    compile 'net.cachapa.expandablelayout:expandablelayout:+'
+    implementation 'net.cachapa.expandablelayout:expandablelayout:+'
 
     // Required only if Facebook login support is required
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
-    compile 'devlight.io:navigationtabbar:1.2.5'
+    implementation 'devlight.io:navigationtabbar:1.2.5'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
     implementation 'com.truizlop.fabreveallayout:library:1.0.0'
-    compile 'com.github.jd-alexander:LikeButton:0.2.3'
+    implementation 'com.github.jd-alexander:LikeButton:0.2.3'
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     implementation project(':library')
+    implementation 'com.android.support:multidex:1.0.3'
 }
 
 // Log out test results to console

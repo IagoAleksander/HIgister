@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.search;
+package com.iaz.higister2.ui.search;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,11 +15,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.BaseItem;
-import com.iaz.higister.data.model.ListItem;
-import com.iaz.higister.data.model.UserList;
-import com.iaz.higister.ui.createItem.CreateItemActivity;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.BaseItem;
+import com.iaz.higister2.data.model.ListItem;
+import com.iaz.higister2.data.model.UserList;
+import com.iaz.higister2.ui.createItem.CreateItemActivity;
 
 import java.util.ArrayList;
 

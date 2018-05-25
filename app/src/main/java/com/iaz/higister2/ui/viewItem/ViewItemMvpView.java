@@ -1,6 +1,6 @@
-package com.iaz.higister.ui.viewItem;
+package com.iaz.higister2.ui.viewItem;
 
-import com.iaz.higister.ui.base.MvpView;
+import com.iaz.higister2.ui.base.MvpView;
 
 public interface ViewItemMvpView extends MvpView {
 

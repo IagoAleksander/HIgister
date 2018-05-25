@@ -1,9 +1,9 @@
-package com.iaz.higister.ui.main;
+package com.iaz.higister2.ui.main;
 
 import android.net.Uri;
 
-import com.iaz.higister.data.model.User;
-import com.iaz.higister.ui.base.MvpView;
+import com.iaz.higister2.data.model.User;
+import com.iaz.higister2.ui.base.MvpView;
 
 public interface ProfileMvpView extends MvpView {
 

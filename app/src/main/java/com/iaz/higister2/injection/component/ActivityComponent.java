@@ -1,17 +1,17 @@
-package com.iaz.higister.injection.component;
+package com.iaz.higister2.injection.component;
 
-import com.iaz.higister.injection.PerActivity;
-import com.iaz.higister.injection.module.ActivityModule;
-import com.iaz.higister.ui.createItem.CreateItemActivity;
-import com.iaz.higister.ui.createList.CreateListActivity;
-import com.iaz.higister.ui.login.AuthActivity;
-import com.iaz.higister.ui.main.MyListsFragment;
-import com.iaz.higister.ui.main.ProfileActivity;
-import com.iaz.higister.ui.splash.SplashActivity;
-import com.iaz.higister.ui.temp.TempTempMainActivity;
-import com.iaz.higister.ui.viewItem.ViewItemActivity;
-import com.iaz.higister.ui.viewList.ViewListActivity;
-import com.iaz.higister.ui.viewUser.UserListsFragment;
+import com.iaz.higister2.injection.PerActivity;
+import com.iaz.higister2.injection.module.ActivityModule;
+import com.iaz.higister2.ui.createItem.CreateItemActivity;
+import com.iaz.higister2.ui.createList.CreateListActivity;
+import com.iaz.higister2.ui.login.AuthActivity;
+import com.iaz.higister2.ui.main.MyListsFragment;
+import com.iaz.higister2.ui.main.ProfileActivity;
+import com.iaz.higister2.ui.splash.SplashActivity;
+import com.iaz.higister2.ui.temp.TempTempMainActivity;
+import com.iaz.higister2.ui.viewItem.ViewItemActivity;
+import com.iaz.higister2.ui.viewList.ViewListActivity;
+import com.iaz.higister2.ui.viewUser.UserListsFragment;
 
 import dagger.Subcomponent;
 

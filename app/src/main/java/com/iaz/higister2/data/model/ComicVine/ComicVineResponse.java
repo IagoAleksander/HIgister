@@ -1,4 +1,4 @@
-package com.iaz.higister.data.model.ComicVine;
+package com.iaz.higister2.data.model.ComicVine;
 
 import java.util.ArrayList;
 

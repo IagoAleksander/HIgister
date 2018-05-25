@@ -1,7 +1,7 @@
-package com.iaz.higister.ui.search;
+package com.iaz.higister2.ui.search;
 
-import com.iaz.higister.data.model.BaseItem;
-import com.iaz.higister.ui.base.MvpView;
+import com.iaz.higister2.data.model.BaseItem;
+import com.iaz.higister2.ui.base.MvpView;
 
 import java.util.ArrayList;
 

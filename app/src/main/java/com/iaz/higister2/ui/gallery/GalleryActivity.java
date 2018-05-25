@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.gallery;
+package com.iaz.higister2.ui.gallery;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -21,7 +21,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
-import com.iaz.higister.R;
+import com.iaz.higister2.R;
 
 import junit.framework.Assert;
 

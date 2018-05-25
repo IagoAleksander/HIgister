@@ -1,6 +1,6 @@
-package com.iaz.higister.data.remote;
+package com.iaz.higister2.data.remote;
 
-import com.iaz.higister.data.model.GoodReads.GoodreadsResponse;
+import com.iaz.higister2.data.model.GoodReads.GoodreadsResponse;
 
 import org.simpleframework.xml.convert.AnnotationStrategy;
 import org.simpleframework.xml.core.Persister;

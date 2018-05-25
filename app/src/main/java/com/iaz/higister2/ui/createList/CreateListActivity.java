@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.createList;
+package com.iaz.higister2.ui.createList;
 
 import android.Manifest;
 import android.app.Dialog;
@@ -31,21 +31,21 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.UserList;
-import com.iaz.higister.data.repository.ListRepository;
-import com.iaz.higister.ui.base.BaseActivity;
-import com.iaz.higister.ui.viewList.ViewListActivity;
-import com.iaz.higister.util.AppBarStateChangeListener;
-import com.iaz.higister.util.CustomPhotoPickerDialog;
-import com.iaz.higister.util.DialogFactory;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.UserList;
+import com.iaz.higister2.data.repository.ListRepository;
+import com.iaz.higister2.ui.base.BaseActivity;
+import com.iaz.higister2.ui.viewList.ViewListActivity;
+import com.iaz.higister2.util.AppBarStateChangeListener;
+import com.iaz.higister2.util.CustomPhotoPickerDialog;
+import com.iaz.higister2.util.DialogFactory;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.iaz.higister.util.Constants.PERMISSION_WRITE_EXTERNAL;
+import static com.iaz.higister2.util.Constants.PERMISSION_WRITE_EXTERNAL;
 
 /**
  * Created by Iago Aleksander on 06/03/18.

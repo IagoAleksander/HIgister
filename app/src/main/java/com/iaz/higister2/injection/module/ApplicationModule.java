@@ -1,10 +1,10 @@
-package com.iaz.higister.injection.module;
+package com.iaz.higister2.injection.module;
 
 import android.app.Application;
 import android.content.Context;
 
-import com.iaz.higister.data.remote.RibotsService;
-import com.iaz.higister.injection.ApplicationContext;
+import com.iaz.higister2.data.remote.RibotsService;
+import com.iaz.higister2.injection.ApplicationContext;
 
 import javax.inject.Singleton;
 

@@ -1,4 +1,4 @@
-package com.iaz.higister.injection;
+package com.iaz.higister2.injection;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -1,14 +1,14 @@
-package com.iaz.higister.ui.base;
+package com.iaz.higister2.ui.base;
 
 import android.os.Bundle;
 import android.support.v4.util.LongSparseArray;
 import android.support.v7.app.AppCompatActivity;
 
-import com.iaz.higister.Application;
-import com.iaz.higister.injection.component.ActivityComponent;
-import com.iaz.higister.injection.component.ConfigPersistentComponent;
-import com.iaz.higister.injection.component.DaggerConfigPersistentComponent;
-import com.iaz.higister.injection.module.ActivityModule;
+import com.iaz.higister2.Application;
+import com.iaz.higister2.injection.component.ActivityComponent;
+import com.iaz.higister2.injection.component.ConfigPersistentComponent;
+import com.iaz.higister2.injection.component.DaggerConfigPersistentComponent;
+import com.iaz.higister2.injection.module.ActivityModule;
 
 import java.util.concurrent.atomic.AtomicLong;
 

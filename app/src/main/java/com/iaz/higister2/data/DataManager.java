@@ -1,9 +1,9 @@
-package com.iaz.higister.data;
+package com.iaz.higister2.data;
 
-import com.iaz.higister.data.local.DatabaseHelper;
-import com.iaz.higister.data.local.PreferencesHelper;
-import com.iaz.higister.data.model.Ribot;
-import com.iaz.higister.data.remote.RibotsService;
+import com.iaz.higister2.data.local.DatabaseHelper;
+import com.iaz.higister2.data.local.PreferencesHelper;
+import com.iaz.higister2.data.model.Ribot;
+import com.iaz.higister2.data.remote.RibotsService;
 
 import java.util.List;
 

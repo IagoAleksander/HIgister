@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.main;
+package com.iaz.higister2.ui.main;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,10 +14,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.User;
-import com.iaz.higister.ui.viewUser.ViewUserActivity;
-import com.iaz.higister.util.ViewUtil;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.User;
+import com.iaz.higister2.ui.viewUser.ViewUserActivity;
+import com.iaz.higister2.util.ViewUtil;
 
 import java.util.ArrayList;
 

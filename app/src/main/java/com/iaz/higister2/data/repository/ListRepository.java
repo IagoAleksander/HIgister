@@ -1,4 +1,4 @@
-package com.iaz.higister.data.repository;
+package com.iaz.higister2.data.repository;
 
 
 import android.app.Activity;
@@ -14,10 +14,10 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.iaz.higister.data.model.FavoritedList;
-import com.iaz.higister.data.model.UserList;
-import com.iaz.higister.util.CompressorUtil;
-import com.iaz.higister.util.Constants;
+import com.iaz.higister2.data.model.FavoritedList;
+import com.iaz.higister2.data.model.UserList;
+import com.iaz.higister2.util.CompressorUtil;
+import com.iaz.higister2.util.Constants;
 
 import java.io.File;
 import java.util.ArrayList;

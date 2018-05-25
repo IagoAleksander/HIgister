@@ -1,7 +1,7 @@
-package com.iaz.higister.ui.viewUser;
+package com.iaz.higister2.ui.viewUser;
 
-import com.iaz.higister.data.model.UserList;
-import com.iaz.higister.ui.base.MvpView;
+import com.iaz.higister2.data.model.UserList;
+import com.iaz.higister2.ui.base.MvpView;
 
 import java.util.ArrayList;
 

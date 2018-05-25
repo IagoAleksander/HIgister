@@ -1,4 +1,4 @@
-package com.iaz.higister.util;
+package com.iaz.higister2.util;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;

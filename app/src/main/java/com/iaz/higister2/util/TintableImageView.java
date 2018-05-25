@@ -1,4 +1,4 @@
-package com.iaz.higister.util;
+package com.iaz.higister2.util;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -6,7 +6,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-import com.iaz.higister.R;
+import com.iaz.higister2.R;
 
 /**
  * https://gist.github.com/tylerchesley/5d15d859be4f3ce31213

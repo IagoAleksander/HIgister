@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.search;
+package com.iaz.higister2.ui.search;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -26,11 +26,11 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.BaseItem;
-import com.iaz.higister.util.Constants;
-import com.iaz.higister.util.DialogFactory;
-import com.iaz.higister.util.ViewUtil;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.BaseItem;
+import com.iaz.higister2.util.Constants;
+import com.iaz.higister2.util.DialogFactory;
+import com.iaz.higister2.util.ViewUtil;
 import com.yalantis.flipviewpager.utils.FlipSettings;
 
 import java.io.BufferedInputStream;
@@ -42,13 +42,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-import static com.iaz.higister.util.Constants.ANIMES;
-import static com.iaz.higister.util.Constants.BOOKS;
-import static com.iaz.higister.util.Constants.COMICS;
-import static com.iaz.higister.util.Constants.MANGAS;
-import static com.iaz.higister.util.Constants.MOVIES;
-import static com.iaz.higister.util.Constants.MUSICS;
-import static com.iaz.higister.util.Constants.TV_SERIES;
+import static com.iaz.higister2.util.Constants.ANIMES;
+import static com.iaz.higister2.util.Constants.BOOKS;
+import static com.iaz.higister2.util.Constants.COMICS;
+import static com.iaz.higister2.util.Constants.MANGAS;
+import static com.iaz.higister2.util.Constants.MOVIES;
+import static com.iaz.higister2.util.Constants.MUSICS;
+import static com.iaz.higister2.util.Constants.TV_SERIES;
 
 /**
  * Created by florentchampigny on 24/04/15.

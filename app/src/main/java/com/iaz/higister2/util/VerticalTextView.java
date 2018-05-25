@@ -1,4 +1,4 @@
-package com.iaz.higister.util;
+package com.iaz.higister2.util;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -8,7 +8,7 @@ import android.support.v7.widget.AppCompatTextView;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 
-import com.iaz.higister.R;
+import com.iaz.higister2.R;
 
 public class VerticalTextView extends AppCompatTextView {
 

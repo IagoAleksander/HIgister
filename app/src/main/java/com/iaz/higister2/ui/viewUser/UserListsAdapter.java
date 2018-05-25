@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.viewUser;
+package com.iaz.higister2.ui.viewUser;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -16,12 +16,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.UserList;
-import com.iaz.higister.data.repository.ListRepository;
-import com.iaz.higister.ui.createList.CreateListActivity;
-import com.iaz.higister.ui.viewList.ViewListActivity;
-import com.iaz.higister.util.DialogFactory;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.UserList;
+import com.iaz.higister2.data.repository.ListRepository;
+import com.iaz.higister2.ui.createList.CreateListActivity;
+import com.iaz.higister2.ui.viewList.ViewListActivity;
+import com.iaz.higister2.util.DialogFactory;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 
@@ -30,13 +30,13 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.iaz.higister.util.Constants.ANIMES;
-import static com.iaz.higister.util.Constants.BOOKS;
-import static com.iaz.higister.util.Constants.COMICS;
-import static com.iaz.higister.util.Constants.MANGAS;
-import static com.iaz.higister.util.Constants.MOVIES;
-import static com.iaz.higister.util.Constants.MUSICS;
-import static com.iaz.higister.util.Constants.TV_SERIES;
+import static com.iaz.higister2.util.Constants.ANIMES;
+import static com.iaz.higister2.util.Constants.BOOKS;
+import static com.iaz.higister2.util.Constants.COMICS;
+import static com.iaz.higister2.util.Constants.MANGAS;
+import static com.iaz.higister2.util.Constants.MOVIES;
+import static com.iaz.higister2.util.Constants.MUSICS;
+import static com.iaz.higister2.util.Constants.TV_SERIES;
 
 public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.ListViewHolder> {
 

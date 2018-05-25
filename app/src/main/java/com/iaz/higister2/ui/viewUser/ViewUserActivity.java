@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.viewUser;
+package com.iaz.higister2.ui.viewUser;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -21,15 +21,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.User;
-import com.iaz.higister.data.repository.UserRepository;
-import com.iaz.higister.ui.base.BaseActivity;
-import com.iaz.higister.ui.main.MainActivity;
-import com.iaz.higister.ui.main.ProfileActivity;
-import com.iaz.higister.util.AppBarStateChangeListener;
-import com.iaz.higister.util.DialogFactory;
-import com.iaz.higister.util.SectionsPagerAdapter;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.User;
+import com.iaz.higister2.data.repository.UserRepository;
+import com.iaz.higister2.ui.base.BaseActivity;
+import com.iaz.higister2.ui.main.MainActivity;
+import com.iaz.higister2.ui.main.ProfileActivity;
+import com.iaz.higister2.util.AppBarStateChangeListener;
+import com.iaz.higister2.util.DialogFactory;
+import com.iaz.higister2.util.SectionsPagerAdapter;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
 import java.util.ArrayList;
@@ -37,8 +37,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.iaz.higister.util.Constants.USER_FAVOURITES_TAB_INDEX;
-import static com.iaz.higister.util.Constants.USER_LISTS_TAB_INDEX;
+import static com.iaz.higister2.util.Constants.USER_FAVOURITES_TAB_INDEX;
+import static com.iaz.higister2.util.Constants.USER_LISTS_TAB_INDEX;
 
 /**
  * Created by Iago Aleksander on 06/03/18.

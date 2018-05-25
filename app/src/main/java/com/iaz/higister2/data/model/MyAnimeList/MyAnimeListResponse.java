@@ -1,4 +1,4 @@
-package com.iaz.higister.data.model.MyAnimeList;
+package com.iaz.higister2.data.model.MyAnimeList;
 
 import java.util.ArrayList;
 

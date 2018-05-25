@@ -1,10 +1,10 @@
-package com.iaz.higister.ui.temp;
+package com.iaz.higister2.ui.temp;
 
-import com.iaz.higister.data.DataManager;
-import com.iaz.higister.data.model.Ribot;
-import com.iaz.higister.injection.ConfigPersistent;
-import com.iaz.higister.ui.base.BasePresenter;
-import com.iaz.higister.util.RxUtil;
+import com.iaz.higister2.data.DataManager;
+import com.iaz.higister2.data.model.Ribot;
+import com.iaz.higister2.injection.ConfigPersistent;
+import com.iaz.higister2.ui.base.BasePresenter;
+import com.iaz.higister2.util.RxUtil;
 
 import java.util.List;
 

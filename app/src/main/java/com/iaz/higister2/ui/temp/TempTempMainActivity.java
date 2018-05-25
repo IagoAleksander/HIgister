@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.temp;
+package com.iaz.higister2.ui.temp;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,12 +9,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.iaz.higister.R;
-import com.iaz.higister.data.SyncService;
-import com.iaz.higister.data.model.Ribot;
-import com.iaz.higister.ui.base.BaseActivity;
-import com.iaz.higister.ui.search.SearchActivity;
-import com.iaz.higister.util.DialogFactory;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.SyncService;
+import com.iaz.higister2.data.model.Ribot;
+import com.iaz.higister2.ui.base.BaseActivity;
+import com.iaz.higister2.ui.search.SearchActivity;
+import com.iaz.higister2.util.DialogFactory;
 
 import java.util.Collections;
 import java.util.List;

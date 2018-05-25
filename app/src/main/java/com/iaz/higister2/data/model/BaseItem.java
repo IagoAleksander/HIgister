@@ -1,15 +1,15 @@
-package com.iaz.higister.data.model;
+package com.iaz.higister2.data.model;
 
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.iaz.higister.data.model.ComicVine.Results;
-import com.iaz.higister.data.model.GoodReads.BestBook;
-import com.iaz.higister.data.model.LastFM.Track;
-import com.iaz.higister.data.model.MyAnimeList.Result;
-import com.iaz.higister.data.model.Omdb.Search;
-import com.iaz.higister.util.Constants;
+import com.iaz.higister2.data.model.ComicVine.Results;
+import com.iaz.higister2.data.model.GoodReads.BestBook;
+import com.iaz.higister2.data.model.LastFM.Track;
+import com.iaz.higister2.data.model.MyAnimeList.Result;
+import com.iaz.higister2.data.model.Omdb.Search;
+import com.iaz.higister2.util.Constants;
 
 /**
  * Created by alksander on 04/03/2018.

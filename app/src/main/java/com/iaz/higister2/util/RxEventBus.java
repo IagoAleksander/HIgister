@@ -1,4 +1,4 @@
-package com.iaz.higister.util;
+package com.iaz.higister2.util;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

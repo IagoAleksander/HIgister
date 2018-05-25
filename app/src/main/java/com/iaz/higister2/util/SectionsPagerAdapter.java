@@ -1,20 +1,20 @@
-package com.iaz.higister.util;
+package com.iaz.higister2.util;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.iaz.higister.ui.main.MyListsFragment;
-import com.iaz.higister.ui.viewUser.UserListsFragment;
+import com.iaz.higister2.ui.main.MyListsFragment;
+import com.iaz.higister2.ui.viewUser.UserListsFragment;
 
-import static com.iaz.higister.util.Constants.FAVOURITES_TAB_INDEX;
-import static com.iaz.higister.util.Constants.FEED_TAB_INDEX;
-import static com.iaz.higister.util.Constants.LISTS_TAB_INDEX;
-import static com.iaz.higister.util.Constants.MY_LISTS;
-import static com.iaz.higister.util.Constants.SEARCH_TAB_INDEX;
-import static com.iaz.higister.util.Constants.USER_FAVOURITES_TAB_INDEX;
-import static com.iaz.higister.util.Constants.USER_LISTS_TAB_INDEX;
+import static com.iaz.higister2.util.Constants.FAVOURITES_TAB_INDEX;
+import static com.iaz.higister2.util.Constants.FEED_TAB_INDEX;
+import static com.iaz.higister2.util.Constants.LISTS_TAB_INDEX;
+import static com.iaz.higister2.util.Constants.MY_LISTS;
+import static com.iaz.higister2.util.Constants.SEARCH_TAB_INDEX;
+import static com.iaz.higister2.util.Constants.USER_FAVOURITES_TAB_INDEX;
+import static com.iaz.higister2.util.Constants.USER_LISTS_TAB_INDEX;
 
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter {

@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.viewList;
+package com.iaz.higister2.ui.viewList;
 
 import android.util.Log;
 
@@ -6,11 +6,11 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.iaz.higister.data.DataManager;
-import com.iaz.higister.data.model.ListItem;
-import com.iaz.higister.data.model.UserList;
-import com.iaz.higister.injection.ConfigPersistent;
-import com.iaz.higister.ui.base.BasePresenter;
+import com.iaz.higister2.data.DataManager;
+import com.iaz.higister2.data.model.ListItem;
+import com.iaz.higister2.data.model.UserList;
+import com.iaz.higister2.injection.ConfigPersistent;
+import com.iaz.higister2.ui.base.BasePresenter;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.iaz.higister.util;
+package com.iaz.higister2.util;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.dd.CircularProgressButton;
-import com.iaz.higister.R;
+import com.iaz.higister2.R;
 
 public final class DialogFactory {
 

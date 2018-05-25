@@ -1,4 +1,4 @@
-package com.iaz.higister.data.model.LastFM;
+package com.iaz.higister2.data.model.LastFM;
 
 public class Track
 {

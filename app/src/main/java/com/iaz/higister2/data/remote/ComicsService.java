@@ -1,6 +1,6 @@
-package com.iaz.higister.data.remote;
+package com.iaz.higister2.data.remote;
 
-import com.iaz.higister.data.model.ComicVine.ComicVineResponse;
+import com.iaz.higister2.data.model.ComicVine.ComicVineResponse;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;

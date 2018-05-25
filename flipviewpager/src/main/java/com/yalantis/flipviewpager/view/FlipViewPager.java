@@ -76,7 +76,7 @@ public class FlipViewPager extends FrameLayout {
 
     // Internal interface to store page position
     public interface OnChangePageListener {
-        public void onFlipped(int page);
+        void onFlipped(int page);
     }
 
     class PageItem {

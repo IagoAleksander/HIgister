@@ -1,4 +1,4 @@
-package com.iaz.higister.data.model;
+package com.iaz.higister2.data.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.search;
+package com.iaz.higister2.ui.search;
 
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
@@ -9,10 +9,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.BaseItem;
-import com.iaz.higister.data.model.ListItem;
-import com.iaz.higister.ui.createItem.CreateItemActivity;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.BaseItem;
+import com.iaz.higister2.data.model.ListItem;
+import com.iaz.higister2.ui.createItem.CreateItemActivity;
 import com.yalantis.flipviewpager.adapter.BaseFlipAdapter;
 import com.yalantis.flipviewpager.utils.FlipSettings;
 

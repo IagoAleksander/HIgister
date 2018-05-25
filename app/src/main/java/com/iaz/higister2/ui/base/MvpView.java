@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.base;
+package com.iaz.higister2.ui.base;
 
 
 /**

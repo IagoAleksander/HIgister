@@ -1,7 +1,7 @@
-package com.iaz.higister.ui.temp;
+package com.iaz.higister2.ui.temp;
 
-import com.iaz.higister.data.model.Ribot;
-import com.iaz.higister.ui.base.MvpView;
+import com.iaz.higister2.data.model.Ribot;
+import com.iaz.higister2.ui.base.MvpView;
 
 import java.util.List;
 

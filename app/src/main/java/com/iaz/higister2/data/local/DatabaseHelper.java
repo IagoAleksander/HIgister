@@ -1,10 +1,10 @@
-package com.iaz.higister.data.local;
+package com.iaz.higister2.data.local;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.VisibleForTesting;
 
-import com.iaz.higister.data.model.Ribot;
+import com.iaz.higister2.data.model.Ribot;
 import com.squareup.sqlbrite2.BriteDatabase;
 import com.squareup.sqlbrite2.SqlBrite;
 

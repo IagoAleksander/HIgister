@@ -1,8 +1,8 @@
-package com.iaz.higister.ui.viewUser;
+package com.iaz.higister2.ui.viewUser;
 
-import com.iaz.higister.data.DataManager;
-import com.iaz.higister.injection.ConfigPersistent;
-import com.iaz.higister.ui.base.BasePresenter;
+import com.iaz.higister2.data.DataManager;
+import com.iaz.higister2.injection.ConfigPersistent;
+import com.iaz.higister2.ui.base.BasePresenter;
 
 import javax.inject.Inject;
 

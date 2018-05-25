@@ -1,9 +1,9 @@
-package com.iaz.higister.data.remote;
+package com.iaz.higister2.data.remote;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.iaz.higister.data.model.Ribot;
-import com.iaz.higister.util.MyGsonTypeAdapterFactory;
+import com.iaz.higister2.data.model.Ribot;
+import com.iaz.higister2.util.MyGsonTypeAdapterFactory;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.viewItem;
+package com.iaz.higister2.ui.viewItem;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,10 +11,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.ListItem;
-import com.iaz.higister.ui.base.BaseActivity;
-import com.iaz.higister.util.CustomPhotoPickerDialog;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.ListItem;
+import com.iaz.higister2.ui.base.BaseActivity;
+import com.iaz.higister2.util.CustomPhotoPickerDialog;
 
 import java.util.ArrayList;
 

@@ -1,23 +1,23 @@
-package com.iaz.higister.data;
+package com.iaz.higister2.data;
 
-import com.iaz.higister.data.model.BaseItem;
-import com.iaz.higister.data.model.ComicVine.ComicVineResponse;
-import com.iaz.higister.data.model.ComicVine.Results;
-import com.iaz.higister.data.model.GoodReads.GoodreadsResponse;
-import com.iaz.higister.data.model.GoodReads.Work;
-import com.iaz.higister.data.model.LastFM.LastFmResponse;
-import com.iaz.higister.data.model.LastFM.Track;
-import com.iaz.higister.data.model.MyAnimeList.MyAnimeListResponse;
-import com.iaz.higister.data.model.MyAnimeList.Result;
-import com.iaz.higister.data.model.Omdb.OmdbResponse;
-import com.iaz.higister.data.model.Omdb.Search;
-import com.iaz.higister.data.remote.AnimesService;
-import com.iaz.higister.data.remote.BooksService;
-import com.iaz.higister.data.remote.ComicsService;
-import com.iaz.higister.data.remote.MoviesService;
-import com.iaz.higister.data.remote.MusicsService;
-import com.iaz.higister.ui.search.RecyclerViewFragment2;
-import com.iaz.higister.util.Constants;
+import com.iaz.higister2.data.model.BaseItem;
+import com.iaz.higister2.data.model.ComicVine.ComicVineResponse;
+import com.iaz.higister2.data.model.ComicVine.Results;
+import com.iaz.higister2.data.model.GoodReads.GoodreadsResponse;
+import com.iaz.higister2.data.model.GoodReads.Work;
+import com.iaz.higister2.data.model.LastFM.LastFmResponse;
+import com.iaz.higister2.data.model.LastFM.Track;
+import com.iaz.higister2.data.model.MyAnimeList.MyAnimeListResponse;
+import com.iaz.higister2.data.model.MyAnimeList.Result;
+import com.iaz.higister2.data.model.Omdb.OmdbResponse;
+import com.iaz.higister2.data.model.Omdb.Search;
+import com.iaz.higister2.data.remote.AnimesService;
+import com.iaz.higister2.data.remote.BooksService;
+import com.iaz.higister2.data.remote.ComicsService;
+import com.iaz.higister2.data.remote.MoviesService;
+import com.iaz.higister2.data.remote.MusicsService;
+import com.iaz.higister2.ui.search.RecyclerViewFragment2;
+import com.iaz.higister2.util.Constants;
 
 import java.util.ArrayList;
 
@@ -26,7 +26,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
-import static com.iaz.higister.util.Constants.BOOKS;
+import static com.iaz.higister2.util.Constants.BOOKS;
 
 /**
  * Created by alksander on 01/03/2018.

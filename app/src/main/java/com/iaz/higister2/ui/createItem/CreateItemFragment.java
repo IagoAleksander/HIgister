@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.createItem;
+package com.iaz.higister2.ui.createItem;
 
 import android.Manifest;
 import android.content.Intent;
@@ -31,14 +31,14 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.ListItem;
-import com.iaz.higister.util.CustomPhotoPickerDialog;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.ListItem;
+import com.iaz.higister2.util.CustomPhotoPickerDialog;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.iaz.higister.util.Constants.PERMISSION_WRITE_EXTERNAL;
+import static com.iaz.higister2.util.Constants.PERMISSION_WRITE_EXTERNAL;
 
 /**
  * Created by Iago Aleksander on 06/03/18.

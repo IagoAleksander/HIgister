@@ -1,4 +1,4 @@
-package com.iaz.higister.util;
+package com.iaz.higister2.util;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.iaz.higister.R;
+import com.iaz.higister2.R;
 import com.transitionseverywhere.Transition;
 import com.transitionseverywhere.TransitionValues;
 

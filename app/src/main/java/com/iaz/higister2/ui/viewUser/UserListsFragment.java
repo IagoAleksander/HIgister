@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.viewUser;
+package com.iaz.higister2.ui.viewUser;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,10 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.UserList;
-import com.iaz.higister.data.repository.ListRepository;
-import com.iaz.higister.data.repository.UserRepository;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.UserList;
+import com.iaz.higister2.data.repository.ListRepository;
+import com.iaz.higister2.data.repository.UserRepository;
 
 import java.util.ArrayList;
 

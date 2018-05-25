@@ -1,4 +1,4 @@
-package com.iaz.higister.util;
+package com.iaz.higister2.util;
 
 import android.app.Dialog;
 import android.graphics.drawable.ColorDrawable;
@@ -10,8 +10,8 @@ import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.iaz.higister.R;
-import com.iaz.higister.ui.createItem.CreateItemActivity;
+import com.iaz.higister2.R;
+import com.iaz.higister2.ui.createItem.CreateItemActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

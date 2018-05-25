@@ -1,4 +1,4 @@
-package com.iaz.higister.util;
+package com.iaz.higister2.util;
 
 import com.google.gson.TypeAdapterFactory;
 import com.ryanharter.auto.value.gson.GsonTypeAdapterFactory;

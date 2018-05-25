@@ -1,12 +1,12 @@
-package com.iaz.higister.ui.main;
+package com.iaz.higister2.ui.main;
 
-import com.iaz.higister.data.DataManager;
-import com.iaz.higister.data.model.User;
-import com.iaz.higister.data.model.UserList;
-import com.iaz.higister.data.repository.ListRepository;
-import com.iaz.higister.data.repository.UserRepository;
-import com.iaz.higister.injection.ConfigPersistent;
-import com.iaz.higister.ui.base.BasePresenter;
+import com.iaz.higister2.data.DataManager;
+import com.iaz.higister2.data.model.User;
+import com.iaz.higister2.data.model.UserList;
+import com.iaz.higister2.data.repository.ListRepository;
+import com.iaz.higister2.data.repository.UserRepository;
+import com.iaz.higister2.injection.ConfigPersistent;
+import com.iaz.higister2.ui.base.BasePresenter;
 
 import java.util.ArrayList;
 

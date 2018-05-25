@@ -1,6 +1,6 @@
-package com.iaz.higister.injection;
+package com.iaz.higister2.injection;
 
-import com.iaz.higister.injection.component.ConfigPersistentComponent;
+import com.iaz.higister2.injection.component.ConfigPersistentComponent;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

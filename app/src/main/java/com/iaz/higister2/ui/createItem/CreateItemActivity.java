@@ -1,4 +1,4 @@
-package com.iaz.higister.ui.createItem;
+package com.iaz.higister2.ui.createItem;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -17,14 +17,14 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.iaz.higister.R;
-import com.iaz.higister.data.model.ListItem;
-import com.iaz.higister.data.model.UserList;
-import com.iaz.higister.data.repository.ListRepository;
-import com.iaz.higister.ui.base.BaseActivity;
-import com.iaz.higister.ui.viewList.ViewListActivity;
-import com.iaz.higister.util.CustomPhotoPickerDialog;
-import com.iaz.higister.util.DialogFactory;
+import com.iaz.higister2.R;
+import com.iaz.higister2.data.model.ListItem;
+import com.iaz.higister2.data.model.UserList;
+import com.iaz.higister2.data.repository.ListRepository;
+import com.iaz.higister2.ui.base.BaseActivity;
+import com.iaz.higister2.ui.viewList.ViewListActivity;
+import com.iaz.higister2.util.CustomPhotoPickerDialog;
+import com.iaz.higister2.util.DialogFactory;
 
 import javax.inject.Inject;
 

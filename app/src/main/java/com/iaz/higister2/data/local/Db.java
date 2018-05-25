@@ -1,10 +1,10 @@
-package com.iaz.higister.data.local;
+package com.iaz.higister2.data.local;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import com.iaz.higister.data.model.Name;
-import com.iaz.higister.data.model.Profile;
+import com.iaz.higister2.data.model.Name;
+import com.iaz.higister2.data.model.Profile;
 
 import java.util.Date;
 
