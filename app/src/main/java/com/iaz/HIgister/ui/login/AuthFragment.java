@@ -40,12 +40,15 @@ public abstract class AuthFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root=inflater.inflate(authLayout(),container,false);
-        ButterKnife.bind(this,root);
+        View root = inflater.inflate(authLayout(), container, false);
+        ButterKnife.bind(this, root);
 
         KeyboardVisibilityEvent.setEventListener(getActivity(), isOpen -> {
-            callback.scale(isOpen);
-            if(!isOpen){
+
+            if (callback != null)
+                callback.scale(isOpen);
+
+            if (!isOpen) {
                 clearFocus();
             }
         });
@@ -58,53 +61,56 @@ public abstract class AuthFragment extends Fragment {
         this.callback = callback;
     }
 
-    public void unfold(){
-            if(!lock) {
-                caption.setVerticalText(false);
-                caption.requestLayout();
-                Rotate transition = new Rotate();
-                transition.setStartAngle(-90f);
-                transition.setEndAngle(0f);
-                transition.addTarget(caption);
-                TransitionSet set=new TransitionSet();
-                set.setDuration(getResources().getInteger(R.integer.duration));
-                ChangeBounds changeBounds=new ChangeBounds();
-                set.addTransition(changeBounds);
-                set.addTransition(transition);
-                TextSizeTransition sizeTransition=new TextSizeTransition();
-                sizeTransition.addTarget(caption);
-                set.addTransition(sizeTransition);
-                set.setOrdering(TransitionSet.ORDERING_TOGETHER);
-                caption.post(()->{
-                    TransitionManager.beginDelayedTransition(parent, set);
-                    caption.setTextSize(TypedValue.COMPLEX_UNIT_PX,getResources().getDimension(R.dimen.unfolded_size));
-                    caption.setTextColor(ContextCompat.getColor(getContext(),R.color.color_label));
-                    caption.setTranslationX(0);
-                    ConstraintLayout.LayoutParams params = getParams();
-                    params.rightToRight = ConstraintLayout.LayoutParams.PARENT_ID;
-                    params.leftToLeft = ConstraintLayout.LayoutParams.PARENT_ID;
-                    params.verticalBias = 0.78f;
-                    caption.setLayoutParams(params);
-                });
+    public void unfold() {
+        if (!lock) {
+            caption.setVerticalText(false);
+            caption.requestLayout();
+            Rotate transition = new Rotate();
+            transition.setStartAngle(-90f);
+            transition.setEndAngle(0f);
+            transition.addTarget(caption);
+            TransitionSet set = new TransitionSet();
+            set.setDuration(getResources().getInteger(R.integer.duration));
+            ChangeBounds changeBounds = new ChangeBounds();
+            set.addTransition(changeBounds);
+            set.addTransition(transition);
+            TextSizeTransition sizeTransition = new TextSizeTransition();
+            sizeTransition.addTarget(caption);
+            set.addTransition(sizeTransition);
+            set.setOrdering(TransitionSet.ORDERING_TOGETHER);
+            caption.post(() -> {
+                TransitionManager.beginDelayedTransition(parent, set);
+                caption.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.unfolded_size));
+                caption.setTextColor(ContextCompat.getColor(getContext(), R.color.color_label));
+                caption.setTranslationX(0);
+                ConstraintLayout.LayoutParams params = getParams();
+                params.rightToRight = ConstraintLayout.LayoutParams.PARENT_ID;
+                params.leftToLeft = ConstraintLayout.LayoutParams.PARENT_ID;
+                params.verticalBias = 0.78f;
+                caption.setLayoutParams(params);
+            });
 
-                lock=true;
+            lock = true;
 
-                //after everything's been set up, tell the ViewPager to flip the page
-                callback.show(this);
-            }
+            //after everything's been set up, tell the ViewPager to flip the page
+            callback.show(this);
+        }
     }
 
     @LayoutRes
     public abstract int authLayout();
+
     public abstract void fold();
+
     public abstract void clearFocus();
 
     interface Callback {
         void show(AuthFragment fragment);
+
         void scale(boolean hasFocus);
     }
 
-    protected ConstraintLayout.LayoutParams getParams(){
+    protected ConstraintLayout.LayoutParams getParams() {
         return ConstraintLayout.LayoutParams.class.cast(caption.getLayoutParams());
     }
 }

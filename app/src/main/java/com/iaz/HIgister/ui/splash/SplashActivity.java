@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
@@ -74,7 +75,7 @@ public class SplashActivity extends BaseActivity implements SplashMvpView {
 
     public void setRotatingText() {
 
-        //TODO not working on android 7.0+
+//        //TODO not working on android 7.0+
         Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/Reckoner_Bold.ttf");
 
         rotatingTextHeader.setTypeface(typeface);
@@ -93,10 +94,11 @@ public class SplashActivity extends BaseActivity implements SplashMvpView {
             public void run() {
                 rotatingTextWrapper.pause(0);
 //                rotatingTextLayout.setVisibility(View.GONE);
-
+//
                 Intent intent = new Intent(SplashActivity.this, AuthActivity.class);
                 startActivity(intent);
             }
         }, 9500);   //1.5 seconds
+//        }, 1500);
     }
 }

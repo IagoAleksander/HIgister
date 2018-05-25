@@ -3,6 +3,7 @@ package com.iaz.HIgister.ui.login;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -13,11 +14,10 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.ImageViewTarget;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.iaz.HIgister.ui.base.BaseActivity;
 import com.iaz.HIgister.util.AnimatedViewPager;
 import com.iaz.Higister.R;
@@ -54,7 +54,37 @@ public class AuthActivity extends BaseActivity implements AuthMvpView {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         mAuthPresenter.attachView(this);
-        mAuthPresenter.setAutenticationListener();
+
+        FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
+                .addOnSuccessListener(
+                        new OnSuccessListener<PendingDynamicLinkData>() {
+                            @Override
+                            public void onSuccess(PendingDynamicLinkData data) {
+                                if (data == null || data.getLink() == null) {
+                                    // No FDL pending for this app, don't do anything.
+                                    Log.d("onGetDynamicLinkFail: ", "empty");
+                                    return;
+                                }
+
+                                String listId = null;
+
+                                Uri deepLink = data.getLink();
+                                if (deepLink.getQueryParameter("listId") != null) {
+                                    listId = deepLink.getQueryParameter("listId");
+                                    Log.d("onSuccess1:", listId);
+                                } else
+                                    Log.d("onSuccess3:", deepLink.toString());
+
+                                mAuthPresenter.setAutenticationListener(listId);
+                                mAuthPresenter.addAuthStateListener();
+                            }
+                        })
+                .addOnFailureListener(e -> {
+                    Log.d("onGetDynamicLinkFail:", e.getMessage());
+
+                    mAuthPresenter.setAutenticationListener(null);
+                    mAuthPresenter.addAuthStateListener();
+                });
 
         setBackgroundImageAnimation();
 
@@ -64,7 +94,6 @@ public class AuthActivity extends BaseActivity implements AuthMvpView {
     @Override
     public void onStart() {
         super.onStart();
-        mAuthPresenter.addAuthStateListener();
 
     }
 
@@ -120,7 +149,7 @@ public class AuthActivity extends BaseActivity implements AuthMvpView {
                     @Override
                     protected void setResource(Bitmap resource) {
                         background.setImageBitmap(resource);
-                        background.scrollTo(-pager.getWidth()/2,0);
+                        background.scrollTo(-pager.getWidth() / 2, 0);
 //                        background.post(()->{
 //                            //we need to scroll to the very left edge of the image
 //                            //fire the scale animation

@@ -155,236 +155,244 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
         if (getIntent() != null)
             list = getIntent().getExtras().getParcelable("list");
 
-        descriptionLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDescriptiion();
-            }
-        });
-
         if (list != null) {
-            listName.setText(list.getName());
-
-            if (list.getDescription() != null && !list.getDescription().isEmpty())
-                listDescription.setText(list.getDescription());
-            else {
-                descriptionLayout.setVisibility(View.GONE);
-            }
-            populateLabel(list.getType());
-
-            if (list.getListPictureUri() != null) {
-
-                Glide.with(this)
-                        .asBitmap()
-                        .load(list.getListPictureUri())
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                                Bitmap resourceWithBorder = ViewUtil.addWhiteBorder(resource, 3);
-                                listLogoImage.setImageBitmap(resourceWithBorder);
-                            }
-                        });
-
-                listLogoImage.setOnClickListener(view -> {
-                    Intent goToCarousel = new Intent(getApplicationContext(), GalleryActivity.class);
-                    ArrayList<String> listOfPaths = new ArrayList<>();
-                    listOfPaths.add(list.getListPictureUri());
-
-                    goToCarousel.putStringArrayListExtra("photos", listOfPaths);
-                    goToCarousel.putExtra("startPosition", 0);
-                    getApplicationContext().startActivity(goToCarousel);
-
-                });
-            }
-
-            if (list.uid != null) {
-                mViewListPresenter.getListItems(list.uid);
-            } else {
-                updateData(new ArrayList<>());
-            }
-
-            if (list.getListItems() != null && !list.getListItems().isEmpty()) {
-
-                if (list.getComments() != null && !list.getComments().isEmpty()) {
-                    populateCommentsLayout();
-
-                    if (!list.isCommentsEnabled()) {
-                        addCommentButton.setVisibility(View.GONE);
-                    }
-                } else if (!list.isCommentsEnabled()) {
-                    addCommentButton.setVisibility(View.GONE);
-                    commentsLayout.setVisibility(View.GONE);
-                    //TODO change button
+            populateList();
+        } else if (getIntent().getExtras().getString("listId") != null)
+            listRepository.receiveListById(getIntent().getExtras().getString("listId"), new ListRepository.OnListFetched() {
+                @Override
+                public void onSuccess(UserList userList) {
+                    list = userList;
+                    populateList();
                 }
 
-                MaterialDialog.Builder dialog = DialogFactory.newMaterialDialogWithInput(ViewListActivity.this, text -> {
-                    list.getComments().add(FirebaseAuth.getInstance().getCurrentUser().getUid() + ":" + text);
-                    listRepository.updateListInfo(list, new ListRepository.OnListUpdated() {
+                @Override
+                public void onFailed(String exception) {
+                    finish();
+                    overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                }
+            });
+
+        descriptionLayout.setOnClickListener(view -> {
+//                showDescriptiion();
+            mViewListPresenter.shareListToFacebook(list);
+        });
+    }
+
+    public void populateList() {
+        listName.setText(list.getName());
+
+        if (list.getDescription() != null && !list.getDescription().isEmpty())
+            listDescription.setText(list.getDescription());
+        else {
+            descriptionLayout.setVisibility(View.GONE);
+        }
+        populateLabel(list.getType());
+
+        if (list.getListPictureUri() != null) {
+
+            Glide.with(this)
+                    .asBitmap()
+                    .load(list.getListPictureUri())
+                    .into(new SimpleTarget<Bitmap>() {
                         @Override
-                        public void onSuccess() {
-
-                            commentsContainer.removeAllViews();
-                            populateCommentsLayout();
-                        }
-
-                        @Override
-                        public void onFailed(Exception exception) {
-
+                        public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                            Bitmap resourceWithBorder = ViewUtil.addWhiteBorder(resource, 3);
+                            listLogoImage.setImageBitmap(resourceWithBorder);
                         }
                     });
-                });
-                addCommentButton.setOnClickListener(view -> dialog.show());
 
-            } else {
-                addCommentButton.setVisibility(View.GONE);
-                commentsLayout.setVisibility(View.GONE);
-                listLayout.setVisibility(View.GONE);
+            listLogoImage.setOnClickListener(view -> {
+                Intent goToCarousel = new Intent(getApplicationContext(), GalleryActivity.class);
+                ArrayList<String> listOfPaths = new ArrayList<>();
+                listOfPaths.add(list.getListPictureUri());
 
-                if (list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
-                    addItemTextLayout.setVisibility(View.VISIBLE);
-            }
+                goToCarousel.putStringArrayListExtra("photos", listOfPaths);
+                goToCarousel.putExtra("startPosition", 0);
+                getApplicationContext().startActivity(goToCarousel);
 
-            if (list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                addNewItemButton.setOnClickListener(v -> {
-                    Intent intent = new Intent(ViewListActivity.this, SearchActivity.class);
-                    intent.putExtra("list", list);
-                    startActivity(intent);
-                });
-            } else {
-                bottomBar.setVisibility(View.GONE);
-            }
-
-            if (!list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-
-                favoriteButtonLayout.setVisibility(View.VISIBLE);
-                likeButtonLayout.setVisibility(View.VISIBLE);
-
-                favoriteButton.setLiked(list.getFavoritedBy().contains(FirebaseAuth.getInstance().getCurrentUser().getUid()));
-
-                favoriteButton.setOnLikeListener(new OnLikeListener() {
-                    @Override
-                    public void liked(LikeButton likeButton) {
-                        if (canClick) {
-                            canClick = false;
-                            listRepository.favoriteList(list, new ListRepository.OnListFavorited() {
-                                @Override
-                                public void onSuccess(String listUid) {
-                                    canClick = true;
-                                }
-
-                                @Override
-                                public void onFailed(Exception e) {
-                                    canClick = true;
-                                    Log.d("onFavoriteList", e.getMessage());
-
-                                    likeButton.setLiked(false);
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void unLiked(LikeButton likeButton) {
-                        if (canClick) {
-                            canClick = false;
-
-                            listRepository.unfavoriteList(list, new ListRepository.OnListRemoved() {
-                                        @Override
-                                        public void onSuccess(String listUid) {
-                                            canClick = true;
-                                        }
-
-                                        @Override
-                                        public void onFailed(String exception) {
-                                            canClick = true;
-                                            likeButton.setLiked(true);
-                                        }
-                                    }
-                            );
-                        }
-                    }
-                });
-
-
-                likeButton.setLiked(list.getLikedBy().contains(FirebaseAuth.getInstance().getCurrentUser().getUid()));
-                likeButton.setOnLikeListener(new OnLikeListener() {
-                    @Override
-                    public void liked(LikeButton likeButton) {
-                        if (canClick) {
-                            canClick = false;
-                            listRepository.likeList(list, new ListRepository.OnListLiked() {
-                                @Override
-                                public void onSuccess(String listUid) {
-                                    canClick = true;
-                                }
-
-                                @Override
-                                public void onFailed(Exception e) {
-                                    canClick = true;
-                                    Log.d("onFavoriteList", e.getMessage());
-
-                                    likeButton.setLiked(false);
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void unLiked(LikeButton likeButton) {
-                        if (canClick) {
-                            canClick = false;
-
-                            listRepository.unlikeList(list, new ListRepository.OnListRemoved() {
-                                        @Override
-                                        public void onSuccess(String listUid) {
-                                            canClick = true;
-//                                                        notifyDataSetChanged();
-                                        }
-
-                                        @Override
-                                        public void onFailed(String exception) {
-                                            canClick = true;
-                                            likeButton.setLiked(true);
-                                        }
-                                    }
-                            );
-                        }
-                    }
-                });
-            }
-            else if (list.uid != null){
-                removeButton.setVisibility(View.VISIBLE);
-                removeButton.setOnClickListener(v -> {
-
-                    mDialog = DialogFactory.newDialog(ViewListActivity.this, "Removing list...");
-                    mDialog.show();
-
-                    listRepository.removeList(list, new ListRepository.OnListRemoved() {
-                        @Override
-                        public void onSuccess(String listUid) {
-                            DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () -> {
-                                Intent intent = new Intent(ViewListActivity.this, MainActivity.class);
-                                ViewListActivity.this.startActivity(intent);
-                                overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
-                            });
-                        }
-
-                        @Override
-                        public void onFailed(String exception) {
-                            Log.d("onRemoveList", exception);
-                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
-                            });
-                        }
-                    });
-                });
-            }
-
-
-        } else {
-            finish();
-            overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+            });
         }
 
+        if (list.uid != null) {
+            mViewListPresenter.getListItems(list.uid);
+        } else {
+            updateData(new ArrayList<>());
+        }
+
+        if (list.getListItems() != null && !list.getListItems().isEmpty()) {
+
+            if (list.getComments() != null && !list.getComments().isEmpty()) {
+                populateCommentsLayout();
+
+                if (!list.isCommentsEnabled()) {
+                    addCommentButton.setVisibility(View.GONE);
+                }
+            } else if (!list.isCommentsEnabled()) {
+                addCommentButton.setVisibility(View.GONE);
+                commentsLayout.setVisibility(View.GONE);
+                //TODO change button
+            }
+
+            MaterialDialog.Builder dialog = DialogFactory.newMaterialDialogWithInput(ViewListActivity.this, text -> {
+                list.getComments().add(FirebaseAuth.getInstance().getCurrentUser().getUid() + ":" + text);
+                listRepository.updateListInfo(list, new ListRepository.OnListUpdated() {
+                    @Override
+                    public void onSuccess() {
+
+                        commentsContainer.removeAllViews();
+                        populateCommentsLayout();
+                    }
+
+                    @Override
+                    public void onFailed(Exception exception) {
+
+                    }
+                });
+            });
+            addCommentButton.setOnClickListener(view -> dialog.show());
+
+        } else {
+            addCommentButton.setVisibility(View.GONE);
+            commentsLayout.setVisibility(View.GONE);
+            listLayout.setVisibility(View.GONE);
+
+            if (list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                addItemTextLayout.setVisibility(View.VISIBLE);
+        }
+
+        if (list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            addNewItemButton.setOnClickListener(v -> {
+                Intent intent = new Intent(ViewListActivity.this, SearchActivity.class);
+                intent.putExtra("list", list);
+                startActivity(intent);
+            });
+        } else {
+            bottomBar.setVisibility(View.GONE);
+        }
+
+        if (!list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+
+            favoriteButtonLayout.setVisibility(View.VISIBLE);
+            likeButtonLayout.setVisibility(View.VISIBLE);
+
+            favoriteButton.setLiked(list.getFavoritedBy().contains(FirebaseAuth.getInstance().getCurrentUser().getUid()));
+
+            favoriteButton.setOnLikeListener(new OnLikeListener() {
+                @Override
+                public void liked(LikeButton likeButton) {
+                    if (canClick) {
+                        canClick = false;
+                        listRepository.favoriteList(list, new ListRepository.OnListFavorited() {
+                            @Override
+                            public void onSuccess(String listUid) {
+                                canClick = true;
+                            }
+
+                            @Override
+                            public void onFailed(Exception e) {
+                                canClick = true;
+                                Log.d("onFavoriteList", e.getMessage());
+
+                                likeButton.setLiked(false);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void unLiked(LikeButton likeButton) {
+                    if (canClick) {
+                        canClick = false;
+
+                        listRepository.unfavoriteList(list, new ListRepository.OnListRemoved() {
+                                    @Override
+                                    public void onSuccess(String listUid) {
+                                        canClick = true;
+                                    }
+
+                                    @Override
+                                    public void onFailed(String exception) {
+                                        canClick = true;
+                                        likeButton.setLiked(true);
+                                    }
+                                }
+                        );
+                    }
+                }
+            });
+
+
+            likeButton.setLiked(list.getLikedBy().contains(FirebaseAuth.getInstance().getCurrentUser().getUid()));
+            likeButton.setOnLikeListener(new OnLikeListener() {
+                @Override
+                public void liked(LikeButton likeButton) {
+                    if (canClick) {
+                        canClick = false;
+                        listRepository.likeList(list, new ListRepository.OnListLiked() {
+                            @Override
+                            public void onSuccess(String listUid) {
+                                canClick = true;
+                            }
+
+                            @Override
+                            public void onFailed(Exception e) {
+                                canClick = true;
+                                Log.d("onFavoriteList", e.getMessage());
+
+                                likeButton.setLiked(false);
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void unLiked(LikeButton likeButton) {
+                    if (canClick) {
+                        canClick = false;
+
+                        listRepository.unlikeList(list, new ListRepository.OnListRemoved() {
+                                    @Override
+                                    public void onSuccess(String listUid) {
+                                        canClick = true;
+//                                                        notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onFailed(String exception) {
+                                        canClick = true;
+                                        likeButton.setLiked(true);
+                                    }
+                                }
+                        );
+                    }
+                }
+            });
+        } else if (list.uid != null) {
+            removeButton.setVisibility(View.VISIBLE);
+            removeButton.setOnClickListener(v -> {
+
+                mDialog = DialogFactory.newDialog(ViewListActivity.this, "Removing list...");
+                mDialog.show();
+
+                listRepository.removeList(list, new ListRepository.OnListRemoved() {
+                    @Override
+                    public void onSuccess(String listUid) {
+                        DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () -> {
+                            Intent intent = new Intent(ViewListActivity.this, MainActivity.class);
+                            ViewListActivity.this.startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                        });
+                    }
+
+                    @Override
+                    public void onFailed(String exception) {
+                        Log.d("onRemoveList", exception);
+                        DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
+                        });
+                    }
+                });
+            });
+        }
     }
 
     @Override

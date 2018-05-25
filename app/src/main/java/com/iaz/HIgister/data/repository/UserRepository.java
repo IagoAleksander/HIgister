@@ -74,7 +74,10 @@ public class UserRepository {
                 onUpdateProfile.onFailure("usuário nao existe");
             }
         })
-                .addOnFailureListener(e -> Log.w("updateProfile", "Error writing document", e));
+                .addOnFailureListener(e -> {
+                    onUpdateProfile.onFailure("usuário nao existe");
+                    Log.w("updateProfile", "Error writing document", e);
+                });
     }
 
     public void filterResult(String filter, OnGetUsers onGetUsers) {

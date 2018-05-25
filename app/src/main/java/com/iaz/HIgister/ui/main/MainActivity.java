@@ -18,6 +18,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,8 +49,10 @@ import com.truizlop.fabreveallayout.CircularExpandingView;
 
 import java.util.ArrayList;
 
+import bolts.AppLinks;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.fabric.sdk.android.Fabric;
 
 import static com.iaz.HIgister.util.Constants.ANIMES;
 import static com.iaz.HIgister.util.Constants.BOOKS;
@@ -166,11 +169,13 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
     public boolean searchAlreadyClicked = false;
     UserRepository userRepository = new UserRepository();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        Fabric.with(this, new Crashlytics());
 
         setSupportActionBar(mToolbar);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -184,9 +189,15 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
             } else {
                 recoverProfileInfo();
             }
-        }
-        else {
+        } else {
             recoverProfileInfo();
+        }
+
+        if (getIntent() != null) {
+            Uri targetUrl = AppLinks.getTargetUrlFromInboundIntent(this, getIntent());
+            if (targetUrl != null) {
+                Log.i("Activity", "App Link Target URL: " + targetUrl.toString());
+            }
         }
 
         appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
@@ -248,8 +259,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 if (toggle.indexOfChild(findViewById(toggle.getCheckedRadioButtonId())) == 0) {
                     listTypes.setVisibility(View.VISIBLE);
-                }
-                else {
+                } else {
                     listTypes.setVisibility(View.GONE);
                 }
             }
@@ -377,8 +387,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
                                 ((MyListsFragment) fragment).mListsPresenter.search(searchText.getText().toString().trim(), null);
                             }
                             searchAlreadyClicked = true;
-                        }
-                        else {
+                        } else {
                             MaterialDialog.Builder dialog = DialogFactory.newMaterialDialog(MainActivity.this);
                             dialog.show();
                         }
@@ -482,8 +491,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
                     setFilterLayout(false);
                 }
             });
-        }
-        else {
+        } else {
             searchFilterLayout.setVisibility(View.VISIBLE);
             searchFilterButtonImage.setImageDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.ic_keyboard_arrow_down));
             searchFilterButtonText.setText(getResources().getString(R.string.close_filter));

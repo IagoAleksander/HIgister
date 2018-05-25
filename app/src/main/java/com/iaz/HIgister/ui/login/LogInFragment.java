@@ -20,6 +20,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.iaz.HIgister.util.DialogFactory;
 import com.iaz.HIgister.util.Rotate;
 import com.iaz.HIgister.util.TextSizeTransition;
 import com.iaz.HIgister.util.TextWatcherAdapter;
@@ -41,7 +42,7 @@ import butterknife.ButterKnife;
  * Created by alksander on 05/03/2018.
  */
 
-public class LogInFragment extends AuthFragment{
+public class LogInFragment extends AuthFragment {
 
     @BindView(R.id.email_input)
     TextInputLayout emailLayout;
@@ -52,30 +53,34 @@ public class LogInFragment extends AuthFragment{
     @BindView(R.id.login_button)
     LoginButton loginButton;
 
-    @BindViews(value = {R.id.email_input_edit,R.id.password_input_edit})
+    @BindViews(value = {R.id.email_input_edit, R.id.password_input_edit})
     protected List<TextInputEditText> views;
+
+    AuthActivity activity;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(view!=null){
+        activity = (AuthActivity) getActivity();
+
+        if (view != null) {
             caption.setText(getString(R.string.log_in_label));
-            view.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.color_log_in));
-            for(TextInputEditText editText:views){
-                if(editText.getId()==R.id.password_input_edit){
-                    final TextInputLayout inputLayout=ButterKnife.findById(view,R.id.password_input);
+            view.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.color_log_in));
+            for (TextInputEditText editText : views) {
+                if (editText.getId() == R.id.password_input_edit) {
+                    final TextInputLayout inputLayout = ButterKnife.findById(view, R.id.password_input);
                     Typeface boldTypeface = Typeface.defaultFromStyle(Typeface.BOLD);
                     inputLayout.setTypeface(boldTypeface);
-                    editText.addTextChangedListener(new TextWatcherAdapter(){
+                    editText.addTextChangedListener(new TextWatcherAdapter() {
                         @Override
                         public void afterTextChanged(Editable editable) {
-                            inputLayout.setPasswordVisibilityToggleEnabled(editable.length()>0);
+                            inputLayout.setPasswordVisibilityToggleEnabled(editable.length() > 0);
                         }
                     });
                 }
-                editText.setOnFocusChangeListener((temp,hasFocus)->{
-                    if(!hasFocus){
-                        boolean isEnabled=editText.getText().length()>0;
+                editText.setOnFocusChangeListener((temp, hasFocus) -> {
+                    if (!hasFocus) {
+                        boolean isEnabled = editText.getText().length() > 0;
                         editText.setSelected(isEnabled);
                     }
                 });
@@ -84,7 +89,7 @@ public class LogInFragment extends AuthFragment{
             caption.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AuthActivity activity = (AuthActivity) getActivity();
+
                     if (activity.pager.getCurrentItem() == 0 && caption.getText().equals(activity.getString(R.string.log_in_label)))
                         checkFields();
                     else
@@ -93,23 +98,35 @@ public class LogInFragment extends AuthFragment{
             });
         }
 
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activity.mAuthPresenter.mDialog = DialogFactory.newDialog(getContext(), "Please wait for login...");
+                activity.mAuthPresenter.mDialog.show();
+                activity.mAuthPresenter.setAutenticationListener(null);
+            }
+        });
         loginButton.setReadPermissions("email", "public_profile", "user_friends");
-        loginButton.registerCallback(((AuthActivity)getActivity()).callbackManager, new FacebookCallback<LoginResult>() {
+        loginButton.registerCallback(activity.callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d("", "facebook:onSuccess:" + loginResult);
-                ((AuthActivity)getActivity()).mAuthPresenter.handleFacebookAccessToken(loginResult.getAccessToken());
+                activity.mAuthPresenter.handleFacebookAccessToken(loginResult.getAccessToken());
 
             }
 
             @Override
             public void onCancel() {
                 Log.d("", "facebook:onCancel");
+                DialogFactory.finalizeDialogOnClick(activity.mAuthPresenter.mDialog, false, "Login canceled", () -> {
+                });
             }
 
             @Override
             public void onError(FacebookException exception) {
                 Log.d("", "facebook:onError", exception);
+                DialogFactory.finalizeDialogOnClick(activity.mAuthPresenter.mDialog, false, "Sorry, an error occurred on login", () -> {
+                });
             }
         });
     }
@@ -122,21 +139,21 @@ public class LogInFragment extends AuthFragment{
     @Override
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void fold() {
-        lock=false;
+        lock = false;
         Rotate transition = new Rotate();
         transition.setEndAngle(-90f);
         transition.addTarget(caption);
-        TransitionSet set=new TransitionSet();
+        TransitionSet set = new TransitionSet();
         set.setDuration(getResources().getInteger(R.integer.duration));
-        ChangeBounds changeBounds=new ChangeBounds();
+        ChangeBounds changeBounds = new ChangeBounds();
         set.addTransition(changeBounds);
         set.addTransition(transition);
-        TextSizeTransition sizeTransition=new TextSizeTransition();
+        TextSizeTransition sizeTransition = new TextSizeTransition();
         sizeTransition.addTarget(caption);
         set.addTransition(sizeTransition);
         set.setOrdering(TransitionSet.ORDERING_TOGETHER);
-        final float padding=getResources().getDimension(R.dimen.folded_label_padding)/2;
-        set.addListener(new Transition.TransitionListenerAdapter(){
+        final float padding = getResources().getDimension(R.dimen.folded_label_padding) / 2;
+        set.addListener(new Transition.TransitionListenerAdapter() {
             @Override
             public void onTransitionEnd(Transition transition) {
                 super.onTransitionEnd(transition);
@@ -147,19 +164,19 @@ public class LogInFragment extends AuthFragment{
 
             }
         });
-        TransitionManager.beginDelayedTransition(parent,set);
-        caption.setTextSize(TypedValue.COMPLEX_UNIT_PX,getResources().getDimension(R.dimen.folded_size));
+        TransitionManager.beginDelayedTransition(parent, set);
+        caption.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.folded_size));
         caption.setTextColor(Color.WHITE);
         ConstraintLayout.LayoutParams params = getParams();
-        params.leftToLeft=ConstraintLayout.LayoutParams.UNSET;
-        params.verticalBias=0.5f;
+        params.leftToLeft = ConstraintLayout.LayoutParams.UNSET;
+        params.verticalBias = 0.5f;
         caption.setLayoutParams(params);
-        caption.setTranslationX(caption.getWidth()/8-padding);
+        caption.setTranslationX(caption.getWidth() / 8 - padding);
     }
 
     @Override
     public void clearFocus() {
-        for(View view:views) view.clearFocus();
+        for (View view : views) view.clearFocus();
     }
 
     public boolean checkFields() {
@@ -184,24 +201,21 @@ public class LogInFragment extends AuthFragment{
                     Toast.LENGTH_SHORT).show();
             focusView = emailLayout.getEditText();
             cancel = true;
-        }
-        else if (!pattern.matcher(emailLayout.getEditText().getText().toString().trim()).matches()) {
+        } else if (!pattern.matcher(emailLayout.getEditText().getText().toString().trim()).matches()) {
 //            emailLayout.setErrorEnabled(true);
 //            emailLayout.setError("invalid email");
             Toast.makeText(getActivity(), "invalid email",
                     Toast.LENGTH_SHORT).show();
             focusView = emailLayout.getEditText();
             cancel = true;
-        }
-        else if (passwordLayout.getEditText().getText().toString().trim().isEmpty()) {
+        } else if (passwordLayout.getEditText().getText().toString().trim().isEmpty()) {
 //            passwordLayout.setErrorEnabled(true);
 //            passwordLayout.setError("field required");
             Toast.makeText(getActivity(), "field required",
                     Toast.LENGTH_SHORT).show();
             focusView = passwordLayout.getEditText();
             cancel = true;
-        }
-        else if (passwordLayout.getEditText().getText().toString().trim().length() < 6) {
+        } else if (passwordLayout.getEditText().getText().toString().trim().length() < 6) {
 //            passwordLayout.setErrorEnabled(true);
 //            passwordLayout.setError("field required");
             Toast.makeText(getActivity(), "password must have at least 6 characters",
@@ -217,6 +231,10 @@ public class LogInFragment extends AuthFragment{
             ViewUtil.showKeyboard(getActivity(), focusView);
         } else {
             AuthActivity activity = (AuthActivity) getActivity();
+            activity.mAuthPresenter.mDialog = DialogFactory.newDialog(getContext(), "Please wait for login...");
+            activity.mAuthPresenter.mDialog.show();
+            activity.mAuthPresenter.setAutenticationListener(null);
+            activity.mAuthPresenter.addAuthStateListener();
             activity.mAuthPresenter.signInWithEmailAndPassword(views.get(0).getText().toString(), views.get(1).getText().toString());
         }
         return !cancel;

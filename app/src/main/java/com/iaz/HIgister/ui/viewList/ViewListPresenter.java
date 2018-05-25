@@ -2,6 +2,8 @@ package com.iaz.HIgister.ui.viewList;
 
 import android.util.Log;
 
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -11,6 +13,8 @@ import com.iaz.HIgister.data.model.ListItem;
 import com.iaz.HIgister.data.model.UserList;
 import com.iaz.HIgister.injection.ConfigPersistent;
 import com.iaz.HIgister.ui.base.BasePresenter;
+import com.iaz.HIgister.ui.main.MainActivity;
+import com.iaz.HIgister.util.DynamicLinkUtil;
 
 import java.util.ArrayList;
 
@@ -78,6 +82,17 @@ public class ViewListPresenter extends BasePresenter<ViewListMvpView> {
                 .addOnFailureListener(onListItemRemoved::onFailed);
 
 
+    }
+
+    public void shareListToFacebook(UserList list) {
+
+        ShareDialog shareDialog;
+        shareDialog = new ShareDialog(activity);
+        ShareLinkContent content = new ShareLinkContent.Builder()
+                .setQuote("Higister List: " +list.getName() +"\n\n" +"by " +list.getCreatorName())
+                .setContentUrl(DynamicLinkUtil.createDynamicLinkToList(list.uid))
+                .build();
+        shareDialog.show(content);
     }
 
     interface OnListItemRemoved {

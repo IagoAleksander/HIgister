@@ -36,6 +36,7 @@ public class ListRepository {
     private ArrayList<UserList> feedLists = new ArrayList<>();
     private ArrayList<UserList> allLists = new ArrayList<>();
     public ArrayList<String> likedListsId = new ArrayList<>();
+    UserList list;
 
     public ListRepository() {
 
@@ -43,6 +44,29 @@ public class ListRepository {
         storage = FirebaseStorage.getInstance();
 
 //        reference = database.getReference("groups/");
+    }
+
+    public void receiveListById(String uid, OnListFetched onListFetched) {
+
+        DocumentReference docRef = db.collection("lists").document(uid);
+        docRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                list = documentSnapshot.toObject(UserList.class);
+
+                if (list != null) {
+                    list.uid = documentSnapshot.getId();
+                    onListFetched.onSuccess(list);
+                } else {
+                    onListFetched.onFailed("lista nao existe");
+                }
+            } else {
+                onListFetched.onFailed("lista nao existe");
+            }
+        })
+                .addOnFailureListener(e -> {
+                    Log.w("fetchingList", "Error fetching document", e);
+                    onListFetched.onFailed("lista nao existe");
+                });
     }
 
     public void saveList(UserList list, OnListSaved onListSaved) {
@@ -269,8 +293,7 @@ public class ListRepository {
                                         contains = true;
                                         if (changeOn.equals("favorited")) {
                                             list.setFavoritedBy(tempList.getFavoritedBy());
-                                        }
-                                        else {
+                                        } else {
                                             list.setLikedBy(tempList.getLikedBy());
                                         }
                                     }
@@ -527,6 +550,12 @@ public class ListRepository {
     public void deleteList(UserList userList) {
         DocumentReference docRef = db.collection("lists").document(userList.uid);
         docRef.delete();
+    }
+
+    public interface OnListFetched {
+        void onSuccess(UserList userList);
+
+        void onFailed(String exception);
     }
 
     public interface OnListSaved {

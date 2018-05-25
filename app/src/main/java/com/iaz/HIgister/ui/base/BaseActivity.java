@@ -1,14 +1,30 @@
 package com.iaz.HIgister.ui.base;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.util.LongSparseArray;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.iaz.HIgister.Application;
+import com.iaz.HIgister.data.model.User;
+import com.iaz.HIgister.data.repository.UserRepository;
 import com.iaz.HIgister.injection.component.ActivityComponent;
 import com.iaz.HIgister.injection.component.ConfigPersistentComponent;
 import com.iaz.HIgister.injection.component.DaggerConfigPersistentComponent;
 import com.iaz.HIgister.injection.module.ActivityModule;
+import com.iaz.HIgister.ui.main.MainActivity;
+import com.iaz.HIgister.ui.viewList.ViewListActivity;
+import com.iaz.HIgister.util.DialogFactory;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -28,6 +44,10 @@ public class BaseActivity extends AppCompatActivity {
 
     private ActivityComponent mActivityComponent;
     private long mActivityId;
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    ActivityInfo ai = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +85,70 @@ public class BaseActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+//        try {
+//            ai = getPackageManager().getActivityInfo(this.getComponentName(), PackageManager.GET_META_DATA);
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//        }
+
+        FirebaseDynamicLinks.getInstance().getDynamicLink(getIntent())
+                .addOnSuccessListener(
+                        new OnSuccessListener<PendingDynamicLinkData>() {
+                            @Override
+                            public void onSuccess(PendingDynamicLinkData data) {
+                                if (data == null || data.getLink() == null) {
+                                    // No FDL pending for this app, don't do anything.
+                                    Log.d("onGetDynamicLinkFail.b:", "empty");
+                                    return;
+                                }
+
+                                String listId = null;
+
+                                Uri deepLink = data.getLink();
+                                if (deepLink.getQueryParameter("listId") != null) {
+                                    listId = deepLink.getQueryParameter("listId");
+                                    Log.d("onSuccess1.b:", listId);
+                                } else
+                                    Log.d("onSuccess3.b:", deepLink.toString());
+
+                                setAutenticationListener(listId);
+                                addAuthStateListener();
+                            }
+                        })
+                .addOnFailureListener(e -> {
+                    Log.d("onGetDynamicLinkFail.b:", e.getMessage());
+                });
+    }
+
     public ActivityComponent activityComponent() {
         return mActivityComponent;
+    }
+
+    public void setAutenticationListener(String listId) {
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@android.support.annotation.NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    if (listId != null && !listId.isEmpty()) {
+                        Intent intent = new Intent(BaseActivity.this, ViewListActivity.class);
+                        intent.putExtra("listId", listId);
+                        BaseActivity.this.startActivity(intent);
+                    }
+                }
+            }
+        };
+    }
+
+    public void addAuthStateListener() {
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
 }

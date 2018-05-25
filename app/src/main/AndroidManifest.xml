@@ -8,48 +8,74 @@
 
     <application
         android:name="com.iaz.HIgister.Application"
-        tools:replace="android:icon"
         android:icon="@drawable/logo_makr"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        tools:replace="android:icon">
+
 
         <activity
             android:name="com.iaz.HIgister.ui.splash.SplashActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
 
         <activity
             android:name="com.iaz.HIgister.ui.login.AuthActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="http"
+                    android:host="higister.com" />
+            </intent-filter>
+
+        </activity>
 
         <activity
             android:name="com.iaz.HIgister.ui.main.MainActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name">
+
+        </activity>
 
         <activity
             android:name="com.iaz.HIgister.ui.main.ProfileActivity"
             android:label="@string/app_name" />
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
-        <activity android:name="com.facebook.FacebookActivity"
-            android:configChanges=
-                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
+
+        <provider
+            android:authorities="com.facebook.app.FacebookContentProvider2529947693896049"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true" />
+
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
@@ -58,25 +84,19 @@
             android:name="io.fabric.ApiKey"
             android:value="6b4d1a581e2b0b145a9f5561f67aa0758a3e9bf8" />
 
-        <activity
-            android:name="com.iaz.HIgister.ui.search.SearchActivity"/>
+        <activity android:name="com.iaz.HIgister.ui.search.SearchActivity" />
 
-        <activity
-            android:name="com.iaz.HIgister.ui.createList.CreateListActivity"/>
+        <activity android:name="com.iaz.HIgister.ui.createList.CreateListActivity" />
 
-        <activity
-            android:name="com.iaz.HIgister.ui.viewList.ViewListActivity"/>
+        <activity android:name="com.iaz.HIgister.ui.viewList.ViewListActivity" />
 
-        <activity
-            android:name="com.iaz.HIgister.ui.createItem.CreateItemActivity"/>
+        <activity android:name="com.iaz.HIgister.ui.createItem.CreateItemActivity" />
 
-        <activity
-            android:name="com.iaz.HIgister.ui.viewItem.ViewItemActivity"/>
+        <activity android:name="com.iaz.HIgister.ui.viewItem.ViewItemActivity" />
 
-        <activity
-            android:name="com.iaz.HIgister.ui.viewUser.ViewUserActivity"/>
+        <activity android:name="com.iaz.HIgister.ui.viewUser.ViewUserActivity" />
 
-        <activity android:name="com.iaz.HIgister.ui.gallery.GalleryActivity"/>
+        <activity android:name="com.iaz.HIgister.ui.gallery.GalleryActivity" />
 
     </application>
 

@@ -20,6 +20,7 @@ import com.iaz.HIgister.data.repository.UserRepository;
 import com.iaz.HIgister.injection.ConfigPersistent;
 import com.iaz.HIgister.ui.base.BasePresenter;
 import com.iaz.HIgister.ui.main.MainActivity;
+import com.iaz.HIgister.ui.viewList.ViewListActivity;
 import com.iaz.HIgister.util.DialogFactory;
 
 import javax.inject.Inject;
@@ -37,7 +38,7 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     UserRepository userRepository = new UserRepository();
-    private Dialog mDialog;
+    public Dialog mDialog;
 
     @Inject
     public AuthPresenter(DataManager dataManager) {
@@ -55,24 +56,28 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
         if (mDisposable != null) mDisposable.dispose();
     }
 
-    public void setAutenticationListener() {
+    public void setAutenticationListener(String listId) {
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = firebaseAuth -> {
             FirebaseUser userF = firebaseAuth.getCurrentUser();
 
             if (userF != null) {
 
-                mDialog = DialogFactory.newDialog(getMvpView().getActivity(), "Please wait for login...");
-                mDialog.show();
-
                 userRepository.receiveProfileInfo(userF.getUid(), new UserRepository.OnUpdateProfile() {
                     @Override
                     public void onSuccess(User user) {
-                        DialogFactory.finalizeDialog(mDialog, true, "Logged in", () -> {
-                            Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
-                            intent.putExtra("user", user);
+
+                        if (listId != null && !listId.isEmpty()) {
+                            Intent intent = new Intent(getMvpView().getActivity(), ViewListActivity.class);
+                            intent.putExtra("listId", listId);
                             getMvpView().getActivity().startActivity(intent);
-                        });
+                        } else {
+                            DialogFactory.finalizeDialog(mDialog, true, "Logged in", () -> {
+                                Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
+                                intent.putExtra("user", user);
+                                getMvpView().getActivity().startActivity(intent);
+                            });
+                        }
                     }
 
                     @Override
@@ -128,8 +133,8 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Toast.makeText(getMvpView().getActivity(), "falha",
-                                    Toast.LENGTH_SHORT).show();
+                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on create account", () -> {
+                            });
                         }
                     }
                 });
@@ -147,11 +152,9 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
 //                            Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(getMvpView().getActivity(), "falha",
-                                    Toast.LENGTH_SHORT).show();
+                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on login", () -> {
+                            });
                         }
-
-                        // ...
                     }
                 });
     }
@@ -184,7 +187,7 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
 
                                         User newUser = new User();
                                         newUser.setName(profile.getName());
-                                        newUser.setProfilePictureUri(profile.getProfilePictureUri(400,400).toString());
+                                        newUser.setProfilePictureUri(profile.getProfilePictureUri(400, 400).toString());
 
                                         Log.d("auth", "onCheckUser: user does not exist");
                                         userRepository.saveProfileInfo(getMvpView().getActivity(), newUser, new UserRepository.OnUpdateProfile() {
