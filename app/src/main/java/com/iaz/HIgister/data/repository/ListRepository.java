@@ -364,7 +364,7 @@ public class ListRepository {
                         tempList = doc.toObject(UserList.class);
 
                         if (tempList != null
-//                                && !tempList.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                && !tempList.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                 && tempList.isVisibleForEveryone()) {
                             tempList.uid = doc.getId();
                             feedLists.add(tempList);

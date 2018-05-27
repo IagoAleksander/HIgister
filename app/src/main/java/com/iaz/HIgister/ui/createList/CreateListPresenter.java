@@ -21,9 +21,7 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 
 import static com.iaz.HIgister.util.Constants.PERMISSION_WRITE_EXTERNAL;
 import static com.iaz.HIgister.util.Constants.REQUEST_IMAGE_CAPTURE;
-import static com.iaz.HIgister.util.Constants.REQUEST_IMAGE_CAPTURE_BANNER;
 import static com.iaz.HIgister.util.Constants.SELECT_PICTURE;
-import static com.iaz.HIgister.util.Constants.SELECT_PICTURE_BANNER;
 
 @ConfigPersistent
 public class CreateListPresenter extends BasePresenter<CreateListMvpView> {
@@ -63,14 +61,6 @@ public class CreateListPresenter extends BasePresenter<CreateListMvpView> {
         EasyImage.openCamera(activity, REQUEST_IMAGE_CAPTURE);
     }
 
-    public void openDialogWindowBanner() {
-        EasyImage.openGallery(activity, SELECT_PICTURE_BANNER);
-    }
-
-    public void getPhotoBanner() {
-        EasyImage.openCamera(activity, REQUEST_IMAGE_CAPTURE_BANNER);
-    }
-
     public void activityResult(int requestCode, int resultCode, Intent data) {
         EasyImage.handleActivityResult(requestCode, resultCode, data, activity, new DefaultCallback() {
             @Override
@@ -82,11 +72,8 @@ public class CreateListPresenter extends BasePresenter<CreateListMvpView> {
             @Override
             public void onImagesPicked(@android.support.annotation.NonNull List<File> imageFiles, EasyImage.ImageSource source, int type) {
                 Uri imageUri = Uri.fromFile(imageFiles.get(0));
-                if (type == SELECT_PICTURE_BANNER || type == REQUEST_IMAGE_CAPTURE_BANNER) {
-                    getMvpView().callGlideBanner(imageUri);
-                } else {
-                    getMvpView().callGlide(imageUri);
-                }
+                getMvpView().callGlide(imageUri);
+
             }
 
             @Override

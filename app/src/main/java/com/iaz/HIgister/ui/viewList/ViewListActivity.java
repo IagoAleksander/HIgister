@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -187,7 +188,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
             });
 
         descriptionLayout.setOnClickListener(view ->
-            showDescriptiion());
+                showDescriptiion());
     }
 
     public void populateList() {
@@ -282,9 +283,13 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
         if (list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
             addNewItemButton.setVisibility(View.VISIBLE);
             addNewItemButton.setOnClickListener(v -> {
-                Intent intent = new Intent(ViewListActivity.this, SearchActivity.class);
-                intent.putExtra("list", list);
-                startActivity(intent);
+                if (list.getListItems().size() < 5) {
+                    Intent intent = new Intent(ViewListActivity.this, SearchActivity.class);
+                    intent.putExtra("list", list);
+                    startActivity(intent);
+                } else {
+                    DialogFactory.newMaterialDialog(ViewListActivity.this, "It is not possible to add more than 5 items to a list. Please remove one of the others to add a new item").show();
+                }
             });
             bottomBar.setVisibility(View.VISIBLE);
         } else {
@@ -399,26 +404,36 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
             removeButton.setVisibility(View.VISIBLE);
             removeButton.setOnClickListener(v -> {
 
-                mDialog = DialogFactory.newDialog(ViewListActivity.this, "Removing list...");
-                mDialog.show();
-
-                listRepository.removeList(list, new ListRepository.OnListRemoved() {
+                MaterialDialog dialog = DialogFactory.newMaterialDialogConfirmation(ViewListActivity.this, "Do you really want to remove this list? (all the information will be deleted and will not be recoverable anymore)").show();
+                View positive = dialog.getActionButton(DialogAction.POSITIVE);
+                positive.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onSuccess(String listUid) {
-                        DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () -> {
-                            Intent intent = new Intent(ViewListActivity.this, MainActivity.class);
-                            ViewListActivity.this.startActivity(intent);
-                            overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
-                        });
-                    }
+                    public void onClick(View view) {
+                        dialog.dismiss();
 
-                    @Override
-                    public void onFailed(String exception) {
-                        Log.d("onRemoveList", exception);
-                        DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
+                        mDialog = DialogFactory.newDialog(ViewListActivity.this, "Removing list...");
+                        mDialog.show();
+
+                        listRepository.removeList(list, new ListRepository.OnListRemoved() {
+                            @Override
+                            public void onSuccess(String listUid) {
+                                DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () -> {
+                                    Intent intent = new Intent(ViewListActivity.this, MainActivity.class);
+                                    ViewListActivity.this.startActivity(intent);
+                                    overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                                });
+                            }
+
+                            @Override
+                            public void onFailed(String exception) {
+                                Log.d("onRemoveList", exception);
+                                DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
+                                });
+                            }
                         });
                     }
                 });
+
             });
 
             editButtonLayout.setVisibility(View.VISIBLE);

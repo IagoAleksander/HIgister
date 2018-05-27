@@ -24,31 +24,7 @@
                 android:id="@+id/listLogoImageView"
                 android:layout_width="96dp"
                 android:layout_height="144dp"
-                android:src="#A9B6BC" />
-
-            <LinearLayout
-                android:id="@+id/logo_placeholder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:gravity="center"
-                    app:srcCompat="@drawable/ic_business" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="center"
-                    android:text="LOGO"
-                    android:textColor="@color/white"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
+                android:src="@drawable/large_movie_poster" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -149,7 +125,6 @@
                         android:hint="Item Name"
                         android:imeOptions="actionNext"
                         android:inputType="textCapSentences"
-                        android:maxLength="50"
                         android:textColor="@color/white"
                         android:textColorHint="@color/accent"
                         android:textSize="16sp" />

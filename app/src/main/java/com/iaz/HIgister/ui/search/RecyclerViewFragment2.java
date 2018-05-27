@@ -154,7 +154,7 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
                     mSearchPresenter.loadResults(activity.list.getType(), activity.editText.getText().toString());
                 }
             } else {
-                MaterialDialog.Builder dialog = DialogFactory.newMaterialDialog(activity);
+                MaterialDialog.Builder dialog = DialogFactory.newMaterialDialog(activity, "Please enter at least 3 letters to perform a search");
                 dialog.show();
 
             }

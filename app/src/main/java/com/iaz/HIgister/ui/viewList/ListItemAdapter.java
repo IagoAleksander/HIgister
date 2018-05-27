@@ -14,6 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.HIgister.data.model.ListItem;
@@ -67,6 +69,10 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListIt
 
         if (listItem.getName() != null)
             holder.itemNameTextView.setText(listItem.getName());
+        else if (listItem.getBaseItem() != null
+                && listItem.getBaseItem().title != null
+                && !listItem.getBaseItem().title.isEmpty())
+            holder.itemNameTextView.setText(listItem.getBaseItem().title);
         else
             holder.itemNameTextView.setVisibility(View.GONE);
 
@@ -105,26 +111,41 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListIt
             holder.removeButton.setVisibility(View.VISIBLE);
             holder.removeButton.setOnClickListener(v -> {
 
-                mDialog = DialogFactory.newDialog(activity, "Removing item...");
-                mDialog.show();
-                activity.mViewListPresenter.removeListItem(list, holder.getAdapterPosition(), new ViewListPresenter.OnListItemRemoved() {
-                    @Override
-                    public void onSuccess() {
-                        Log.d("removeListItem: ", "success");
-                        DialogFactory.finalizeDialog(mDialog, true, "Item removed with success", () -> {
-                            list.getListItems().remove(holder.getAdapterPosition());
-                            notifyDataSetChanged();
-                        });
+                if (list.getListItems().size() > 1) {
+                    MaterialDialog dialog = DialogFactory.newMaterialDialogConfirmation(activity, "Do you really want to remove this item? (all the information will be deleted and will not be recoverable anymore)").show();
+                    View positive = dialog.getActionButton(DialogAction.POSITIVE);
+                    positive.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
 
-                    }
+                            mDialog = DialogFactory.newDialog(activity, "Removing item...");
+                            mDialog.show();
+                            activity.mViewListPresenter.removeListItem(list, holder.getAdapterPosition(), new ViewListPresenter.OnListItemRemoved() {
+                                @Override
+                                public void onSuccess() {
+                                    Log.d("removeListItem: ", "success");
+                                    DialogFactory.finalizeDialog(mDialog, true, "Item removed with success", () -> {
+                                        list.getListItems().remove(holder.getAdapterPosition());
+                                        notifyDataSetChanged();
+                                    });
 
-                    @Override
-                    public void onFailed(Exception e) {
-                        Log.e("removeListItem: ", "failed", e);
-                        DialogFactory.finalizeDialog(mDialog, false, "Sorry, an error occurred on item removal", () -> {
-                        });
-                    }
-                });
+                                }
+
+                                @Override
+                                public void onFailed(Exception e) {
+                                    Log.e("removeListItem: ", "failed", e);
+                                    DialogFactory.finalizeDialog(mDialog, false, "Sorry, an error occurred on item removal", () -> {
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+                else {
+                    DialogFactory.newMaterialDialog(activity, "It is not possible to delete the last item of a list. Please delete the list instead or add another item to delete this one").show();
+                }
+
             });
         } else {
             holder.editButtonLayout.setVisibility(View.GONE);

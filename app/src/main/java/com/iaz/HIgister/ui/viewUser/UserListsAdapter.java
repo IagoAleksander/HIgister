@@ -14,6 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.HIgister.data.model.UserList;
@@ -152,23 +154,30 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
 
 
             holder.removeButton.setOnClickListener(v -> {
-                mDialog = DialogFactory.newDialog(fragment.activity, "Removing list...");
-                mDialog.show();
-                listRepository.removeList(mLists.get(position), new ListRepository.OnListRemoved() {
-                    @Override
-                    public void onSuccess(String listUid) {
-                        notifyDataSetChanged();
-                        DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () -> {
-                            notifyDataSetChanged();
-                        });
-                    }
 
-                    @Override
-                    public void onFailed(String exception) {
-                        Log.d("onRemoveList", exception);
-                        DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
-                        });
-                    }
+                MaterialDialog dialog = DialogFactory.newMaterialDialogConfirmation(fragment.getActivity(), "Do you really want to remove this list? (all the information will be deleted and will not be recoverable anymore)").show();
+                View positive = dialog.getActionButton(DialogAction.POSITIVE);
+                positive.setOnClickListener(view -> {
+                    dialog.dismiss();
+
+                    mDialog = DialogFactory.newDialog(fragment.activity, "Removing list...");
+                    mDialog.show();
+                    listRepository.removeList(mLists.get(position), new ListRepository.OnListRemoved() {
+                        @Override
+                        public void onSuccess(String listUid) {
+                            notifyDataSetChanged();
+                            DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () -> {
+                                notifyDataSetChanged();
+                            });
+                        }
+
+                        @Override
+                        public void onFailed(String exception) {
+                            Log.d("onRemoveList", exception);
+                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
+                            });
+                        }
+                    });
                 });
             });
         } else {

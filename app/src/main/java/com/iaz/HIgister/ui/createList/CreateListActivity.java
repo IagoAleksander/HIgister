@@ -1,6 +1,7 @@
 package com.iaz.HIgister.ui.createList;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,7 +24,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -35,7 +35,6 @@ import com.iaz.HIgister.data.model.UserList;
 import com.iaz.HIgister.data.repository.ListRepository;
 import com.iaz.HIgister.ui.base.BaseActivity;
 import com.iaz.HIgister.ui.viewList.ViewListActivity;
-import com.iaz.HIgister.util.AppBarStateChangeListener;
 import com.iaz.HIgister.util.CustomPhotoPickerDialog;
 import com.iaz.HIgister.util.DialogFactory;
 import com.iaz.Higister.R;
@@ -64,12 +63,6 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
     RelativeLayout listLogoImageLayout;
     @BindView(R.id.listLogoImageView)
     ImageView listLogoImage;
-    @BindView(R.id.logo_placeholder)
-    LinearLayout listLogoImagePlaceholder;
-    @BindView(R.id.activity_create_page_add_banner)
-    LinearLayout addBannerLayout;
-    @BindView(R.id.list_banner)
-    ImageView listBannerImage;
     @BindView(R.id.text_input_list_name)
     TextInputLayout listNameLayout;
     @BindView(R.id.text_input_list_desc)
@@ -93,6 +86,7 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
     int typeSelected = 1;
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,78 +127,35 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
             getSupportActionBar().setTitle("Create UserList");
         }
 
-        appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
+        listLogoImageLayout.setVisibility(View.VISIBLE);
+        listLogoImageLayout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onStateChanged(AppBarLayout appBarLayout, State state, int i) {
+            public void onClick(View view) {
+                photoDialog = new CustomPhotoPickerDialog(CreateListActivity.this, new CustomPhotoPickerDialog
+                        .OnOptionPhotoSelected() {
+                    @Override
+                    public void onGallery() {
+                        mCreateListPresenter.openDialogWindow();
+                        photoDialog.dismiss();
+                    }
 
-                float fraction = i / 400.0f;
-                listLogoImageLayout.setAlpha(1.0f + fraction);
-                addBannerLayout.setAlpha(1.0f + fraction);
+                    @Override
+                    public void onCamera() {
+                        // Here, thisActivity is the current activity
+                        if (ContextCompat.checkSelfPermission(CreateListActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                                || ContextCompat.checkSelfPermission(CreateListActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
-                if (state == State.COLLAPSED) {
-                    listLogoImageLayout.setVisibility(View.GONE);
-                    addBannerLayout.setVisibility(View.GONE);
-                } else {
-                    listLogoImageLayout.setVisibility(View.VISIBLE);
-                    addBannerLayout.setVisibility(View.VISIBLE);
-                }
+                            photoDialog.dismiss();
+                            ActivityCompat.requestPermissions(CreateListActivity.this,
+                                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL);
+                        } else {
+                            mCreateListPresenter.getPhoto();
+                            photoDialog.dismiss();
+                        }
+                    }
+                });
+                photoDialog.show();
             }
-        });
-
-        listLogoImageLayout.setOnClickListener(v -> {
-            photoDialog = new CustomPhotoPickerDialog(CreateListActivity.this, new CustomPhotoPickerDialog
-                    .OnOptionPhotoSelected() {
-                @Override
-                public void onGallery() {
-                    mCreateListPresenter.openDialogWindow();
-                    photoDialog.dismiss();
-                }
-
-                @Override
-                public void onCamera() {
-                    // Here, thisActivity is the current activity
-                    if (ContextCompat.checkSelfPermission(CreateListActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                            || ContextCompat.checkSelfPermission(CreateListActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-                        photoDialog.dismiss();
-                        ActivityCompat.requestPermissions(CreateListActivity.this,
-                                new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL);
-                    } else {
-                        mCreateListPresenter.getPhoto();
-                        photoDialog.dismiss();
-                    }
-                }
-            });
-            photoDialog.show();
-
-        });
-
-        addBannerLayout.setOnClickListener(view -> {
-
-            photoDialog = new CustomPhotoPickerDialog(CreateListActivity.this, new CustomPhotoPickerDialog
-                    .OnOptionPhotoSelected() {
-                @Override
-                public void onGallery() {
-                    mCreateListPresenter.openDialogWindowBanner();
-                    photoDialog.dismiss();
-                }
-
-                @Override
-                public void onCamera() {
-                    // Here, thisActivity is the current activity
-                    if (ContextCompat.checkSelfPermission(CreateListActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                            || ContextCompat.checkSelfPermission(CreateListActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-                        photoDialog.dismiss();
-                        ActivityCompat.requestPermissions(CreateListActivity.this,
-                                new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL);
-                    } else {
-                        mCreateListPresenter.getPhotoBanner();
-                        photoDialog.dismiss();
-                    }
-                }
-            });
-            photoDialog.show();
         });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
@@ -216,50 +167,52 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
                 if (list == null)
                     list = new UserList();
 
-                list.setName(listNameLayout.getEditText().getText().toString());
-                list.setDescription(listDescriptionLayout.getEditText().getText().toString());
+                if (fieldsAreOk()) {
+                    list.setName(listNameLayout.getEditText().getText().toString());
+                    list.setDescription(listDescriptionLayout.getEditText().getText().toString());
 //                mCreateListPresenter.saveList(list);
 
-                if (uri != null)
-                    list.setListPictureUri(uri);
+                    if (uri != null)
+                        list.setListPictureUri(uri);
 
-                list.setCreatorId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                String userName = sharedPref.getString("userName", "---");
-                list.setCreatorName(userName);
+                    list.setCreatorId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    String userName = sharedPref.getString("userName", "---");
+                    list.setCreatorName(userName);
 
-                list.setType(typeSelected);
-                list.setVisibleForEveryone(isListVisible.isChecked());
-                list.setCommentsEnabled(areCommentsEnabled.isChecked());
+                    list.setType(typeSelected);
+                    list.setVisibleForEveryone(isListVisible.isChecked());
+                    list.setCommentsEnabled(areCommentsEnabled.isChecked());
 
-                if (list.uid == null) {
-                    Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
-                    intent.putExtra("list", list);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
-                } else {
+                    if (list.uid == null) {
+                        Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
+                        intent.putExtra("list", list);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                    } else {
 
-                    mDialog = DialogFactory.newDialog(CreateListActivity.this, "Updating list...");
-                    mDialog.show();
-                    listRepository.updateList(list, new ListRepository.OnListUpdated() {
-                        @Override
-                        public void onSuccess() {
-                            DialogFactory.finalizeDialogOnClick(mDialog, true, "List updated with success. Click to proceed", () -> {
-                                Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
-                                intent.putExtra("list", list);
-                                CreateListActivity.this.startActivity(intent);
-                                overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
-                            });
-                        }
+                        mDialog = DialogFactory.newDialog(CreateListActivity.this, "Updating list...");
+                        mDialog.show();
+                        listRepository.updateList(list, new ListRepository.OnListUpdated() {
+                            @Override
+                            public void onSuccess() {
+                                DialogFactory.finalizeDialogOnClick(mDialog, true, "List updated with success. Click to proceed", () -> {
+                                    Intent intent = new Intent(CreateListActivity.this, ViewListActivity.class);
+                                    intent.putExtra("list", list);
+                                    CreateListActivity.this.startActivity(intent);
+                                    overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                                });
+                            }
 
-                        @Override
-                        public void onFailed(Exception e) {
-                            Log.w("updateList: ", "failed", e);
-                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list update", () -> {
-                            });
-                        }
-                    });
+                            @Override
+                            public void onFailed(Exception e) {
+                                Log.w("updateList: ", "failed", e);
+                                DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list update", () -> {
+                                });
+                            }
+                        });
 
+                    }
                 }
             }
         });
@@ -301,9 +254,6 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
 
     @Override
     public void callGlide(Uri uri) {
-        if (uri == null) {
-            listLogoImagePlaceholder.setVisibility(View.GONE);
-        }
 
         this.uri = uri.toString();
         try {
@@ -315,23 +265,12 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
         }
     }
 
-    @Override
-    public void callGlideBanner(Uri uri) {
-        try {
-            Glide.with(CreateListActivity.this)
-                    .load(uri)
-                    .into(listBannerImage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     private void bindSpinnerLabel() {
 
         String[] stringArray = getResources().getStringArray(R.array.list_type);
 
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                this, R.layout.support_simple_spinner_dropdown_item, stringArray) {
+                this, R.layout.item_list_type, stringArray) {
             @Override
             public boolean isEnabled(int position) {
                 return position != 0;
@@ -361,7 +300,7 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
         });
 
         if (list != null) {
-            listTypeSpinner.setSelection(list.getType()+1);
+            listTypeSpinner.setSelection(list.getType() + 1);
         }
     }
 
@@ -379,6 +318,20 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
     @Override
     public CreateListActivity getActivity() {
         return this;
+    }
+
+    public boolean fieldsAreOk() {
+        if (listNameLayout.getEditText().getText().toString().isEmpty()) {
+            listNameLayout.setError("This field is required");
+            return false;
+        } else if (listNameLayout.getEditText().getText().toString().length() > 30) {
+            listNameLayout.setError("The list name cannot have more than 30 characters (it has "
+                    + listNameLayout.getEditText().getText().toString().length() + " )");
+            return false;
+        }
+
+        listNameLayout.setError(null);
+        return true;
     }
 
 }

@@ -374,7 +374,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
                             }
                             searchAlreadyClicked = true;
                         } else {
-                            MaterialDialog.Builder dialog = DialogFactory.newMaterialDialog(MainActivity.this);
+                            MaterialDialog.Builder dialog = DialogFactory.newMaterialDialog(MainActivity.this, "Please enter at least 3 letters to perform a search");
                             dialog.show();
                         }
                     }

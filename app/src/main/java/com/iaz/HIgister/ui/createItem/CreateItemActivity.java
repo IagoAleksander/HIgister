@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -59,6 +60,7 @@ public class CreateItemActivity extends BaseActivity {
     private static final int CONTENT_VIEW_ID = 10101010;
 
     ListRepository listRepository = new ListRepository();
+    FragmentManager fm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,55 +107,80 @@ public class CreateItemActivity extends BaseActivity {
                 nextButton.setText("Save");
             }
 
+            fm = getSupportFragmentManager();
+
             Fragment newFragment = CreateItemFragment.newInstance(listItem);
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = fm.beginTransaction();
             ft.add(CONTENT_VIEW_ID, newFragment).commit();
         }
 
         nextButton.setOnClickListener(v -> {
 
+            if (fieldsAreOk()) {
+                if (position == -1) {
+                    list.getListItems().add(listItem);
 
-            if (position == -1) {
-                list.getListItems().add(listItem);
+                    position = list.getListItems().size() - 1;
 
-                position = list.getListItems().size() - 1;
+                    list.setCreatorId(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-                list.setCreatorId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    String userName = sharedPref.getString("userName", "---");
+                    list.setCreatorName(userName);
 
-                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                String userName = sharedPref.getString("userName", "---");
-                list.setCreatorName(userName);
+                    if (list.getListItems().size() == 1) {
 
-                if (list.getListItems().size() == 1) {
+                        mDialog = DialogFactory.newDialog(CreateItemActivity.this, "Creating new list...");
+                        mDialog.show();
+                        listRepository.saveList(list, new ListRepository.OnListSaved() {
+                            @Override
+                            public void onSuccess(UserList userList) {
+                                DialogFactory.finalizeDialogOnClick(mDialog, true, "List created with success. Click to proceed", () -> {
+                                    Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
+                                    intent.putExtra("list", list);
+                                    CreateItemActivity.this.startActivity(intent);
+                                    overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                                });
+                            }
 
-                    mDialog = DialogFactory.newDialog(CreateItemActivity.this, "Creating new list...");
-                    mDialog.show();
-                    listRepository.saveList(list, new ListRepository.OnListSaved() {
-                        @Override
-                        public void onSuccess(UserList userList) {
-                            DialogFactory.finalizeDialogOnClick(mDialog, true, "List created with success. Click to proceed", () -> {
-                                Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
-                                intent.putExtra("list", list);
-                                CreateItemActivity.this.startActivity(intent);
-                                overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
-                            });
-                        }
+                            @Override
+                            public void onFailed(Exception exception) {
+                                Log.d("saveList: ", exception.getMessage());
+                                DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list creation", () -> {
+                                });
+                            }
+                        });
+                    } else {
 
-                        @Override
-                        public void onFailed(Exception exception) {
-                            Log.d("saveList: ", exception.getMessage());
-                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list creation", () -> {
-                            });
-                        }
-                    });
+                        mDialog = DialogFactory.newDialog(CreateItemActivity.this, "Creating new list item...");
+                        mDialog.show();
+                        listRepository.saveItem(list, list.getListItems().size() - 1, new ListRepository.OnItemSaved() {
+                            @Override
+                            public void onSuccess() {
+                                DialogFactory.finalizeDialogOnClick(mDialog, true, "List item created with success. Click to proceed", () -> {
+                                    Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
+                                    intent.putExtra("list", list);
+                                    CreateItemActivity.this.startActivity(intent);
+                                    overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                                });
+                            }
+
+                            @Override
+                            public void onFailed(Exception exception) {
+                                Log.d("saveItem: ", exception.getMessage());
+                                DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list item creation", () -> {
+                                });
+                            }
+                        });
+                    }
                 } else {
 
-                    mDialog = DialogFactory.newDialog(CreateItemActivity.this, "Creating new list item...");
+                    mDialog = DialogFactory.newDialog(CreateItemActivity.this, "Updating list item...");
                     mDialog.show();
-                    listRepository.saveItem(list, list.getListItems().size() - 1, new ListRepository.OnItemSaved() {
+                    listRepository.updateItem(list, position, new ListRepository.OnItemUpdated() {
                         @Override
                         public void onSuccess() {
-                            DialogFactory.finalizeDialogOnClick(mDialog, true, "List item created with success. Click to proceed", () -> {
+                            DialogFactory.finalizeDialogOnClick(mDialog, true, "List item updated with success. Click to proceed", () -> {
                                 Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
                                 intent.putExtra("list", list);
                                 CreateItemActivity.this.startActivity(intent);
@@ -163,37 +190,16 @@ public class CreateItemActivity extends BaseActivity {
 
                         @Override
                         public void onFailed(Exception exception) {
-                            Log.d("saveItem: ", exception.getMessage());
-                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list item creation", () -> {
+                            Log.d("updateItem: ", exception.getMessage());
+                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list item update", () -> {
                             });
                         }
                     });
                 }
-            } else {
-
-                mDialog = DialogFactory.newDialog(CreateItemActivity.this, "Updating list item...");
-                mDialog.show();
-                listRepository.updateItem(list, position, new ListRepository.OnItemUpdated() {
-                    @Override
-                    public void onSuccess() {
-                        DialogFactory.finalizeDialogOnClick(mDialog, true, "List item updated with success. Click to proceed", () -> {
-                            Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
-                            intent.putExtra("list", list);
-                            CreateItemActivity.this.startActivity(intent);
-                            overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
-                        });
-                    }
-
-                    @Override
-                    public void onFailed(Exception exception) {
-                        Log.d("updateItem: ", exception.getMessage());
-                        DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list item update", () -> {
-                        });
-                    }
-                });
             }
 
         });
+
 
     }
 
@@ -228,7 +234,21 @@ public class CreateItemActivity extends BaseActivity {
         mCreateItemPresenter.activityResult(requestCode, resultCode, data);
     }
 
+    public boolean fieldsAreOk() {
 
+        Fragment fragment = fm.findFragmentById(CONTENT_VIEW_ID);
+        if (fragment instanceof CreateItemFragment) {
+
+            if (listItem.getName() != null && listItem.getName().length() > 30) {
+                ((CreateItemFragment)fragment).listNameLayout.setError("The item name cannot have more than 30 characters (it has "
+                        + listItem.getName().length() + " )");
+                return false;
+            }
+
+            ((CreateItemFragment)fragment).listNameLayout.setError(null);
+        }
+        return true;
+    }
 
 
 }

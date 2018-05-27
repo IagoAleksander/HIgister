@@ -123,11 +123,19 @@ public final class DialogFactory {
                 });
     }
 
-    public static MaterialDialog.Builder newMaterialDialog(Context context) {
+    public static MaterialDialog.Builder newMaterialDialog(Context context, String text) {
         return new MaterialDialog.Builder(context)
-                .content("Please enter at least 3 letters to perform a search")
+                .content(text)
                 .cancelable(true)
                 .positiveText("OK");
+    }
+
+    public static MaterialDialog.Builder newMaterialDialogConfirmation(Context context, String text) {
+        return new MaterialDialog.Builder(context)
+                .content(text)
+                .cancelable(true)
+                .positiveText("Yes, delete")
+                .negativeText("No, cancel");
     }
 
     public interface OnDialogButtonClicked {

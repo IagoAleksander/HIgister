@@ -76,12 +76,12 @@ public class SplashActivity extends BaseActivity implements SplashMvpView {
     public void setRotatingText() {
 
 //        //TODO not working on android 7.0+
-        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/Reckoner_Bold.ttf");
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/carter_one_regular.ttf");
 
         rotatingTextHeader.setTypeface(typeface);
 
         final Rotatable rotatable = new Rotatable(getResources().getColor(R.color.white), 2000, "", "your movies", "your books", "your musics", "YOU...", "", "");
-        rotatable.setSize(35);
+        rotatable.setSize(25);
         rotatable.setAnimationDuration(500);
         rotatable.setTypeface(typeface);
         rotatable.setCenter(true);

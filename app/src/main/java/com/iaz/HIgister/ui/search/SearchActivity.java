@@ -102,17 +102,17 @@ public class SearchActivity extends AppCompatActivity {
         );
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.ic_action_eye_open),
+                        getResources().getDrawable(R.drawable.anime_icon),
                         ContextCompat.getColor(getApplicationContext(), R.color.green))
-                        .selectedIcon(getResources().getDrawable(R.drawable.ic_action_eye_open))
+                        .selectedIcon(getResources().getDrawable(R.drawable.anime_icon))
                         .title("ic_third")
                         .build()
         );
         models.add(
                 new NavigationTabBar.Model.Builder(
-                        getResources().getDrawable(R.drawable.icons8_manga),
+                        getResources().getDrawable(R.drawable.manga_icon),
                         ContextCompat.getColor(getApplicationContext(), R.color.sienna))
-                        .selectedIcon(getResources().getDrawable(R.drawable.icons8_manga))
+                        .selectedIcon(getResources().getDrawable(R.drawable.manga_icon))
                         .title("ic_fourth")
                         .build()
         );

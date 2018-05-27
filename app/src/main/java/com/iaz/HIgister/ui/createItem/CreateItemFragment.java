@@ -55,8 +55,6 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
     RelativeLayout listLogoImageLayout;
     @BindView(R.id.listLogoImageView)
     ImageView listLogoImage;
-    @BindView(R.id.logo_placeholder)
-    LinearLayout listLogoImagePlaceholder;
     @BindView(R.id.base_item_layout)
     LinearLayout baseItemLayout;
     @BindView(R.id.list_type_spinner)
@@ -112,18 +110,6 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
                 if (listItem.getBaseItem().imageUrl != null) {
                     Glide.with(this)
                             .load(listItem.getBaseItem().imageUrl)
-                            .listener(new RequestListener<Drawable>() {
-                                @Override
-                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                    return false;
-                                }
-
-                                @Override
-                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                    listLogoImagePlaceholder.setVisibility(View.GONE);
-                                    return false;
-                                }
-                            })
                             .into(listLogoImage);
                 }
 
@@ -228,9 +214,6 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
 
     @Override
     public void callGlide(Uri uri) {
-        if (uri != null) {
-            listLogoImagePlaceholder.setVisibility(View.GONE);
-        }
         try {
             Glide.with(CreateItemFragment.this)
                     .load(uri)
@@ -260,7 +243,7 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
 
         String[] stringArray = getResources().getStringArray(R.array.list_type);
 
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(activity, R.layout.support_simple_spinner_dropdown_item, stringArray) {
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(activity, R.layout.item_list_type, stringArray) {
             @Override
             public boolean isEnabled(int position) {
                 return position != 0;
