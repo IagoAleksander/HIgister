@@ -130,7 +130,7 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
                     public void onClick(View view) {
                         Intent intent = new Intent(fragment.getActivity(), ViewUserActivity.class);
                         intent.putExtra("userId", mLists.get(position).getCreatorId());
-                        intent.putStringArrayListExtra("myFavoritedListsId", fragment.activity.favoritedListsId);
+//                        intent.putStringArrayListExtra("myFavoritedListsId", fragment.activity.favoritedListsId);
                         fragment.getActivity().startActivity(intent);
                     }
                 });
@@ -175,150 +175,115 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
             holder.favoriteButtonLayout.setVisibility(View.VISIBLE);
             holder.likeButtonLayout.setVisibility(View.VISIBLE);
 
-            if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid)) {
-                holder.favoriteButton.setLiked(true);
+            holder.favoriteButton.setLiked(mLists.get(position).getFavoritedBy().contains(FirebaseAuth.getInstance().getCurrentUser().getUid()));
+            holder.favoriteButton.setOnLikeListener(new OnLikeListener() {
+                @Override
+                public void liked(LikeButton likeButton) {
+                    if (canClick) {
+                        canClick = false;
+                        listRepository.favoriteList(mLists.get(position), new ListRepository.OnListFavorited() {
+                            @Override
+                            public void onSuccess(String listUid) {
+                                canClick = true;
+//                                if (!fragment.activity.favoritedListsId.contains(listUid))
+//                                    fragment.activity.favoritedListsId.add(listUid);
 
-                holder.favoriteButton.setOnLikeListener(new OnLikeListener() {
-                    @Override
-                    public void liked(LikeButton likeButton) {
+                                notifyDataSetChanged();
+                            }
 
+                            @Override
+                            public void onFailed(Exception e) {
+                                canClick = true;
+                                Log.d("onFavoriteList", e.getMessage());
+
+                                likeButton.setLiked(false);
+
+//                                if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
+//                                    fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
+                            }
+                        });
                     }
+                }
 
-                    @Override
-                    public void unLiked(LikeButton likeButton) {
-                        if (canClick) {
-                            canClick = false;
-                            if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
-                                fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
+                @Override
+                public void unLiked(LikeButton likeButton) {
+                    if (canClick) {
+                        canClick = false;
+//                        if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
+//                            fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
 
-                            listRepository.unfavoriteList(mLists.get(position), new ListRepository.OnListRemoved() {
-                                        @Override
-                                        public void onSuccess(String listUid) {
-                                            canClick = true;
-                                            notifyDataSetChanged();
-                                        }
-
-                                        @Override
-                                        public void onFailed(String exception) {
-                                            canClick = true;
-                                            likeButton.setLiked(true);
-
-                                            if (!fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
-                                                fragment.activity.favoritedListsId.add(mLists.get(position).uid);
-                                        }
+                        listRepository.unfavoriteList(mLists.get(position), new ListRepository.OnListRemoved() {
+                                    @Override
+                                    public void onSuccess(String listUid) {
+                                        canClick = true;
+                                        notifyDataSetChanged();
                                     }
-                            );
-                        }
-                    }
-                });
 
-            } else {
+                                    @Override
+                                    public void onFailed(String exception) {
+                                        canClick = true;
+                                        likeButton.setLiked(true);
 
-                holder.favoriteButton.setLiked(false);
-                holder.favoriteButton.setOnLikeListener(new OnLikeListener() {
-                    @Override
-                    public void liked(LikeButton likeButton) {
-                        if (canClick) {
-                            canClick = false;
-                            listRepository.favoriteList(mLists.get(position), new ListRepository.OnListFavorited() {
-                                @Override
-                                public void onSuccess(String listUid) {
-                                    canClick = true;
-                                    if (!fragment.activity.favoritedListsId.contains(listUid))
-                                        fragment.activity.favoritedListsId.add(listUid);
-
-                                    notifyDataSetChanged();
-                                }
-
-                                @Override
-                                public void onFailed(Exception e) {
-                                    canClick = true;
-                                    Log.d("onFavoriteList", e.getMessage());
-
-                                    likeButton.setLiked(false);
-
-                                    if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
-                                        fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void unLiked(LikeButton likeButton) {
-
-                    }
-                });
-            }
-            if (mLists.get(position).getLikedBy().contains(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                holder.likeButton.setLiked(true);
-                holder.likeButton.setOnLikeListener(new OnLikeListener() {
-                    @Override
-                    public void liked(LikeButton likeButton) {
-
-                    }
-
-                    @Override
-                    public void unLiked(LikeButton likeButton) {
-                        if (canClick) {
-                            canClick = false;
-
-                            listRepository.unlikeList(mLists.get(position), new ListRepository.OnListRemoved() {
-                                        @Override
-                                        public void onSuccess(String listUid) {
-                                            canClick = true;
-//                                                    notifyDataSetChanged();
-                                        }
-
-                                        @Override
-                                        public void onFailed(String exception) {
-                                            canClick = true;
-                                            likeButton.setLiked(true);
-                                        }
+//                                        if (!fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
+//                                            fragment.activity.favoritedListsId.add(mLists.get(position).uid);
                                     }
-                            );
-                        }
+                                }
+                        );
                     }
-                });
-            } else {
-                holder.likeButton.setLiked(false);
-                holder.likeButton.setOnLikeListener(new OnLikeListener() {
-                    @Override
-                    public void liked(LikeButton likeButton) {
-                        if (canClick) {
-                            canClick = false;
-                            listRepository.likeList(mLists.get(position), new ListRepository.OnListLiked() {
-                                @Override
-                                public void onSuccess(String listUid) {
-                                    canClick = true;
+                }
+            });
+
+            holder.likeButton.setLiked(mLists.get(position).getLikedBy().contains(FirebaseAuth.getInstance().getCurrentUser().getUid()));
+            holder.likeButton.setOnLikeListener(new OnLikeListener() {
+                @Override
+                public void liked(LikeButton likeButton) {
+                    if (canClick) {
+                        canClick = false;
+                        listRepository.likeList(mLists.get(position), new ListRepository.OnListLiked() {
+                            @Override
+                            public void onSuccess(String listUid) {
+                                canClick = true;
 //                                            notifyDataSetChanged();
-                                }
+                            }
 
-                                @Override
-                                public void onFailed(Exception e) {
-                                    canClick = true;
-                                    Log.d("onFavoriteList", e.getMessage());
+                            @Override
+                            public void onFailed(Exception e) {
+                                canClick = true;
+                                Log.d("onFavoriteList", e.getMessage());
 
-                                    likeButton.setLiked(false);
-                                }
-                            });
-                        }
+                                likeButton.setLiked(false);
+                            }
+                        });
                     }
+                }
 
-                    @Override
-                    public void unLiked(LikeButton likeButton) {
+                @Override
+                public void unLiked(LikeButton likeButton) {
+                    if (canClick) {
+                        canClick = false;
 
+                        listRepository.unlikeList(mLists.get(position), new ListRepository.OnListRemoved() {
+                                    @Override
+                                    public void onSuccess(String listUid) {
+                                        canClick = true;
+//                                                    notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onFailed(String exception) {
+                                        canClick = true;
+                                        likeButton.setLiked(true);
+                                    }
+                                }
+                        );
                     }
-                });
-            }
+                }
+            });
+
 
         }
 
-        populateLabel(holder, mLists.get(position).
-
-                getType());
-
-
+        populateLabel(holder, mLists.get(position).getType());
     }
 
     @Override

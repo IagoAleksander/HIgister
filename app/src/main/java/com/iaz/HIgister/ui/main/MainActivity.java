@@ -39,7 +39,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.HIgister.data.model.User;
 import com.iaz.HIgister.data.repository.UserRepository;
 import com.iaz.HIgister.ui.base.BaseActivity;
-import com.iaz.HIgister.ui.createList.CreateListActivity;
 import com.iaz.HIgister.util.AppBarStateChangeListener;
 import com.iaz.HIgister.util.DialogFactory;
 import com.iaz.HIgister.util.SectionsPagerAdapter;
@@ -163,7 +162,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
     Uri uri;
     private Dialog mDialog;
 
-    public ArrayList<String> favoritedListsId = new ArrayList<>();
+//    public ArrayList<String> favoritedListsId = new ArrayList<>();
     public User user;
 
     public boolean searchAlreadyClicked = false;
@@ -330,7 +329,9 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 
     public void updateUserInfo() {
 
-        followersCounter.setText(Integer.toString(user.getFollowersNumber()));
+        if (user.getLikesReceived() > 0)
+            followersCounter.setText(Integer.toString(user.getLikesReceived()));
+
         createdListsCounter.setText(Integer.toString(user.getListsCreatedNumber()));
         favoritedListsCounter.setText(Integer.toString(user.getListsFavouritedNumber()));
 
@@ -352,22 +353,7 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 
         Fragment fragment = fm.findFragmentByTag("android:switcher:" + R.id.container + ":" + position);
 
-        if (position == LISTS_TAB_INDEX) {
-            fab.setVisibility(View.VISIBLE);
-            fab.setImageResource(R.drawable.ic_add);
-            fab.setOnClickListener(v -> {
-                Intent intent = new Intent(MainActivity.this, CreateListActivity.class);
-                MainActivity.this.startActivity(intent);
-                fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
-            });
-            closeSearch();
-        } else if (position == FAVOURITES_TAB_INDEX) {
-            fab.setVisibility(View.GONE);
-            closeSearch();
-        } else if (position == FEED_TAB_INDEX) {
-            fab.setVisibility(View.GONE);
-            closeSearch();
-        } else if (position == SEARCH_TAB_INDEX) {
+        if (position == SEARCH_TAB_INDEX) {
             fab.setVisibility(View.VISIBLE);
             fab.setImageResource(R.drawable.ic_search_white_24dp);
             circular.setVisibility(View.VISIBLE);
@@ -394,6 +380,9 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
                     }
                 }
             });
+        } else {
+            fab.setVisibility(View.GONE);
+            closeSearch();
         }
     }
 

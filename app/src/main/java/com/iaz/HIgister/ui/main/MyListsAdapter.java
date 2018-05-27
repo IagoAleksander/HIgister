@@ -114,7 +114,7 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                         public void onClick(View view) {
                             Intent intent = new Intent(fragment.getActivity(), ViewUserActivity.class);
                             intent.putExtra("userId", mLists.get(position).getCreatorId());
-                            intent.putStringArrayListExtra("myFavoritedListsId", fragment.activity.favoritedListsId);
+//                            intent.putStringArrayListExtra("myFavoritedListsId", fragment.activity.favoritedListsId);
                             fragment.getActivity().startActivity(intent);
                         }
                     });
@@ -184,8 +184,8 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                         public void unLiked(LikeButton likeButton) {
                             if (canClick) {
                                 canClick = false;
-                                if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
-                                    fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
+//                                if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
+//                                    fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
 
                                 listRepository.unfavoriteList(mLists.get(position), new ListRepository.OnListRemoved() {
                                             @Override
@@ -199,8 +199,8 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                                                 canClick = true;
                                                 likeButton.setLiked(true);
 
-                                                if (!fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
-                                                    fragment.activity.favoritedListsId.add(mLists.get(position).uid);
+//                                                if (!fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
+//                                                    fragment.activity.favoritedListsId.add(mLists.get(position).uid);
                                             }
                                         }
                                 );
@@ -309,8 +309,8 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                                         @Override
                                         public void onSuccess(String listUid) {
                                             canClick = true;
-                                            if (!fragment.activity.favoritedListsId.contains(listUid))
-                                                fragment.activity.favoritedListsId.add(listUid);
+//                                            if (!fragment.activity.favoritedListsId.contains(listUid))
+//                                                fragment.activity.favoritedListsId.add(listUid);
 
                                             notifyDataSetChanged();
                                         }
@@ -322,8 +322,8 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
 
                                             likeButton.setLiked(false);
 
-                                            if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
-                                                fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
+//                                            if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
+//                                                fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
                                         }
                                     });
                                 }
@@ -333,8 +333,8 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                             public void unLiked(LikeButton likeButton) {
                                 if (canClick) {
                                     canClick = false;
-                                    if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
-                                        fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
+//                                    if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
+//                                        fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
 
                                     listRepository.unfavoriteList(mLists.get(position), new ListRepository.OnListRemoved() {
                                                 @Override
@@ -348,8 +348,8 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                                                     canClick = true;
                                                     likeButton.setLiked(true);
 
-                                                    if (!fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
-                                                        fragment.activity.favoritedListsId.add(mLists.get(position).uid);
+//                                                    if (!fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
+//                                                        fragment.activity.favoritedListsId.add(mLists.get(position).uid);
                                                 }
                                             }
                                     );

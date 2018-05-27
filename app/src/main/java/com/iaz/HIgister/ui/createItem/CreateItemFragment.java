@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -130,9 +131,13 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
                     itemTitle.setText(listItem.getBaseItem().title);
 
                 if (listItem.getBaseItem().description != null)
-                itemDescription.setText(listItem.getBaseItem().description);
-            }
-            else {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                        itemDescription.setText((Html.fromHtml(listItem.getBaseItem().description, Html.FROM_HTML_MODE_LEGACY)).toString());
+                    } else {
+                        itemDescription.setText((Html.fromHtml(listItem.getBaseItem().description)).toString());
+                    }
+
+            } else {
                 baseItemLayout.setVisibility(View.GONE);
             }
 
@@ -275,7 +280,7 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
                 if (position == 0)
                     listItem.setType(position);
                 else
-                    listItem.setType(position-1);
+                    listItem.setType(position - 1);
             }
 
             @Override

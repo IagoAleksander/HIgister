@@ -1,4 +1,4 @@
-package com.iaz.HIgister.data.model.Omdb;
+package com.iaz.HIgister.data.model.Omdb.search;
 
 import android.os.Parcel;
 import android.os.Parcelable;

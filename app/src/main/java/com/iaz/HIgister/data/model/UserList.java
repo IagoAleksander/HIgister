@@ -3,7 +3,9 @@ package com.iaz.HIgister.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.ServerTimestamp;
 
 import java.util.ArrayList;
 
@@ -27,6 +29,9 @@ public class UserList implements Parcelable {
     private ArrayList<String> favoritedBy = new ArrayList<>();
     private ArrayList<String> likedBy = new ArrayList<>();
     private ArrayList<String> comments = new ArrayList<>();
+
+    @ServerTimestamp
+    Timestamp time;
 
     @Exclude
     private ArrayList<ListItem> listItems = new ArrayList<>();
@@ -172,6 +177,14 @@ public class UserList implements Parcelable {
 
     public void setComments(ArrayList<String> comments) {
         this.comments = comments;
+    }
+
+    public Timestamp getTime() {
+        return time;
+    }
+
+    public void setTime(Timestamp time) {
+        this.time = time;
     }
 
     public ArrayList<ListItem> getListItems() {

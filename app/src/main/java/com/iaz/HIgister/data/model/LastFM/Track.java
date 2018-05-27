@@ -8,7 +8,7 @@ public class Track
 
     private String name;
 
-//    private Image[] image;
+    private ImageLast[] image;
 
 //    private String streamable;
 
@@ -46,15 +46,15 @@ public class Track
         this.name = name;
     }
 
-//    public Image[] getImage ()
-//    {
-//        return image;
-//    }
-//
-//    public void setImage (Image[] image)
-//    {
-//        this.image = image;
-//    }
+    public ImageLast[] getImage ()
+    {
+        return image;
+    }
+
+    public void setImage (ImageLast[] image)
+    {
+        this.image = image;
+    }
 
 //    public String getStreamable ()
 //    {

@@ -13,7 +13,7 @@ import retrofit2.http.Path;
 
 public interface AnimesService {
 
-    String ENDPOINT = "http://api.jikan.me/";
+    String ENDPOINT = "http://api.jikan.moe/";
 
     @GET("/search/{type}/{s}")
     @Headers({

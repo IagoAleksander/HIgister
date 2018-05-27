@@ -179,7 +179,7 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
 
         if (itens != null) {
             counterList.put(type, 0);
-            if (type == Constants.MUSICS || itens.isEmpty()) {
+            if (itens.isEmpty()) {
                 itemsCollection.put(type, itens);
                 preupdateAdapter();
             } else {
@@ -257,7 +257,8 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
 
         for (Fragment frag : activity.getSupportFragmentManager().getFragments()) {
             if (frag instanceof RecyclerViewFragment2) {
-                activity.getSupportFragmentManager().beginTransaction().remove(frag).commit();
+                activity.getSupportFragmentManager().beginTransaction().remove(frag).commitNow();
+                activity.getSupportFragmentManager().executePendingTransactions();
             }
         }
 

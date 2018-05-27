@@ -41,7 +41,62 @@ public class MyListsPresenter extends BasePresenter<MyListsMvpView> {
             getMvpView().getFragment().userRepository.filterResult(filter, new UserRepository.OnGetUsers() {
                 @Override
                 public void onSuccess(ArrayList<User> peopleList) {
-                    getMvpView().getFragment().updateDataPeople(peopleList);
+                    ListRepository listRepository = new ListRepository();
+
+                    ArrayList<User> peopleListPopulated = new ArrayList<>();
+
+                    for (User user : peopleList) {
+                        listRepository.receiveListsOfUser(user.uid, new ListRepository.OnUpdateLists() {
+                            @Override
+                            public void onSuccess(ArrayList<UserList> userLists) {
+                                user.setListsCreatedNumber(userLists.size());
+
+                                listRepository.receiveFavoritesOfUser(user.uid, new ListRepository.OnUpdateLists() {
+                                    @Override
+                                    public void onSuccess(ArrayList<UserList> userLists2) {
+                                        user.setListsFavouritedNumber(userLists2.size());
+                                        peopleListPopulated.add(user);
+
+                                        if (peopleListPopulated.size() == peopleList.size())
+                                            getMvpView().getFragment().updateDataPeople(peopleList);
+                                    }
+
+                                    @Override
+                                    public void onFailed(Exception e) {
+                                        user.setListsFavouritedNumber(0);
+                                        peopleListPopulated.add(user);
+
+                                        if (peopleListPopulated.size() == peopleList.size())
+                                            getMvpView().getFragment().updateDataPeople(peopleList);
+                                    }
+                                }, "favorited");
+                            }
+
+                            @Override
+                            public void onFailed(Exception e) {
+                                user.setListsCreatedNumber(0);
+                                listRepository.receiveFavoritesOfUser(user.uid, new ListRepository.OnUpdateLists() {
+                                    @Override
+                                    public void onSuccess(ArrayList<UserList> userLists2) {
+                                        user.setListsFavouritedNumber(userLists2.size());
+                                        peopleListPopulated.add(user);
+
+                                        if (peopleListPopulated.size() == peopleList.size())
+                                            getMvpView().getFragment().updateDataPeople(peopleList);
+                                    }
+
+                                    @Override
+                                    public void onFailed(Exception e) {
+                                        user.setListsFavouritedNumber(0);
+                                        peopleListPopulated.add(user);
+
+                                        if (peopleListPopulated.size() == peopleList.size())
+                                            getMvpView().getFragment().updateDataPeople(peopleList);
+                                    }
+                                }, "favorited");
+                            }
+                        });
+                    }
                 }
 
                 @Override

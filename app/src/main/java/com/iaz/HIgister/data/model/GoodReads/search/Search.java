@@ -1,4 +1,4 @@
-package com.iaz.HIgister.data.model.GoodReads;
+package com.iaz.HIgister.data.model.GoodReads.search;
 
 import org.simpleframework.xml.Element;
 

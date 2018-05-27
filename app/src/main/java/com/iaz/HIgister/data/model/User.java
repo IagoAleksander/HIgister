@@ -17,7 +17,7 @@ public class User implements Parcelable {
     public String uid;
 
     private String name;
-    private int followersNumber;
+    private int likesReceived;
     //    private ArrayList<User> followers;
     private int listsCreatedNumber;
     //    private ArrayList<UserList> listsCreated;
@@ -38,12 +38,12 @@ public class User implements Parcelable {
         this.name = name;
     }
 
-    public int getFollowersNumber() {
-        return followersNumber;
+    public int getLikesReceived() {
+        return likesReceived;
     }
 
-    public void setFollowersNumber(int followersNumber) {
-        this.followersNumber = followersNumber;
+    public void setLikesReceived(int likesReceived) {
+        this.likesReceived = likesReceived;
     }
 
 //    public ArrayList<User> getFollowers() {
@@ -113,7 +113,7 @@ public class User implements Parcelable {
     protected User(Parcel in) {
         uid = in.readString();
         setName(in.readString());
-        setFollowersNumber(in.readInt());
+        setLikesReceived(in.readInt());
         setListsCreatedNumber(in.readInt());
         setListsFavouritedNumber(in.readInt());
         setBio(in.readString());
@@ -131,7 +131,7 @@ public class User implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(uid);
         dest.writeString(getName());
-        dest.writeInt(getFollowersNumber());
+        dest.writeInt(getLikesReceived());
         dest.writeInt(getListsCreatedNumber());
         dest.writeInt(getListsFavouritedNumber());
         dest.writeString(getBio());

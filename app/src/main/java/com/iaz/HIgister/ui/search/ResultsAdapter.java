@@ -9,9 +9,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.iaz.HIgister.data.BackendManager;
 import com.iaz.HIgister.data.model.BaseItem;
 import com.iaz.HIgister.data.model.ListItem;
 import com.iaz.HIgister.ui.createItem.CreateItemActivity;
+import com.iaz.HIgister.util.Constants;
+import com.iaz.HIgister.util.ViewUtil;
 import com.iaz.Higister.R;
 import com.yalantis.flipviewpager.adapter.BaseFlipAdapter;
 import com.yalantis.flipviewpager.utils.FlipSettings;
@@ -108,7 +111,7 @@ public class ResultsAdapter extends BaseFlipAdapter {
         setClick(holder, item);
 
         holder.nickName.setText(item.title);
-        holder.itemDescription.setText(item.description);
+        holder.itemDescription.setText(ViewUtil.stripHtml(item.description));
 
     }
 
@@ -134,14 +137,49 @@ public class ResultsAdapter extends BaseFlipAdapter {
             public void onClick(View v) {
 
                 ListItem listItem = new ListItem();
-                listItem.setBaseItem(item);
 
-                Intent intent = new Intent(activity, CreateItemActivity.class);
-                intent.putExtra("list", activity.list);
-                intent.putExtra("position", -1);
-                intent.putExtra("listItem", listItem);
-                activity.startActivity(intent);
+
+                BackendManager backendManager = new BackendManager();
+
+                if (item.getMyType() == Constants.BOOKS) {
+                    backendManager.fetchBookDetails(item.id, new BackendManager.OnUpdateResult() {
+                        @Override
+                        public void onSuccess(BaseItem baseItem) {
+                            setItemAndProceed(listItem, baseItem);
+                        }
+
+                        @Override
+                        public void onFailed(String e) {
+                            setItemAndProceed(listItem, item);
+                        }
+                    });
+                }
+                else if (item.getMyType() == Constants.MOVIES || item.getMyType() == Constants.TV_SERIES) {
+                    backendManager.fetchMovieDetails(item.id, item.getMyType(), new BackendManager.OnUpdateResult() {
+                        @Override
+                        public void onSuccess(BaseItem baseItem) {
+                            setItemAndProceed(listItem, baseItem);
+                        }
+
+                        @Override
+                        public void onFailed(String e) {
+                            setItemAndProceed(listItem, item);
+                        }
+                    });
+                }
+                else {
+                    setItemAndProceed(listItem, item);
+                }
             }
         });
+    }
+
+    public void setItemAndProceed(ListItem listItem, BaseItem item) {
+        listItem.setBaseItem(item);
+        Intent intent = new Intent(activity, CreateItemActivity.class);
+        intent.putExtra("list", activity.list);
+        intent.putExtra("position", -1);
+        intent.putExtra("listItem", listItem);
+        activity.startActivity(intent);
     }
 }

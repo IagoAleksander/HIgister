@@ -53,9 +53,6 @@ public class CreateItemActivity extends BaseActivity {
     int position;
     ListItem listItem;
 
-    public String listName;
-    public String listDescription;
-
     private Dialog mDialog;
 
     private CustomPhotoPickerDialog photoDialog;

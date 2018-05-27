@@ -78,23 +78,34 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.PeopleView
             holder.listItem.setOnClickListener(v -> {
                 Intent intent = new Intent(fragment.getActivity(), ViewUserActivity.class);
                 intent.putExtra("user", currentPerson);
-                intent.putStringArrayListExtra("myFavoritedListsId", fragment.activity.favoritedListsId);
+//                intent.putStringArrayListExtra("myFavoritedListsId", fragment.activity.favoritedListsId);
                 fragment.getActivity().startActivity(intent);
             });
-            String createdCounter = "";
-            String favoritedCounter = "";
+            String createdCounter = "--";
+            String favoritedCounter = "--";
+            String likesCounter = "--";
             try {
                 createdCounter = Integer.toString(currentPerson.getListsCreatedNumber());
             } catch (Exception e) {
                 e.printStackTrace();
             }
             try {
-                favoritedCounter = Integer.toString(currentPerson.getListsCreatedNumber());
+                favoritedCounter = Integer.toString(currentPerson.getListsFavouritedNumber());
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             holder.listsCreatedCounter.setText(createdCounter);
             holder.listsFavoritedCounter.setText(favoritedCounter);
+
+            if (currentPerson.getLikesReceived() > 0) {
+                try {
+                    likesCounter = Integer.toString(currentPerson.getLikesReceived());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                holder.likesReceivedCounter.setText(likesCounter);
+            }
         }
 
     }
@@ -119,7 +130,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.PeopleView
         TextView listsCreatedCounter;
 
         @BindView(R.id.likes_received_counter)
-        TextView likesReceivedCunter;
+        TextView likesReceivedCounter;
 
         @BindView(R.id.lists_favorited_counter)
         TextView listsFavoritedCounter;

@@ -1,5 +1,6 @@
 package com.iaz.HIgister.ui.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -16,6 +18,7 @@ import com.iaz.HIgister.data.model.User;
 import com.iaz.HIgister.data.model.UserList;
 import com.iaz.HIgister.data.repository.ListRepository;
 import com.iaz.HIgister.data.repository.UserRepository;
+import com.iaz.HIgister.ui.createList.CreateListActivity;
 import com.iaz.HIgister.util.SpacesItemDecoration;
 import com.iaz.Higister.R;
 
@@ -40,6 +43,9 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
     @BindView(R.id.lists_header_text)
     TextView listsHeaderText;
+
+    @BindView(R.id.create_list_button)
+    Button createListButton;
 
     MainActivity activity;
 
@@ -87,6 +93,12 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
         initLists();
 //        initListeners();
 
+        createListButton.setOnClickListener(v -> {
+            Intent intent = new Intent(activity, CreateListActivity.class);
+            activity.startActivity(intent);
+            activity.overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+        });
+
     }
 
     @Override
@@ -133,56 +145,13 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
     public void initLists() {
         if (type.equals("created")) {
-//            listRepository.receiveListsOfUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), new ListRepository.OnUpdateLists() {
-//                @Override
-//                public void onSuccess(ArrayList<UserList> userLists) {
-//                    updateDataLists(userLists);
-//                }
-//
-//                @Override
-//                public void onFailed(Exception e) {
-//                    Log.e("receiveMyLists: ", "failed", e);
-//                }
-//            });
-
             listsHeaderText.setText("My created lists");
+            createListButton.setVisibility(View.VISIBLE);
         } else if (type.equals("favorited")) {
-//            listRepository.receiveFavoritesOfUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), new ListRepository.OnUpdateLists() {
-//                @Override
-//                public void onSuccess(ArrayList<UserList> userLists) {
-//
-//                    activity.favoritedListsId.clear();
-//
-//                    for (UserList list : userLists) {
-//                        if (!activity.favoritedListsId.contains(list.uid))
-//                            activity.favoritedListsId.add(list.uid);
-//                    }
-//
-//                    updateDataLists(userLists);
-//
-//                }
-//
-//                @Override
-//                public void onFailed(Exception e) {
-//                    Log.e("receiveMyLists: ", "failed", e);
-//                }
-//            }, "favorited");
-
             listsHeaderText.setText("My favorited lists");
         } else if (type.equals("feed")) {
-//            listRepository.receiveFeed(new ListRepository.OnUpdateLists() {
-//                @Override
-//                public void onSuccess(ArrayList<UserList> userLists) {
-//                    updateDataLists(userLists);
-//                }
-//
-//                @Override
-//                public void onFailed(Exception e) {
-//                    Log.e("receiveMyLists: ", "failed", e);
-//                }
-//            });
-
             listsHeaderText.setText("My feed");
+            createListButton.setVisibility(View.VISIBLE);
         } else {
             listsHeaderText.setText("Search Lists");
         }
@@ -198,12 +167,12 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
                             activity.user.setListsCreatedNumber(userLists.size());
                             activity.updateUserInfo();
                         } else if (type.equals("favorited") && activity != null) {
-                            activity.favoritedListsId.clear();
+//                            activity.favoritedListsId.clear();
 
-                            for (UserList list : userLists) {
-                                if (!activity.favoritedListsId.contains(list.uid))
-                                    activity.favoritedListsId.add(list.uid);
-                            }
+//                            for (UserList list : userLists) {
+//                                if (!activity.favoritedListsId.contains(list.uid))
+//                                    activity.favoritedListsId.add(list.uid);
+//                            }
 
                             if (activity.user == null)
                                 activity.user = new User();

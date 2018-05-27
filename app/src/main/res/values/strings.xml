@@ -23,6 +23,6 @@
     <string name="close_filter">"hide\noptions"</string>
     <string name="hide_search">"hide\nsearch"</string>
 
-    <string name="show_description">"show\ndescription"</string>
-    <string name="hide_description">"hide\ndescription"</string>
+    <string name="show_description">"show description"</string>
+    <string name="hide_description">"hide description"</string>
 </resources>

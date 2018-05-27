@@ -287,7 +287,7 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
     }
 
     public void updateProfileInfo() {
-        followersCounter.setText(Integer.toString(user.getFollowersNumber()));
+        followersCounter.setText(Integer.toString(user.getLikesReceived()));
         createdListsCounter.setText(Integer.toString(user.getListsCreatedNumber()));
         favoritedListsCounter.setText(Integer.toString(user.getListsFavouritedNumber()));
 

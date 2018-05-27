@@ -1,4 +1,4 @@
-package com.iaz.HIgister.data.model.Omdb;
+package com.iaz.HIgister.data.model.Omdb.search;
 
 public class OmdbResponse
 {

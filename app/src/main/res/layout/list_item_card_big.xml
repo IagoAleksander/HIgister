@@ -172,6 +172,7 @@
                     android:layout_margin="1dp"
                     android:background="@color/primary_light"
                     android:drawableBottom="@drawable/ic_action_edit"
+                    android:textSize="12sp"
                     android:text="edit" />
             </LinearLayout>
 
@@ -184,6 +185,8 @@
                 android:background="@color/red"
                 android:drawableBottom="@drawable/ic_action_trash"
                 android:text="remove"
+                android:paddingBottom="4dp"
+                android:textSize="12sp"
                 android:visibility="gone" />
 
             <LinearLayout

@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.iaz.HIgister.ui.main.MyListsFragment;
+import com.iaz.HIgister.ui.viewUser.UserListsFragment;
 
 import static com.iaz.HIgister.util.Constants.FAVOURITES_TAB_INDEX;
 import static com.iaz.HIgister.util.Constants.FEED_TAB_INDEX;
@@ -55,11 +56,11 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         else {
             switch (position) {
                 case USER_LISTS_TAB_INDEX:
-//                    new UserListsFragment();
-//                    return UserListsFragment.newInstance("created");
+                    new UserListsFragment();
+                    return UserListsFragment.newInstance("created");
                 case USER_FAVOURITES_TAB_INDEX:
-//                    new UserListsFragment();
-//                    return UserListsFragment.newInstance("favorited");
+                    new UserListsFragment();
+                    return UserListsFragment.newInstance("favorited");
                 default:
                     return null;
             }

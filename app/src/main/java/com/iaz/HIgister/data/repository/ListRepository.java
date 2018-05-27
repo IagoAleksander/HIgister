@@ -10,6 +10,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -204,7 +205,7 @@ public class ListRepository {
             CollectionReference colRef = db.collection("users").document(uid)
                     .collection("createdLists");
 
-            colRef.get()
+            colRef.orderBy("time", Query.Direction.DESCENDING).get()
                     .addOnSuccessListener(documentSnapshots -> {
                         Log.d("receiveMyLists: ", "success");
                         FavoritedList tempListId;
@@ -255,7 +256,7 @@ public class ListRepository {
         CollectionReference colRef = db.collection("users").document(uid)
                 .collection("favoritedLists");
 
-        colRef.get()
+        colRef.orderBy("time", Query.Direction.DESCENDING).get()
                 .addOnSuccessListener(documentSnapshots -> {
                     Log.d("receiveFavoritedLists: ", "success");
 
@@ -354,7 +355,7 @@ public class ListRepository {
 
         CollectionReference colRef = db.collection("lists");
 
-        colRef.get()
+        colRef.orderBy("time", Query.Direction.DESCENDING).get()
                 .addOnSuccessListener(documentSnapshots -> {
                     Log.d("receiveFavoritedLists: ", "success");
                     UserList tempList;
@@ -363,7 +364,7 @@ public class ListRepository {
                         tempList = doc.toObject(UserList.class);
 
                         if (tempList != null
-                                && !tempList.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())
+//                                && !tempList.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                 && tempList.isVisibleForEveryone()) {
                             tempList.uid = doc.getId();
                             feedLists.add(tempList);
@@ -384,7 +385,7 @@ public class ListRepository {
 
         CollectionReference colRef = db.collection("lists");
 
-        colRef.get()
+        colRef.orderBy("time", Query.Direction.DESCENDING).get()
                 .addOnSuccessListener(documentSnapshots -> {
                     Log.d("receiveAllLists: ", "success");
                     UserList tempList;

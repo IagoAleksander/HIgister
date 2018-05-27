@@ -27,9 +27,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
                     android:paddingTop="16dp"
                     android:scaleX="-1">
 
@@ -45,7 +45,8 @@
                         android:rotation="90"
                         android:scaleY="-1"
                         android:text="TV SERIES"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/white"
+                        android:visibility="gone" />
 
                     <RelativeLayout
                         android:id="@+id/listLogoLayout"
@@ -66,7 +67,8 @@
                                 android:layout_gravity="center"
                                 android:adjustViewBounds="true"
                                 android:background="@color/primary_light"
-                                android:src="@drawable/large_movie_poster" />
+                                android:src="@drawable/large_movie_poster"
+                                android:visibility="gone" />
 
                         </LinearLayout>
                     </RelativeLayout>
@@ -155,33 +157,54 @@
                                 android:drawableBottom="@drawable/ic_action_trash"
                                 android:scaleX="-1"
                                 android:text="remove"
+                                android:textSize="10sp"
                                 android:visibility="gone" />
-                        </LinearLayout>
 
-                        <LinearLayout
-                            android:id="@+id/description_layout"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:orientation="vertical"
-                            android:scaleX="-1">
-
-                            <TextView
-                                android:id="@+id/description_button_text"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                            <LinearLayout
+                                android:id="@+id/edit_button_layout"
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
                                 android:layout_gravity="center"
-                                android:gravity="center"
-                                android:text="@string/show_description"
-                                android:textColor="@color/white"
-                                android:textSize="10sp" />
+                                android:layout_marginStart="4dp"
+                                android:background="@color/accent_dark"
+                                android:scaleX="-1"
+                                android:visibility="gone">
 
-                            <ImageView
-                                android:id="@+id/description_button_image"
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
+                                <Button
+                                    android:id="@+id/edit_button"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:layout_margin="1dp"
+                                    android:background="@color/primary_light"
+                                    android:drawableBottom="@drawable/ic_action_edit"
+                                    android:text="edit"
+                                    android:textSize="10sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/share_button_layout"
+                                android:layout_width="46dp"
+                                android:layout_height="46dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_keyboard_arrow_down" />
+                                android:layout_marginStart="4dp"
+                                android:background="@color/accent_dark"
+                                android:scaleX="-1"
+                                android:visibility="gone">
+
+                                <Button
+                                    android:id="@+id/share_button"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:layout_margin="1dp"
+                                    android:background="@color/primary_light"
+                                    android:drawableBottom="@drawable/ic_share"
+                                    android:paddingBottom="4dp"
+                                    android:text="share"
+                                    android:textSize="10sp" />
+                            </LinearLayout>
+
                         </LinearLayout>
 
 
@@ -193,11 +216,41 @@
                         android:layout_height="16dp"
                         android:layout_below="@+id/listLogoLayout" />
 
+                    <LinearLayout
+                        android:id="@+id/description_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/separator"
+                        android:layout_centerHorizontal="true"
+                        android:orientation="horizontal"
+                        android:padding="2dp"
+                        android:scaleX="-1"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/description_button_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:text="@string/show_description"
+                            android:textColor="@color/white"
+                            android:textSize="10sp" />
+
+                        <ImageView
+                            android:id="@+id/description_button_image"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_keyboard_arrow_down" />
+                    </LinearLayout>
+
                     <net.cachapa.expandablelayout.ExpandableLayout
                         android:id="@+id/expandable_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/separator"
+                        android:layout_below="@+id/description_layout"
+                        android:layout_centerHorizontal="true"
                         android:scaleX="-1"
                         app:el_duration="1000"
                         app:el_expanded="false"
@@ -207,7 +260,9 @@
                             android:id="@+id/list_description"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingBottom="12dp"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:paddingBottom="8dp"
                             android:textColor="@color/white" />
 
                     </net.cachapa.expandablelayout.ExpandableLayout>
@@ -258,6 +313,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
+                    android:visibility="gone"
                     app:cardBackgroundColor="@color/primary_light">
 
                     <LinearLayout
@@ -290,7 +346,8 @@
                     android:layout_marginTop="20dp"
                     android:background="@color/primary_light"
                     android:padding="5dp"
-                    android:text="Add comment" />
+                    android:text="Add comment"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -323,12 +380,46 @@
         android:layout_gravity="bottom"
         android:background="@color/primary_light"
         android:clickable="true"
-        android:focusable="true">
+        android:focusable="true"
+        android:visibility="visible">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/creators_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:layout_margin="8dp"
+            android:padding="8dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/creator_name_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center"
+                android:text="Created by "
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/creator_name_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/add_new_item_button"
@@ -344,7 +435,8 @@
             android:text="Add new item"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 

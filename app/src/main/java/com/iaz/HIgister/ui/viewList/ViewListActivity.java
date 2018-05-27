@@ -38,9 +38,11 @@ import com.iaz.HIgister.data.model.UserList;
 import com.iaz.HIgister.data.repository.ListRepository;
 import com.iaz.HIgister.data.repository.UserRepository;
 import com.iaz.HIgister.ui.base.BaseActivity;
+import com.iaz.HIgister.ui.createList.CreateListActivity;
 import com.iaz.HIgister.ui.gallery.GalleryActivity;
 import com.iaz.HIgister.ui.main.MainActivity;
 import com.iaz.HIgister.ui.search.SearchActivity;
+import com.iaz.HIgister.ui.viewUser.ViewUserActivity;
 import com.iaz.HIgister.util.CustomPhotoPickerDialog;
 import com.iaz.HIgister.util.DialogFactory;
 import com.iaz.HIgister.util.ViewUtil;
@@ -103,6 +105,10 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     RelativeLayout bottomBar;
     @BindView(R.id.add_new_item_button)
     TextView addNewItemButton;
+    @BindView(R.id.creators_layout)
+    LinearLayout creatorsLayout;
+    @BindView(R.id.creator_name_text)
+    TextView creatorNameText;
     @BindView(R.id.description_layout)
     LinearLayout descriptionLayout;
     @BindView(R.id.description_button_text)
@@ -122,6 +128,14 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     LikeButton likeButton;
     @BindView(R.id.remove_button)
     Button removeButton;
+    @BindView(R.id.edit_button_layout)
+    LinearLayout editButtonLayout;
+    @BindView(R.id.edit_button)
+    Button editButton;
+    @BindView(R.id.share_button)
+    Button shareButton;
+    @BindView(R.id.share_button_layout)
+    LinearLayout shareButtonLayout;
 
     UserList list;
     User user;
@@ -172,22 +186,22 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
                 }
             });
 
-        descriptionLayout.setOnClickListener(view -> {
-//                showDescriptiion();
-            mViewListPresenter.shareListToFacebook(list);
-        });
+        descriptionLayout.setOnClickListener(view ->
+            showDescriptiion());
     }
 
     public void populateList() {
         listName.setText(list.getName());
 
-        if (list.getDescription() != null && !list.getDescription().isEmpty())
+        if (list.getDescription() != null && !list.getDescription().isEmpty()) {
             listDescription.setText(list.getDescription());
-        else {
+            descriptionLayout.setVisibility(View.VISIBLE);
+        } else {
             descriptionLayout.setVisibility(View.GONE);
         }
         populateLabel(list.getType());
 
+        listLogoImage.setVisibility(View.VISIBLE);
         if (list.getListPictureUri() != null) {
 
             Glide.with(this)
@@ -221,6 +235,9 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
 
         if (list.getListItems() != null && !list.getListItems().isEmpty()) {
 
+            shareButtonLayout.setVisibility(View.VISIBLE);
+            shareButton.setOnClickListener(view -> mViewListPresenter.shareListToFacebook(list));
+
             if (list.getComments() != null && !list.getComments().isEmpty()) {
                 populateCommentsLayout();
 
@@ -249,25 +266,36 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
                     }
                 });
             });
+            addCommentButton.setVisibility(View.VISIBLE);
             addCommentButton.setOnClickListener(view -> dialog.show());
 
         } else {
             addCommentButton.setVisibility(View.GONE);
             commentsLayout.setVisibility(View.GONE);
             listLayout.setVisibility(View.GONE);
+            shareButtonLayout.setVisibility(View.GONE);
 
             if (list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
                 addItemTextLayout.setVisibility(View.VISIBLE);
         }
 
         if (list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            addNewItemButton.setVisibility(View.VISIBLE);
             addNewItemButton.setOnClickListener(v -> {
                 Intent intent = new Intent(ViewListActivity.this, SearchActivity.class);
                 intent.putExtra("list", list);
                 startActivity(intent);
             });
+            bottomBar.setVisibility(View.VISIBLE);
         } else {
-            bottomBar.setVisibility(View.GONE);
+            creatorsLayout.setVisibility(View.VISIBLE);
+            creatorNameText.setText(list.getCreatorName());
+            bottomBar.setOnClickListener(v -> {
+                Intent intent = new Intent(ViewListActivity.this, ViewUserActivity.class);
+                intent.putExtra("userId", list.getCreatorId());
+                ViewListActivity.this.startActivity(intent);
+            });
+            bottomBar.setVisibility(View.VISIBLE);
         }
 
         if (!list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
@@ -392,6 +420,14 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
                     }
                 });
             });
+
+            editButtonLayout.setVisibility(View.VISIBLE);
+            editButton.setOnClickListener(v -> {
+                Intent intent = new Intent(ViewListActivity.this, CreateListActivity.class);
+                intent.putExtra("list", list);
+                ViewListActivity.this.startActivity(intent);
+                ViewListActivity.this.overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+            });
         }
     }
 
@@ -433,6 +469,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     }
 
     public void populateCommentsLayout() {
+        commentsLayout.setVisibility(View.VISIBLE);
         for (int i = 0; i < list.getComments().size(); i++) {
 
             String entry = list.getComments().get(i);
@@ -548,6 +585,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
                 listType.setText("MISC");
 
         }
+        listType.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -560,7 +598,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     private void showDescriptiion() {
         expandableLayout.expand();
         descriptionButtonImage.setImageDrawable(ContextCompat.getDrawable(ViewListActivity.this, R.drawable.ic_keyboard_arrow_up));
-        descriptionButtonText.setText(getResources().getString(R.string.show_description));
+        descriptionButtonText.setText(getResources().getString(R.string.hide_description));
         descriptionLayout.setOnClickListener(view -> hideDescriptiion());
 
     }
@@ -568,7 +606,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     private void hideDescriptiion() {
         expandableLayout.collapse();
         descriptionButtonImage.setImageDrawable(ContextCompat.getDrawable(ViewListActivity.this, R.drawable.ic_keyboard_arrow_down));
-        descriptionButtonText.setText(getResources().getString(R.string.hide_description));
+        descriptionButtonText.setText(getResources().getString(R.string.show_description));
         descriptionLayout.setOnClickListener(view -> showDescriptiion());
     }
 

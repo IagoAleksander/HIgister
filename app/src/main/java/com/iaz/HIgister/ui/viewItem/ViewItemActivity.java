@@ -78,7 +78,7 @@ public class ViewItemActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        getSupportActionBar().setTitle("Create List Item");
+        getSupportActionBar().setTitle("View List Item");
 
         previousButton.setOnClickListener(v -> {
 

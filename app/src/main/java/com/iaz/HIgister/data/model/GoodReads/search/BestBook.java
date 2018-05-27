@@ -1,4 +1,4 @@
-package com.iaz.HIgister.data.model.GoodReads;
+package com.iaz.HIgister.data.model.GoodReads.search;
 
 /**
  * Created by alksander on 02/03/2018.
@@ -6,7 +6,7 @@ package com.iaz.HIgister.data.model.GoodReads;
 
 public class BestBook {
 
-//    private Id id;
+    private int id;
 //
 //    private Author author;
 
@@ -38,54 +38,53 @@ public class BestBook {
 //        this.author = author;
 //    }
 
-    private BestBook () {
+    private BestBook() {
 
     }
 
-    public String getTitle ()
-    {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
         return title;
     }
 
-    public void setTitle (String title)
-    {
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public String getImage_url ()
-    {
+    public String getImage_url() {
         return image_url;
     }
 
-    public void setImage_url (String image_url)
-    {
+    public void setImage_url(String image_url) {
         this.image_url = image_url;
     }
 
-    public String getType ()
-    {
+    public String getType() {
         return type;
     }
 
-    public void setType (String type)
-    {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public String getSmall_image_url ()
-    {
+    public String getSmall_image_url() {
         return small_image_url;
     }
 
-    public void setSmall_image_url (String small_image_url)
-    {
+    public void setSmall_image_url(String small_image_url) {
         this.small_image_url = small_image_url;
     }
 
     @Override
-    public String toString()
-    {
-        return "ClassPojo [id = , author = , title = "+title+", image_url = "+image_url+", type = "+type+", small_image_url = "+small_image_url+"]";
+    public String toString() {
+        return "ClassPojo [id = , author = , title = " + title + ", image_url = " + image_url + ", type = " + type + ", small_image_url = " + small_image_url + "]";
     }
 
 //    protected BestBook(Parcel in) {

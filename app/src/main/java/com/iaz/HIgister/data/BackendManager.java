@@ -4,14 +4,15 @@ package com.iaz.HIgister.data;
 import com.iaz.HIgister.data.model.BaseItem;
 import com.iaz.HIgister.data.model.ComicVine.ComicVineResponse;
 import com.iaz.HIgister.data.model.ComicVine.Results;
-import com.iaz.HIgister.data.model.GoodReads.GoodreadsResponse;
-import com.iaz.HIgister.data.model.GoodReads.Work;
+import com.iaz.HIgister.data.model.GoodReads.search.GoodreadsResponse;
+import com.iaz.HIgister.data.model.GoodReads.search.Work;
 import com.iaz.HIgister.data.model.LastFM.LastFmResponse;
 import com.iaz.HIgister.data.model.LastFM.Track;
 import com.iaz.HIgister.data.model.MyAnimeList.MyAnimeListResponse;
 import com.iaz.HIgister.data.model.MyAnimeList.Result;
-import com.iaz.HIgister.data.model.Omdb.OmdbResponse;
-import com.iaz.HIgister.data.model.Omdb.Search;
+import com.iaz.HIgister.data.model.Omdb.movieDetails.MovieDetails;
+import com.iaz.HIgister.data.model.Omdb.search.OmdbResponse;
+import com.iaz.HIgister.data.model.Omdb.search.Search;
 import com.iaz.HIgister.data.remote.AnimesService;
 import com.iaz.HIgister.data.remote.BooksService;
 import com.iaz.HIgister.data.remote.ComicsService;
@@ -42,8 +43,7 @@ public class BackendManager {
 
         if (type == Constants.MOVIES) {
             typeString = "movie";
-        }
-        else {
+        } else {
             typeString = "series";
         }
 
@@ -73,14 +73,32 @@ public class BackendManager {
         );
     }
 
+    public void fetchMovieDetails(String id, int type, OnUpdateResult onUpdateResult) {
+
+        MoviesService.Creator.newMoviesService().fetchMovieDetails(id).enqueue(
+                new Callback<MovieDetails>() {
+                    @Override
+                    public void onResponse(Call<MovieDetails> call, Response<MovieDetails> response) {
+                        onUpdateResult.onSuccess(new BaseItem(response.body(), type));
+                    }
+
+                    @Override
+                    public void onFailure(Call<MovieDetails> call, Throwable t) {
+                        Timber.d(t.toString());
+                        onUpdateResult.onFailed(t.getMessage());
+                    }
+                }
+
+        );
+    }
+
     public void fetchAnimes(final RecyclerViewFragment2 activity, int type, String text) {
 
         String typeString;
 
         if (type == Constants.ANIMES) {
             typeString = "anime";
-        }
-        else {
+        } else {
             typeString = "manga";
         }
 
@@ -100,7 +118,7 @@ public class BackendManager {
                                     results.add(new BaseItem(result, type));
 
                         }
-                            activity.showItems(results, type);
+                        activity.showItems(results, type);
                     }
 
                     @Override
@@ -139,6 +157,27 @@ public class BackendManager {
                     public void onFailure(Call<GoodreadsResponse> call, Throwable t) {
                         Timber.d(t.toString());
                         activity.showItems(new ArrayList<BaseItem>(), BOOKS);
+                    }
+                }
+
+        );
+    }
+
+    public void fetchBookDetails(String id, OnUpdateResult onUpdateResult) {
+
+        int idNumber = Integer.parseInt(id);
+
+        BooksService.Creator.newBookDetailsService().fetchBookDetails(idNumber).enqueue(
+                new Callback<com.iaz.HIgister.data.model.GoodReads.bookDetails.GoodreadsResponse>() {
+                    @Override
+                    public void onResponse(Call<com.iaz.HIgister.data.model.GoodReads.bookDetails.GoodreadsResponse> call, Response<com.iaz.HIgister.data.model.GoodReads.bookDetails.GoodreadsResponse> response) {
+                        onUpdateResult.onSuccess(new BaseItem(response.body().getBook()));
+                    }
+
+                    @Override
+                    public void onFailure(Call<com.iaz.HIgister.data.model.GoodReads.bookDetails.GoodreadsResponse> call, Throwable t) {
+                        Timber.d(t.toString());
+                        onUpdateResult.onFailed(t.getMessage());
                     }
                 }
 
@@ -207,5 +246,11 @@ public class BackendManager {
                 }
 
         );
+    }
+
+    public interface OnUpdateResult {
+        void onSuccess(BaseItem baseItem);
+
+        void onFailed(String e);
     }
 }

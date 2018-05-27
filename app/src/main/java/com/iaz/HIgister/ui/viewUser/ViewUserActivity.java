@@ -32,8 +32,6 @@ import com.iaz.HIgister.util.SectionsPagerAdapter;
 import com.iaz.Higister.R;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
 
-import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -83,7 +81,7 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
 
     Uri uri;
 
-    public ArrayList<String> favoritedListsId = new ArrayList<>();
+    //    public ArrayList<String> favoritedListsId = new ArrayList<>();
     public User user;
     String userId;
 
@@ -102,7 +100,7 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
         if (getIntent() != null && getIntent().getExtras() != null) {
             user = getIntent().getExtras().getParcelable("user");
             userId = getIntent().getExtras().getString("userId");
-            favoritedListsId = getIntent().getExtras().getStringArrayList("myFavoritedListsId");
+//            favoritedListsId = getIntent().getExtras().getStringArrayList("myFavoritedListsId");
         }
 
         mDialog = DialogFactory.newDialog(this, "Loading profile...");
@@ -110,8 +108,7 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
 
         if (user != null) {
             initFrags();
-        }
-        else if (userId != null && !userId.isEmpty()){
+        } else if (userId != null && !userId.isEmpty()) {
             recoverProfileInfo();
         }
 
@@ -152,7 +149,10 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
     }
 
     public void updateUserInfo() {
-        followersCounter.setText(Integer.toString(user.getFollowersNumber()));
+
+        if (user.getLikesReceived() > 0)
+            followersCounter.setText(Integer.toString(user.getLikesReceived()));
+
         createdListsCounter.setText(Integer.toString(user.getListsCreatedNumber()));
         favoritedListsCounter.setText(Integer.toString(user.getListsFavouritedNumber()));
 
@@ -211,8 +211,7 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         getApplicationContext().startActivity(intent);
         overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
@@ -224,15 +223,8 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
             @Override
             public void onSuccess(User mUser) {
                 user = mUser;
-
-                DialogFactory.finalizeDialog(mDialog, true, "Profile updated with success", new DialogFactory.OnDialogButtonClicked() {
-                    @Override
-                    public void onClick() {
-                        updateUserInfo();
-                        initFrags();
-                    }
-                });
-
+                updateUserInfo();
+                initFrags();
             }
 
             @Override
@@ -244,11 +236,11 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
     public void initFrags() {
 
         fm = getSupportFragmentManager();
-        mSectionsPagerAdapter = new SectionsPagerAdapter(fm, this, 1);
+        mSectionsPagerAdapter = new SectionsPagerAdapter(fm, ViewUserActivity.this, 1);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         final SmartTabLayout viewPagerTab = findViewById(R.id.viewpagertab);
-        viewPagerTab.setCustomTabView(this);
+        viewPagerTab.setCustomTabView(ViewUserActivity.this);
         viewPagerTab.setViewPager(mViewPager);
 
         viewPagerTab.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -258,6 +250,10 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
                 View tab = viewPagerTab.getTabAt(position);
             }
         });
+
+        DialogFactory.finalizeDialog(mDialog, true, "Profile updated with success", () -> {
+        });
+
     }
 
 }
