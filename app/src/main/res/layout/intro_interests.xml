@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary">
+
+    <TextView
+        android:id="@+id/info_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_margin="80dp"
+        android:layout_weight="1"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center"
+        android:text="And, finally, add some interests to complete your registration"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/info_header"
+        android:orientation="horizontal"
+        android:weightSum="7">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/checkbox_movies"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Movies"
+                android:textColor="@color/white" />
+
+            <CheckBox
+                android:id="@+id/checkbox_series"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="TV series"
+                android:textColor="@color/white" />
+
+            <CheckBox
+                android:id="@+id/checkbox_books"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Books"
+                android:textColor="@color/white" />
+
+            <CheckBox
+                android:id="@+id/checkbox_music"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Music"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/checkbox_animes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Animes"
+                android:textColor="@color/white" />
+
+            <CheckBox
+                android:id="@+id/checkbox_mangas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Mangas"
+                android:textColor="@color/white" />
+
+            <CheckBox
+                android:id="@+id/checkbox_comics"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Comics"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="You can edit your profile information anytime you want on profile section"
+        android:textColor="@color/white"
+        android:fontFamily="sans-serif-light"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="100dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        />
+
+</RelativeLayout>

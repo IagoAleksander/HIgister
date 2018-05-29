@@ -159,6 +159,7 @@ public class UserRepository {
             eventListener = (EventListener<DocumentSnapshot>) (documentSnapshot, e) -> {
                 if (documentSnapshot.exists()) {
                     user = documentSnapshot.toObject(User.class);
+                    user.uid = documentSnapshot.getId();
                     onUpdateProfile.onSuccess(user);
                 }
             };

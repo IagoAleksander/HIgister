@@ -25,4 +25,6 @@
 
     <string name="show_description">"show description"</string>
     <string name="hide_description">"hide description"</string>
+
+    <string name="introPicture">"First, let' choose a photo for the profile"</string>
 </resources>

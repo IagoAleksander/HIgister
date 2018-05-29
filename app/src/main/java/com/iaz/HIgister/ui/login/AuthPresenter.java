@@ -2,6 +2,8 @@ package com.iaz.HIgister.ui.login;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -19,7 +21,9 @@ import com.iaz.HIgister.data.model.User;
 import com.iaz.HIgister.data.repository.UserRepository;
 import com.iaz.HIgister.injection.ConfigPersistent;
 import com.iaz.HIgister.ui.base.BasePresenter;
+import com.iaz.HIgister.ui.intro.IntroActivity;
 import com.iaz.HIgister.ui.main.MainActivity;
+import com.iaz.HIgister.ui.main.ProfileActivity;
 import com.iaz.HIgister.ui.viewList.ViewListActivity;
 import com.iaz.HIgister.util.DialogFactory;
 
@@ -73,9 +77,18 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                             getMvpView().getActivity().startActivity(intent);
                         } else {
                             DialogFactory.finalizeDialog(mDialog, true, "Logged in", () -> {
-                                Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
-                                intent.putExtra("user", user);
-                                getMvpView().getActivity().startActivity(intent);
+                                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getMvpView().getActivity());
+                                Boolean showTutorial = sharedPref.getBoolean("showTutorial", true);
+
+                                if (showTutorial) {
+                                    Intent intent = new Intent(getMvpView().getActivity(), IntroActivity.class);
+                                    intent.putExtra("user", user);
+                                    getMvpView().getActivity().startActivity(intent);
+                                }
+                                else {
+                                    Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
+                                    getMvpView().getActivity().startActivity(intent);
+                                }
                             });
                         }
                     }
@@ -84,23 +97,18 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                     public void onFailure(String exception) {
 
                         Log.d("auth", "onCheckUser: user does not exist");
-                        userRepository.saveProfileInfo(getMvpView().getActivity(), new User(), new UserRepository.OnUpdateProfile() {
-                            @Override
-                            public void onSuccess(User user) {
-                                DialogFactory.finalizeDialog(mDialog, true, "Logged in", () -> {
-                                    Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
-                                    intent.putExtra("user", user);
-                                    getMvpView().getActivity().startActivity(intent);
-                                });
-                            }
 
-                            @Override
-                            public void onFailure(String exception) {
-                                Log.d("auth", "onCreateNewUser:failure");
-                                DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on login", () -> {
-                                });
-                            }
-                        });
+                        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getMvpView().getActivity());
+                        Boolean showTutorial = sharedPref.getBoolean("showTutorial", true);
+
+                        if (showTutorial) {
+                            Intent intent = new Intent(getMvpView().getActivity(), IntroActivity.class);
+                            getMvpView().getActivity().startActivity(intent);
+                        }
+                        else {
+                            Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
+                            getMvpView().getActivity().startActivity(intent);
+                        }
                     }
                 });
                 // User is signed in
@@ -174,8 +182,20 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                             userRepository.receiveProfileInfo(FirebaseAuth.getInstance().getCurrentUser().getUid(), new UserRepository.OnUpdateProfile() {
                                 @Override
                                 public void onSuccess(User user) {
-                                    Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
-                                    getMvpView().getActivity().startActivity(intent);
+
+                                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getMvpView().getActivity());
+                                    Boolean showTutorial = sharedPref.getBoolean("showTutorial", true);
+
+                                    if (showTutorial) {
+                                        Intent intent = new Intent(getMvpView().getActivity(), IntroActivity.class);
+                                        intent.putExtra("user", user);
+                                        getMvpView().getActivity().startActivity(intent);
+                                    }
+                                    else {
+                                        Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
+                                        intent.putExtra("user", user);
+                                        getMvpView().getActivity().startActivity(intent);
+                                    }
                                 }
 
                                 @Override
@@ -193,9 +213,20 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                                         userRepository.saveProfileInfo(getMvpView().getActivity(), newUser, new UserRepository.OnUpdateProfile() {
                                             @Override
                                             public void onSuccess(User user) {
-                                                Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
-                                                intent.putExtra("loggedWithFacebook", 1);
-                                                getMvpView().getActivity().startActivity(intent);
+
+                                                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getMvpView().getActivity());
+                                                Boolean showTutorial = sharedPref.getBoolean("showTutorial", true);
+
+                                                if (showTutorial) {
+                                                    Intent intent = new Intent(getMvpView().getActivity(), IntroActivity.class);
+                                                    intent.putExtra("user", user);
+                                                    getMvpView().getActivity().startActivity(intent);
+                                                }
+                                                else {
+                                                    Intent intent = new Intent(getMvpView().getActivity(), MainActivity.class);
+                                                    intent.putExtra("loggedWithFacebook", 1);
+                                                    getMvpView().getActivity().startActivity(intent);
+                                                }
                                             }
 
                                             @Override

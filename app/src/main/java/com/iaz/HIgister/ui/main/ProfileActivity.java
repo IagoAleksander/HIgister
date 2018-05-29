@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -161,12 +162,21 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
     @BindView(R.id.user_social_layout)
     LinearLayout userSocialLayout;
 
+    @BindView(R.id.bottom_bar)
+    RelativeLayout bottomBar;
+
+    @BindView(R.id.activity_profile_next_button)
+    TextView nextButton;
+
     private CustomPhotoPickerDialog photoDialog;
 
     UserRepository userRepository = new UserRepository();
     User user;
     Uri uri;
     private Dialog mDialog;
+
+    boolean newUser = false;
+    boolean isFromIntro = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -178,20 +188,26 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
 
         setSupportActionBar(mToolbar);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mProfilePresenter.attachView(this);
 
         if (getIntent() != null && getIntent().getExtras() != null) {
-            user = getIntent().getExtras().getParcelable("user");
 
-            if (user != null) {
-                updateData(user);
+//            newUser = getIntent().getExtras().getBoolean("newUser", false);
+            isFromIntro = getIntent().getExtras().getBoolean("isFromIntro", false);
+            if (newUser) {
+                completeRegistration();
             } else {
-                recoverProfileInfo();
+                user = getIntent().getExtras().getParcelable("user");
+
+                if (user != null) {
+                    updateData(user);
+                } else {
+                    recoverProfileInfo();
+                }
             }
+        } else {
+            completeRegistration();
         }
     }
 
@@ -315,7 +331,7 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
                 DialogFactory.finalizeDialog(mDialog, true, "Profile updated with success", new DialogFactory.OnDialogButtonClicked() {
                     @Override
                     public void onClick() {
-                        updateProfileInfo();
+                        updateData(user);
                     }
                 });
 
@@ -327,55 +343,59 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
         });
     }
 
-    public void swapBetweenDisplayAndEditProfileInfos() {
-        if (mViewProfileLayout.getVisibility() == View.VISIBLE) {
+    public void showEditProfileInfos() {
 
-            userRepository.removeListener();
+        userRepository.removeListener();
 
-            changePictureButton.setOnClickListener(v -> {
-                photoDialog = new CustomPhotoPickerDialog(ProfileActivity.this, new CustomPhotoPickerDialog
-                        .OnOptionPhotoSelected() {
-                    @Override
-                    public void onGallery() {
-                        mProfilePresenter.openDialogWindow();
+        changePictureButton.setOnClickListener(v -> {
+            photoDialog = new CustomPhotoPickerDialog(ProfileActivity.this, new CustomPhotoPickerDialog
+                    .OnOptionPhotoSelected() {
+                @Override
+                public void onGallery() {
+                    mProfilePresenter.openDialogWindow();
+                    photoDialog.dismiss();
+                }
+
+                @Override
+                public void onCamera() {
+                    // Here, thisActivity is the current activity
+                    if (ContextCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                            || ContextCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                        photoDialog.dismiss();
+                        ActivityCompat.requestPermissions(ProfileActivity.this,
+                                new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL);
+                    } else {
+                        mProfilePresenter.getPhoto();
                         photoDialog.dismiss();
                     }
-
-                    @Override
-                    public void onCamera() {
-                        // Here, thisActivity is the current activity
-                        if (ContextCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                                || ContextCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-                            photoDialog.dismiss();
-                            ActivityCompat.requestPermissions(ProfileActivity.this,
-                                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL);
-                        } else {
-                            mProfilePresenter.getPhoto();
-                            photoDialog.dismiss();
-                        }
-                    }
-                });
-                photoDialog.show();
-
-
+                }
             });
+            photoDialog.show();
 
 
-            mNameTextInput.getEditText().setText(profileName.getText());
+        });
 
-            if (user != null) {
+        if (user != null) {
+
+            if (profileName.getText() != null && !profileName.getText().equals("Complete Registration"))
+                mNameTextInput.getEditText().setText(profileName.getText());
+
+            if (user.getBio() != null)
                 mDescriptionTextInput.getEditText().setText(user.getBio());
+
+            if (user.getAge() > 0)
                 mAgeTextInput.getEditText().setText(Integer.toString(user.getAge()));
 
-                mCheckBoxMovies.setChecked(false);
-                mCheckBoxSeries.setChecked(false);
-                mCheckBoxBooks.setChecked(false);
-                mCheckBoxMusic.setChecked(false);
-                mCheckBoxAnimes.setChecked(false);
-                mCheckBoxMangas.setChecked(false);
-                mCheckBoxComics.setChecked(false);
+            mCheckBoxMovies.setChecked(false);
+            mCheckBoxSeries.setChecked(false);
+            mCheckBoxBooks.setChecked(false);
+            mCheckBoxMusic.setChecked(false);
+            mCheckBoxAnimes.setChecked(false);
+            mCheckBoxMangas.setChecked(false);
+            mCheckBoxComics.setChecked(false);
 
+            if (user.getInterests() != null && !user.getInterests().isEmpty())
                 for (String interest : user.getInterests()) {
                     switch (interest) {
                         case "Movies":
@@ -401,12 +421,12 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
                             break;
                     }
                 }
-            }
-//
-            mViewProfileLayout.setVisibility(View.GONE);
-            mEditProfileLayout.setVisibility(View.VISIBLE);
-            invalidateOptionsMenu();
         }
+//
+        mViewProfileLayout.setVisibility(View.GONE);
+        mEditProfileLayout.setVisibility(View.VISIBLE);
+        invalidateOptionsMenu();
+
 
     }
 
@@ -458,8 +478,17 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
                 menu.findItem(R.id.action_edit).setVisible(true);
                 menu.findItem(R.id.action_save).setVisible(false);
             }
-        }
-        else {
+
+            if (newUser) {
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                getSupportActionBar().setDisplayShowHomeEnabled(false);
+            } else {
+                getSupportActionBar().setDisplayShowTitleEnabled(true);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setDisplayShowHomeEnabled(true);
+            }
+        } else {
             menu.findItem(R.id.action_edit).setVisible(false);
             menu.findItem(R.id.action_save).setVisible(false);
         }
@@ -473,66 +502,77 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
 
         switch (id) {
             case android.R.id.home:
-                if (user != null)
-                    if (user.uid == null || user.uid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        getApplicationContext().startActivity(intent);
-                        overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
-                    }
+                if (!isFromIntro) {
 
-                finish();
-                overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                    if (user != null)
+                        if (user.uid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            getApplicationContext().startActivity(intent);
+                            overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                        }
+
+                    finish();
+                    overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                } else {
+                    finish();
+                    overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                }
                 break;
             case R.id.action_save:
-                ArrayList<String> interests = new ArrayList<>();
-                if (mCheckBoxMovies.isChecked())
-                    interests.add("Movies");
-                if (mCheckBoxSeries.isChecked())
-                    interests.add("TV Series");
-                if (mCheckBoxBooks.isChecked())
-                    interests.add("Books");
-                if (mCheckBoxMusic.isChecked())
-                    interests.add("Music");
-                if (mCheckBoxAnimes.isChecked())
-                    interests.add("Animes");
-                if (mCheckBoxMangas.isChecked())
-                    interests.add("Mangas");
-                if (mCheckBoxComics.isChecked())
-                    interests.add("Comics");
+                saveUser();
+                break;
+            case R.id.action_edit:
+                showEditProfileInfos();
 
-                if (uri != null && !uri.toString().contains("http")) {
-                    userRepository.saveProfileImageOnStorage(uri.toString(), new UserRepository.OnImageUpload() {
-                        @Override
-                        public void onSuccess(Uri uri) {
+                break;
 
-                            if (user == null)
-                                user = new User();
+            default:
+                return true;
+        }
 
-                            user.setName(mNameTextInput.getEditText().getText().toString());
-                            user.setBio(mDescriptionTextInput.getEditText().getText().toString());
-                            user.setAge(Integer.parseInt(mAgeTextInput.getEditText().getText().toString()));
-                            user.setInterests(interests);
-                            user.setProfilePictureUri(uri.toString());
+        return super.onOptionsItemSelected(item);
+    }
 
-                            userRepository.saveProfileInfo(ProfileActivity.this, user, new UserRepository.OnUpdateProfile() {
-                                @Override
-                                public void onSuccess(User user) {
-                                    updateData(user);
-                                }
+    public void completeRegistration() {
+        this.user = new User();
+        profileName.setText("Complete Registration");
+        profileName.setVisibility(View.VISIBLE);
+        bottomBar.setVisibility(View.VISIBLE);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveUser();
+            }
+        });
 
-                                @Override
-                                public void onFailure(String exception) {
+        showEditProfileInfos();
+    }
 
-                                }
-                            });
-                        }
+    public void saveUser() {
 
-                        @Override
-                        public void onFailure(String exception) {
-                        }
-                    });
+        mDialog = DialogFactory.newDialog(ProfileActivity.this, "Saving user profile information...");
+        mDialog.show();
 
-                } else {
+        ArrayList<String> interests = new ArrayList<>();
+        if (mCheckBoxMovies.isChecked())
+            interests.add("Movies");
+        if (mCheckBoxSeries.isChecked())
+            interests.add("TV Series");
+        if (mCheckBoxBooks.isChecked())
+            interests.add("Books");
+        if (mCheckBoxMusic.isChecked())
+            interests.add("Music");
+        if (mCheckBoxAnimes.isChecked())
+            interests.add("Animes");
+        if (mCheckBoxMangas.isChecked())
+            interests.add("Mangas");
+        if (mCheckBoxComics.isChecked())
+            interests.add("Comics");
+
+        if (uri != null && !uri.toString().contains("http")) {
+            userRepository.saveProfileImageOnStorage(uri.toString(), new UserRepository.OnImageUpload() {
+                @Override
+                public void onSuccess(Uri uri) {
 
                     if (user == null)
                         user = new User();
@@ -547,47 +587,103 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
                     }
 
                     user.setInterests(interests);
-
-                    if (uri != null)
-                        user.setProfilePictureUri(uri.toString());
+                    user.setProfilePictureUri(uri.toString());
 
                     userRepository.saveProfileInfo(ProfileActivity.this, user, new UserRepository.OnUpdateProfile() {
                         @Override
-                        public void onSuccess(User user) {
-                            updateData(user);
+                        public void onSuccess(User userWithId) {
+
+                            if (newUser) {
+                                DialogFactory.finalizeDialogOnClick(mDialog, true, "Profile information updated with success. Click to proceed", () -> {
+                                    Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                                    intent.putExtra("user", userWithId);
+                                    ProfileActivity.this.startActivity(intent);
+                                });
+                            } else {
+                                DialogFactory.finalizeDialogOnClick(mDialog, true, "Profile information updated with success. Click to show", () -> {
+                                    updateData(userWithId);
+                                });
+                            }
                         }
 
                         @Override
                         public void onFailure(String exception) {
-
+                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on saving user profile information", () -> {
+                            });
                         }
                     });
                 }
 
-                break;
-            case R.id.action_edit:
-                swapBetweenDisplayAndEditProfileInfos();
+                @Override
+                public void onFailure(String exception) {
+                    DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on saving user profile information", () -> {
+                    });
+                }
+            });
 
-                break;
+        } else {
 
-            default:
-                return true;
+            if (user == null)
+                user = new User();
+
+            user.setName(mNameTextInput.getEditText().getText().toString());
+            user.setBio(mDescriptionTextInput.getEditText().getText().toString());
+
+            try {
+                user.setAge(Integer.parseInt(mAgeTextInput.getEditText().getText().toString()));
+            } catch (NumberFormatException e) {
+                user.setAge(0);
+            }
+
+            user.setInterests(interests);
+
+            if (uri != null)
+                user.setProfilePictureUri(uri.toString());
+
+            userRepository.saveProfileInfo(ProfileActivity.this, user, new UserRepository.OnUpdateProfile() {
+                @Override
+                public void onSuccess(User userWithId) {
+                    if (newUser) {
+                        DialogFactory.finalizeDialogOnClick(mDialog, true, "Profile information updated with success. Click to proceed", () -> {
+                            Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                            intent.putExtra("user", userWithId);
+                            ProfileActivity.this.startActivity(intent);
+                        });
+                    } else {
+                        DialogFactory.finalizeDialogOnClick(mDialog, true, "Profile information updated with success. Click to show", () -> {
+                            updateData(userWithId);
+                        });
+                    }
+                }
+
+                @Override
+                public void onFailure(String exception) {
+                    DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on saving user profile information", () -> {
+                    });
+                }
+            });
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
 
-        if (user != null)
-            if (user.uid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                getApplicationContext().startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
-            }
+        if (!isFromIntro) {
 
-        finish();
-        overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+            if (user != null)
+                if (user.uid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    getApplicationContext().startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                }
+
+            finish();
+            overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+        } else {
+            finish();
+            overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+        }
     }
+
+
 }
