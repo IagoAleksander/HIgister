@@ -2,6 +2,8 @@ package com.iaz.HIgister.ui.viewList;
 
 import android.util.Log;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ShareEvent;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.google.firebase.firestore.CollectionReference;
@@ -14,6 +16,7 @@ import com.iaz.HIgister.data.model.UserList;
 import com.iaz.HIgister.injection.ConfigPersistent;
 import com.iaz.HIgister.ui.base.BasePresenter;
 import com.iaz.HIgister.ui.main.MainActivity;
+import com.iaz.HIgister.util.Constants;
 import com.iaz.HIgister.util.DynamicLinkUtil;
 
 import java.util.ArrayList;
@@ -85,6 +88,37 @@ public class ViewListPresenter extends BasePresenter<ViewListMvpView> {
     }
 
     public void shareListToFacebook(UserList list) {
+
+        String type = "Misc";
+
+        switch (list.getType()) {
+            case Constants.MOVIES:
+                type = "Movies";
+                break;
+            case Constants.TV_SERIES:
+                type = "Tv Series";
+                break;
+            case Constants.ANIMES:
+                type = "Animes";
+                break;
+            case Constants.MANGAS:
+                type = "Mangas";
+                break;
+            case Constants.BOOKS:
+                type = "Books";
+                break;
+            case Constants.MUSICS:
+                type = "Musics";
+                break;
+            case Constants.COMICS:
+                type = "Comics";
+                break;
+        }
+
+        Answers.getInstance().logShare(new ShareEvent()
+                .putContentName(list.getCreatorId())
+                .putContentType(type)
+                .putContentId(list.uid));
 
         ShareDialog shareDialog;
         shareDialog = new ShareDialog(activity);

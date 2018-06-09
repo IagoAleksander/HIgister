@@ -1,5 +1,6 @@
 package com.iaz.HIgister.ui.search;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -56,6 +57,7 @@ public class SearchActivity extends AppCompatActivity {
     public ArrayList<BaseItem> itens = new ArrayList<>();
 
     public UserList list;
+    public boolean isFromTutorial;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +68,10 @@ public class SearchActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
 
-        if (getIntent() != null)
+        if (getIntent() != null) {
             list = getIntent().getParcelableExtra("list");
+            isFromTutorial = getIntent().getBooleanExtra("isFromTutorial", false);
+        }
 
         mViewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
 
@@ -161,11 +165,19 @@ public class SearchActivity extends AppCompatActivity {
         nextButton.setOnClickListener(view -> {
             ListItem listItem = new ListItem();
 
-            Intent intent = new Intent(SearchActivity.this, CreateItemActivity.class);
-            intent.putExtra("list", list);
-            intent.putExtra("position", -1);
-            intent.putExtra("listItem", listItem);
-            SearchActivity.this.startActivity(intent);
+            if (isFromTutorial) {
+                Intent intent = new Intent();
+                intent.putExtra("listItem", listItem);
+                setResult(Activity.RESULT_OK, intent);
+                finish();
+            }
+            else {
+                Intent intent = new Intent(SearchActivity.this, CreateItemActivity.class);
+                intent.putExtra("list", list);
+                intent.putExtra("position", -1);
+                intent.putExtra("listItem", listItem);
+                startActivity(intent);
+            }
         });
     }
 

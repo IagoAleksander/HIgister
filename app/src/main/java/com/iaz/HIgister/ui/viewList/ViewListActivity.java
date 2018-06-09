@@ -32,6 +32,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
+import com.crashlytics.android.answers.CustomEvent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.HIgister.data.model.ListItem;
 import com.iaz.HIgister.data.model.User;
@@ -44,6 +47,7 @@ import com.iaz.HIgister.ui.gallery.GalleryActivity;
 import com.iaz.HIgister.ui.main.MainActivity;
 import com.iaz.HIgister.ui.search.SearchActivity;
 import com.iaz.HIgister.ui.viewUser.ViewUserActivity;
+import com.iaz.HIgister.util.Constants;
 import com.iaz.HIgister.util.CustomPhotoPickerDialog;
 import com.iaz.HIgister.util.DialogFactory;
 import com.iaz.HIgister.util.ViewUtil;
@@ -150,6 +154,8 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     ListRepository listRepository = new ListRepository();
     UserRepository userRepository = new UserRepository();
 
+    public boolean isFromTutorial;
+    int position = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,8 +173,10 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        if (getIntent() != null)
+        if (getIntent() != null) {
             list = getIntent().getExtras().getParcelable("list");
+            isFromTutorial = getIntent().getBooleanExtra("isFromTutorial", false);
+        }
 
         if (list != null) {
             populateList();
@@ -177,6 +185,10 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
                 @Override
                 public void onSuccess(UserList userList) {
                     list = userList;
+                    Answers.getInstance().logCustom(new CustomEvent("From DeepLink")
+                            .putCustomAttribute("List Id", list.uid)
+                            .putCustomAttribute("Creator Id", list.getCreatorId()));
+
                     populateList();
                 }
 
@@ -192,6 +204,39 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
     }
 
     public void populateList() {
+
+        String type = "Misc";
+
+        switch (list.getType()) {
+            case Constants.MOVIES:
+                type = "Movies";
+                break;
+            case Constants.TV_SERIES:
+                type = "Tv Series";
+                break;
+            case Constants.ANIMES:
+                type = "Animes";
+                break;
+            case Constants.MANGAS:
+                type = "Mangas";
+                break;
+            case Constants.BOOKS:
+                type = "Books";
+                break;
+            case Constants.MUSICS:
+                type = "Musics";
+                break;
+            case Constants.COMICS:
+                type = "Comics";
+                break;
+        }
+
+        Answers.getInstance().logContentView(new ContentViewEvent()
+                .putContentName(list.getName())
+                .putContentType("List")
+                .putContentId(list.uid)
+                .putCustomAttribute("List Type", type));
+
         listName.setText(list.getName());
 
         if (list.getDescription() != null && !list.getDescription().isEmpty()) {
@@ -223,7 +268,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
 
                 goToCarousel.putStringArrayListExtra("photos", listOfPaths);
                 goToCarousel.putExtra("startPosition", 0);
-                getApplicationContext().startActivity(goToCarousel);
+                startActivity(goToCarousel);
 
             });
         }
@@ -240,7 +285,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
             shareButton.setOnClickListener(view -> mViewListPresenter.shareListToFacebook(list));
 
             if (list.getComments() != null && !list.getComments().isEmpty()) {
-                populateCommentsLayout();
+                populateCommentsLayout(0);
 
                 if (!list.isCommentsEnabled()) {
                     addCommentButton.setVisibility(View.GONE);
@@ -257,8 +302,12 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
                     @Override
                     public void onSuccess() {
 
+                        Answers.getInstance().logCustom(new CustomEvent("Comment Created")
+                                .putCustomAttribute("List Name", list.getName())
+                                .putCustomAttribute("User Id", FirebaseAuth.getInstance().getCurrentUser().getUid()));
+
                         commentsContainer.removeAllViews();
-                        populateCommentsLayout();
+                        populateCommentsLayout(0);
                     }
 
                     @Override
@@ -283,24 +332,31 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
         if (list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
             addNewItemButton.setVisibility(View.VISIBLE);
             addNewItemButton.setOnClickListener(v -> {
-                if (list.getListItems().size() < 5) {
+                if (list.getListItems().size() < 5 || !list.isVisibleForEveryone()) {
                     Intent intent = new Intent(ViewListActivity.this, SearchActivity.class);
                     intent.putExtra("list", list);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                 } else {
                     DialogFactory.newMaterialDialog(ViewListActivity.this, "It is not possible to add more than 5 items to a list. Please remove one of the others to add a new item").show();
                 }
             });
             bottomBar.setVisibility(View.VISIBLE);
         } else {
-            creatorsLayout.setVisibility(View.VISIBLE);
-            creatorNameText.setText(list.getCreatorName());
-            bottomBar.setOnClickListener(v -> {
-                Intent intent = new Intent(ViewListActivity.this, ViewUserActivity.class);
-                intent.putExtra("userId", list.getCreatorId());
-                ViewListActivity.this.startActivity(intent);
-            });
-            bottomBar.setVisibility(View.VISIBLE);
+            if (list.getCreatorName() != null && !list.getCreatorName().isEmpty()
+                    && list.getCreatorId() != null && !list.getCreatorId().isEmpty()) {
+                creatorsLayout.setVisibility(View.VISIBLE);
+                creatorNameText.setText(list.getCreatorName());
+                bottomBar.setOnClickListener(v -> {
+                    Intent intent = new Intent(ViewListActivity.this, ViewUserActivity.class);
+                    intent.putExtra("userId", list.getCreatorId());
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                });
+                bottomBar.setVisibility(View.VISIBLE);
+            } else {
+                bottomBar.setVisibility(View.GONE);
+            }
         }
 
         if (!list.getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
@@ -419,7 +475,7 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
                             public void onSuccess(String listUid) {
                                 DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () -> {
                                     Intent intent = new Intent(ViewListActivity.this, MainActivity.class);
-                                    ViewListActivity.this.startActivity(intent);
+                                    startActivity(intent);
                                     overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
                                 });
                             }
@@ -440,8 +496,8 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
             editButton.setOnClickListener(v -> {
                 Intent intent = new Intent(ViewListActivity.this, CreateListActivity.class);
                 intent.putExtra("list", list);
-                ViewListActivity.this.startActivity(intent);
-                ViewListActivity.this.overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
             });
         }
     }
@@ -452,9 +508,14 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
 
         switch (id) {
             case android.R.id.home:
-                Intent intent = new Intent(this, MainActivity.class);
-                this.startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                if (isFromTutorial) {
+                    finish();
+                    overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                } else {
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                }
                 break;
 //            case R.id.action_next:
 //                goToNextSection();
@@ -483,85 +544,110 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
         mViewListPresenter.attachView(this);
     }
 
-    public void populateCommentsLayout() {
+    public void populateCommentsLayout(int i) {
         commentsLayout.setVisibility(View.VISIBLE);
-        for (int i = 0; i < list.getComments().size(); i++) {
 
-            String entry = list.getComments().get(i);
+        String entry = list.getComments().get(i);
 
-            int index = entry.indexOf(":");
-            String key = entry.substring(0, index);
-            String value = entry.substring(index + 1, entry.length());
+        int index = entry.indexOf(":");
+        String key = entry.substring(0, index);
+        String value = entry.substring(index + 1, entry.length());
 
-            int finalI = i;
-            userRepository.receiveProfileInfo(key, new UserRepository.OnUpdateProfile() {
-                @Override
-                public void onSuccess(User user) {
-                    ViewListActivity.this.user = user;
+        int finalI = i;
+        userRepository.receiveProfileInfo(key, new UserRepository.OnUpdateProfile() {
+            @Override
+            public void onSuccess(User user) {
+                ViewListActivity.this.user = user;
 
-                    View item = LayoutInflater.from(getApplicationContext()).inflate(R.layout.item_comment, null);
+                View item = LayoutInflater.from(getApplicationContext()).inflate(R.layout.item_comment, null);
 
-                    RelativeLayout commentItem = item.findViewById(R.id.comment_item);
-                    TextView userName = item.findViewById(R.id.text_name);
-                    TextView userComment = item.findViewById(R.id.item_description);
-                    CircleImageView userImage = item.findViewById(R.id.user_image);
+                RelativeLayout commentItem = item.findViewById(R.id.comment_item);
+                TextView userName = item.findViewById(R.id.text_name);
+                TextView userComment = item.findViewById(R.id.item_description);
+                CircleImageView userImage = item.findViewById(R.id.user_image);
 
-                    commentsLayout.setVisibility(View.VISIBLE);
+                commentsLayout.setVisibility(View.VISIBLE);
 
-                    userName.setText(user.getName());
-                    userComment.setText(value);
-                    if (key.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                        commentItem.setOnLongClickListener(view -> {
-                            new MaterialDialog.Builder(ViewListActivity.this)
-                                    .title("Edit comment")
-                                    .cancelable(true)
-                                    .negativeText("cancel")
-                                    .input("", value, (dialog, input) -> {
-                                        list.getComments().set(finalI, FirebaseAuth.getInstance().getCurrentUser().getUid() + ":" + input.toString());
-                                        listRepository.updateListInfo(list, new ListRepository.OnListUpdated() {
-                                            @Override
-                                            public void onSuccess() {
+                userName.setText(user.getName());
+                userComment.setText(value);
 
-                                                commentsContainer.removeAllViews();
-                                                populateCommentsLayout();
-                                            }
+                if (key.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                    commentItem.setOnLongClickListener(view -> {
+                        new MaterialDialog.Builder(ViewListActivity.this)
+                                .title("Edit comment")
+                                .cancelable(true)
+                                .negativeText("cancel")
+                                .input("", value, (dialog, input) -> {
+                                    list.getComments().set(finalI, FirebaseAuth.getInstance().getCurrentUser().getUid() + ":" + input.toString());
+                                    listRepository.updateListInfo(list, new ListRepository.OnListUpdated() {
+                                        @Override
+                                        public void onSuccess() {
 
-                                            @Override
-                                            public void onFailed(Exception exception) {
+                                            Answers.getInstance().logCustom(new CustomEvent("Comment Edited")
+                                                    .putCustomAttribute("List Name", list.getName())
+                                                    .putCustomAttribute("User Id", FirebaseAuth.getInstance().getCurrentUser().getUid()));
 
-                                            }
-                                        });
-                                    }).show();
-                            return true;
-                        });
+                                            commentsContainer.removeAllViews();
+                                            populateCommentsLayout(0);
+                                        }
+
+                                        @Override
+                                        public void onFailed(Exception exception) {
+
+                                        }
+                                    });
+                                }).show();
+                        return true;
+                    });
+                }
+                userName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(ViewListActivity.this, ViewUserActivity.class);
+                        intent.putExtra("user", user);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                     }
+                });
+                userImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(ViewListActivity.this, ViewUserActivity.class);
+                        intent.putExtra("user", user);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                    }
+                });
 
-                    Glide.with(ViewListActivity.this)
-                            .load(user.getProfilePictureUri())
-                            .listener(new RequestListener<Drawable>() {
-                                @Override
-                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                    commentsContainer.addView(item);
-                                    return false;
-                                }
+                Glide.with(ViewListActivity.this)
+                        .load(user.getProfilePictureUri())
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                commentsContainer.addView(item);
+                                return false;
+                            }
 
-                                @Override
-                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                    commentsContainer.addView(item);
-                                    return false;
-                                }
-                            })
-                            .into(userImage);
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                commentsContainer.addView(item);
+                                return false;
+                            }
+                        })
+                        .into(userImage);
 
-
+                if (position < list.getComments().size()-1) {
+                    position++;
+                    populateCommentsLayout(position);
                 }
+            }
 
-                @Override
-                public void onFailure(String exception) {
+            @Override
+            public void onFailure(String exception) {
 
-                }
-            });
-        }
+            }
+        });
+
     }
 
     public void populateLabel(int type) {
@@ -605,9 +691,15 @@ public class ViewListActivity extends BaseActivity implements ViewListMvpView {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
-        this.startActivity(intent);
-        overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+
+        if (isFromTutorial) {
+            finish();
+            overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+        } else {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+        }
     }
 
     private void showDescriptiion() {

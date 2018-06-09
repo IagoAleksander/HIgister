@@ -96,13 +96,17 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
             }
 
             holder.listItem.setOnClickListener(v -> {
-                Intent intent = new Intent(fragment.getActivity(), ViewListActivity.class);
-                intent.putExtra("list", mLists.get(position));
-                fragment.getActivity().startActivity(intent);
-                fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+
+                if (canClick && position < mLists.size()) {
+                    Intent intent = new Intent(fragment.getActivity(), ViewListActivity.class);
+                    intent.putExtra("list", mLists.get(position));
+                    fragment.startActivity(intent);
+                    fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                }
             });
 
-            if (mLists.get(position).getCreatorName() != null && !mLists.get(position).getCreatorName().isEmpty()) {
+            if (mLists.get(position).getCreatorName() != null && !mLists.get(position).getCreatorName().isEmpty()
+                    && mLists.get(position).getCreatorId() != null && !mLists.get(position).getCreatorId().isEmpty()) {
 
                 if (mLists.get(position).getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     holder.creatorNameText.setText("By me");
@@ -111,13 +115,14 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                     holder.creatorNameText.setText(String.format("By %s", mLists.get(position).getCreatorName()));
                     holder.creatorsLayout.setVisibility(View.VISIBLE);
 
-                    holder.creatorsLayout.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
+                    holder.creatorsLayout.setOnClickListener(view -> {
+
+                        if (canClick) {
                             Intent intent = new Intent(fragment.getActivity(), ViewUserActivity.class);
                             intent.putExtra("userId", mLists.get(position).getCreatorId());
 //                            intent.putStringArrayListExtra("myFavoritedListsId", fragment.activity.favoritedListsId);
-                            fragment.getActivity().startActivity(intent);
+                            fragment.startActivity(intent);
+                            fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                         }
                     });
                 }
@@ -132,49 +137,42 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                     holder.favoriteButtonLayout.setVisibility(View.GONE);
                     holder.likeButtonLayout.setVisibility(View.GONE);
 
-                    holder.editButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
+                    holder.editButton.setOnClickListener(view -> {
+                        if (canClick) {
                             Intent intent = new Intent(fragment.getActivity(), CreateListActivity.class);
                             intent.putExtra("list", mLists.get(position));
-                            fragment.getActivity().startActivity(intent);
+                            fragment.startActivity(intent);
                             fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                         }
                     });
 
-                    holder.removeButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
+                    holder.removeButton.setOnClickListener(view -> {
 
-                            MaterialDialog dialog = DialogFactory.newMaterialDialogConfirmation(fragment.getActivity(), "Do you really want to remove this list? (all the information will be deleted and will not be recoverable anymore)").show();
-                            View positive = dialog.getActionButton(DialogAction.POSITIVE);
-                            positive.setOnClickListener(new View.OnClickListener() {
+                        MaterialDialog dialog = DialogFactory.newMaterialDialogConfirmation(fragment.getActivity(), "Do you really want to remove this list? (all the information will be deleted and will not be recoverable anymore)").show();
+                        View positive = dialog.getActionButton(DialogAction.POSITIVE);
+                        positive.setOnClickListener(view1 -> {
+                            dialog.dismiss();
+
+                            mDialog = DialogFactory.newDialog(fragment.activity, "Removing list...");
+                            mDialog.show();
+
+                            listRepository.removeList(mLists.get(position), new ListRepository.OnListRemoved() {
                                 @Override
-                                public void onClick(View view) {
-                                    dialog.dismiss();
+                                public void onSuccess(String listUid) {
+                                    DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () ->
+                                            notifyDataSetChanged()
+                                    );
+                                }
 
-                                    mDialog = DialogFactory.newDialog(fragment.activity, "Removing list...");
-                                    mDialog.show();
-
-                                    listRepository.removeList(mLists.get(position), new ListRepository.OnListRemoved() {
-                                        @Override
-                                        public void onSuccess(String listUid) {
-                                            DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () ->
-                                                    notifyDataSetChanged()
-                                            );
-                                        }
-
-                                        @Override
-                                        public void onFailed(String exception) {
-                                            Log.d("onRemoveList", exception);
-                                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
-                                            });
-                                        }
+                                @Override
+                                public void onFailed(String exception) {
+                                    Log.d("onRemoveList", exception);
+                                    DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
                                     });
                                 }
                             });
+                        });
 
-                        }
                     });
 
                     break;
@@ -194,7 +192,7 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
 
                         @Override
                         public void unLiked(LikeButton likeButton) {
-                            if (canClick) {
+                            if (canClick && mLists.size() > position && mLists.get(position) != null) {
                                 canClick = false;
 //                                if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
 //                                    fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
@@ -203,7 +201,7 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                                             @Override
                                             public void onSuccess(String listUid) {
                                                 canClick = true;
-                                                notifyDataSetChanged();
+//                                                notifyDataSetChanged();
                                             }
 
                                             @Override
@@ -224,7 +222,7 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                     holder.likeButton.setOnLikeListener(new OnLikeListener() {
                         @Override
                         public void liked(LikeButton likeButton) {
-                            if (canClick) {
+                            if (canClick && mLists.size() > position && mLists.get(position) != null) {
                                 canClick = false;
                                 listRepository.likeList(mLists.get(position), new ListRepository.OnListLiked() {
                                     @Override
@@ -246,7 +244,7 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
 
                         @Override
                         public void unLiked(LikeButton likeButton) {
-                            if (canClick) {
+                            if (canClick && mLists.size() > position && mLists.get(position) != null) {
                                 canClick = false;
 
                                 listRepository.unlikeList(mLists.get(position), new ListRepository.OnListRemoved() {
@@ -277,40 +275,39 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                         holder.likeButtonLayout.setVisibility(View.GONE);
 
                         holder.editButton.setOnClickListener(v -> {
-                            Intent intent = new Intent(fragment.getActivity(), CreateListActivity.class);
-                            intent.putExtra("list", mLists.get(position));
-                            fragment.getActivity().startActivity(intent);
-                            fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                            if (canClick) {
+                                Intent intent = new Intent(fragment.getActivity(), CreateListActivity.class);
+                                intent.putExtra("list", mLists.get(position));
+                                fragment.startActivity(intent);
+                                fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                            }
                         });
 
                         holder.removeButton.setOnClickListener(v -> {
 
                             MaterialDialog dialog = DialogFactory.newMaterialDialogConfirmation(fragment.getActivity(), "Do you really want to remove this list? (all the information will be deleted and will not be recoverable anymore)").show();
                             View positive = dialog.getActionButton(DialogAction.POSITIVE);
-                            positive.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    dialog.dismiss();
+                            positive.setOnClickListener(view -> {
+                                dialog.dismiss();
 
-                                    mDialog = DialogFactory.newDialog(fragment.activity, "Removing list...");
-                                    mDialog.show();
+                                mDialog = DialogFactory.newDialog(fragment.activity, "Removing list...");
+                                mDialog.show();
 
-                                    listRepository.removeList(mLists.get(position), new ListRepository.OnListRemoved() {
-                                        @Override
-                                        public void onSuccess(String listUid) {
-                                            DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () -> {
-                                                notifyDataSetChanged();
-                                            });
-                                        }
+                                listRepository.removeList(mLists.get(position), new ListRepository.OnListRemoved() {
+                                    @Override
+                                    public void onSuccess(String listUid) {
+                                        DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () -> {
+                                            notifyDataSetChanged();
+                                        });
+                                    }
 
-                                        @Override
-                                        public void onFailed(String exception) {
-                                            Log.d("onRemoveList", exception);
-                                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
-                                            });
-                                        }
-                                    });
-                                }
+                                    @Override
+                                    public void onFailed(String exception) {
+                                        Log.d("onRemoveList", exception);
+                                        DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on list removal", () -> {
+                                        });
+                                    }
+                                });
                             });
 
                         });
@@ -325,7 +322,7 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                         holder.favoriteButton.setOnLikeListener(new OnLikeListener() {
                             @Override
                             public void liked(LikeButton likeButton) {
-                                if (canClick) {
+                                if (canClick && mLists.size() > position && mLists.get(position) != null) {
                                     canClick = false;
                                     listRepository.favoriteList(mLists.get(position), new ListRepository.OnListFavorited() {
                                         @Override
@@ -334,7 +331,7 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
 //                                            if (!fragment.activity.favoritedListsId.contains(listUid))
 //                                                fragment.activity.favoritedListsId.add(listUid);
 
-                                            notifyDataSetChanged();
+//                                            notifyDataSetChanged();
                                         }
 
                                         @Override
@@ -353,7 +350,7 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
 
                             @Override
                             public void unLiked(LikeButton likeButton) {
-                                if (canClick) {
+                                if (canClick && mLists.size() > position && mLists.get(position) != null) {
                                     canClick = false;
 //                                    if (fragment.activity.favoritedListsId.contains(mLists.get(position).uid))
 //                                        fragment.activity.favoritedListsId.remove(mLists.get(position).uid);
@@ -362,7 +359,7 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                                                 @Override
                                                 public void onSuccess(String listUid) {
                                                     canClick = true;
-                                                    notifyDataSetChanged();
+//                                                    notifyDataSetChanged();
                                                 }
 
                                                 @Override
@@ -384,7 +381,7 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
                         holder.likeButton.setOnLikeListener(new OnLikeListener() {
                             @Override
                             public void liked(LikeButton likeButton) {
-                                if (canClick) {
+                                if (canClick && mLists.size() > position && mLists.get(position) != null) {
                                     canClick = false;
                                     listRepository.likeList(mLists.get(position), new ListRepository.OnListLiked() {
                                         @Override
@@ -406,7 +403,7 @@ public class MyListsAdapter extends RecyclerView.Adapter<MyListsAdapter.ListView
 
                             @Override
                             public void unLiked(LikeButton likeButton) {
-                                if (canClick) {
+                                if (canClick && mLists.size() > position && mLists.get(position) != null) {
                                     canClick = false;
 
                                     listRepository.unlikeList(mLists.get(position), new ListRepository.OnListRemoved() {

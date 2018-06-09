@@ -195,13 +195,13 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
         switch (id) {
             case android.R.id.home:
                 Intent intent = new Intent(this, MainActivity.class);
-                this.startActivity(intent);
+                startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
                 break;
             case R.id.action_profile:
                 Intent intent2 = new Intent(ViewUserActivity.this, ProfileActivity.class);
                 intent2.putExtra("user", user);
-                ViewUserActivity.this.startActivity(intent2);
+                startActivity(intent2);
                 break;
             default:
                 return true;
@@ -212,8 +212,8 @@ public class ViewUserActivity extends BaseActivity implements SmartTabLayout.Tab
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        getApplicationContext().startActivity(intent);
+        Intent intent = new Intent(ViewUserActivity.this, MainActivity.class);
+        startActivity(intent);
         overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
     }
 

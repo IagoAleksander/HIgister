@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -100,7 +102,14 @@ public class ListRepository {
                     saveItem(list, 0, new OnItemSaved() {
                         @Override
                         public void onSuccess() {
+
                             onListSaved.onSuccess(list);
+                            Answers.getInstance().logCustom(new CustomEvent("List Created")
+                                    .putCustomAttribute("List Name", list.getName())
+                                    .putCustomAttribute("List Type", list.getType())
+                                    .putCustomAttribute("List Id", list.uid)
+                                    .putCustomAttribute("List Creator", list.getCreatorId()));
+
                         }
 
                         @Override
@@ -163,11 +172,64 @@ public class ListRepository {
                 .addOnSuccessListener(documentReference -> {
                     Log.d("updateList: ", "success");
                     onListUpdated.onSuccess();
+
+                    String type = "Misc";
+
+                    switch (list.getType()) {
+                        case Constants.MOVIES:
+                            type = "Movies";
+                            break;
+                        case Constants.TV_SERIES:
+                            type = "Tv Series";
+                            break;
+                        case Constants.ANIMES:
+                            type = "Animes";
+                            break;
+                        case Constants.MANGAS:
+                            type = "Mangas";
+                            break;
+                        case Constants.BOOKS:
+                            type = "Books";
+                            break;
+                        case Constants.MUSICS:
+                            type = "Musics";
+                            break;
+                        case Constants.COMICS:
+                            type = "Comics";
+                            break;
+                    }
+
+                    Answers.getInstance().logCustom(new CustomEvent("List Updated")
+                            .putCustomAttribute("List Name", list.getName())
+                            .putCustomAttribute("List Type", type)
+                            .putCustomAttribute("List Id", list.uid)
+                            .putCustomAttribute("List Creator", list.getCreatorId()));
                 })
                 .addOnFailureListener(onListUpdated::onFailed);
     }
 
     public void saveItem(UserList list, int position, OnItemSaved onItemSaved) {
+        if (list.getListItems().get(position).getBaseItem().imageUrl != null
+                && !list.getListItems().get(position).getBaseItem().imageUrl.contains("http")) {
+
+            saveListImageOnStorage(list.getListItems().get(position).getBaseItem().imageUrl, new OnImageUpload() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    list.getListItems().get(position).getBaseItem().imageUrl = uri.toString();
+                    saveListItemInfo(list, position, onItemSaved);
+                }
+
+                @Override
+                public void onFailure(String exception) {
+
+                }
+            });
+        } else {
+            saveListItemInfo(list, position, onItemSaved);
+        }
+    }
+
+    public void saveListItemInfo(UserList list, int position, OnItemSaved onItemSaved) {
 
 
         db.collection("lists").document(list.uid).collection("listItems").add(list.getListItems().get(position))
@@ -176,12 +238,64 @@ public class ListRepository {
                     Log.d("saveItem: ", "success");
                     onItemSaved.onSuccess();
 
+                    String type = "Misc";
+
+                    switch (list.getType()) {
+                        case Constants.MOVIES:
+                            type = "Movies";
+                            break;
+                        case Constants.TV_SERIES:
+                            type = "Tv Series";
+                            break;
+                        case Constants.ANIMES:
+                            type = "Animes";
+                            break;
+                        case Constants.MANGAS:
+                            type = "Mangas";
+                            break;
+                        case Constants.BOOKS:
+                            type = "Books";
+                            break;
+                        case Constants.MUSICS:
+                            type = "Musics";
+                            break;
+                        case Constants.COMICS:
+                            type = "Comics";
+                            break;
+                    }
+
+                    Answers.getInstance().logCustom(new CustomEvent("List Item Created")
+                            .putCustomAttribute("List Item Name", list.getListItems().get(position).getName())
+                            .putCustomAttribute("List Item Type", type)
+                            .putCustomAttribute("List Item Id", documentReference.getId()));
+
                 })
                 .addOnFailureListener(onItemSaved::onFailed);
 
     }
 
     public void updateItem(UserList list, int position, OnItemUpdated onItemUpdated) {
+        if (list.getListItems().get(position).getBaseItem().imageUrl != null
+                && !list.getListItems().get(position).getBaseItem().imageUrl.contains("http")) {
+
+            saveListImageOnStorage(list.getListItems().get(position).getBaseItem().imageUrl, new OnImageUpload() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    list.getListItems().get(position).getBaseItem().imageUrl = uri.toString();
+                    updateListItemInfo(list, position, onItemUpdated);
+                }
+
+                @Override
+                public void onFailure(String exception) {
+
+                }
+            });
+        } else {
+            updateListItemInfo(list, position, onItemUpdated);
+        }
+    }
+
+    public void updateListItemInfo(UserList list, int position, OnItemUpdated onItemUpdated) {
 
         DocumentReference docRef = db.collection("lists").document(list.uid).collection("listItems")
                 .document(list.getListItems().get(position).uid);
@@ -191,6 +305,37 @@ public class ListRepository {
 
                     Log.d("updateListItem", "DocumentSnapshot successfully written!");
                     onItemUpdated.onSuccess();
+
+                    String type = "Misc";
+
+                    switch (list.getListItems().get(position).getType()) {
+                        case Constants.MOVIES:
+                            type = "Movies";
+                            break;
+                        case Constants.TV_SERIES:
+                            type = "Tv Series";
+                            break;
+                        case Constants.ANIMES:
+                            type = "Animes";
+                            break;
+                        case Constants.MANGAS:
+                            type = "Mangas";
+                            break;
+                        case Constants.BOOKS:
+                            type = "Books";
+                            break;
+                        case Constants.MUSICS:
+                            type = "Musics";
+                            break;
+                        case Constants.COMICS:
+                            type = "Comics";
+                            break;
+                    }
+
+                    Answers.getInstance().logCustom(new CustomEvent("List Item Updated")
+                            .putCustomAttribute("List Item Name", list.getListItems().get(position).getName())
+                            .putCustomAttribute("List Item Type", type)
+                            .putCustomAttribute("List Item Id", list.getListItems().get(position).uid));
                 })
                 .addOnFailureListener(onItemUpdated::onFailed);
 

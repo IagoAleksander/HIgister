@@ -15,6 +15,8 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -108,7 +110,7 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
 
         if (list != null) {
 
-            getSupportActionBar().setTitle("Edit UserList");
+            getSupportActionBar().setTitle("Edit List");
 
             listNameLayout.getEditText().setText(list.getName());
             listDescriptionLayout.getEditText().setText(list.getDescription());
@@ -119,7 +121,14 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
                         .into(listLogoImage);
             }
 
-            isListVisible.setChecked(list.isVisibleForEveryone());
+            if (list.getListItems().size() > 5) {
+                isListVisible.setVisibility(View.GONE);
+            }
+            else {
+                isListVisible.setVisibility(View.VISIBLE);
+                isListVisible.setChecked(list.isVisibleForEveryone());
+            }
+
             areCommentsEnabled.setChecked(list.isCommentsEnabled());
 
             nextButton.setText("UPDATE LIST INFO");
@@ -218,6 +227,23 @@ public class CreateListActivity extends BaseActivity implements CreateListMvpVie
         });
 
         bindSpinnerLabel();
+
+        listNameLayout.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                fieldsAreOk();
+            }
+        });
 
     }
 

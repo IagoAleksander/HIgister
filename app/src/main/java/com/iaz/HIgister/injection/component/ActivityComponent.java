@@ -4,6 +4,7 @@ import com.iaz.HIgister.injection.PerActivity;
 import com.iaz.HIgister.injection.module.ActivityModule;
 import com.iaz.HIgister.ui.createItem.CreateItemActivity;
 import com.iaz.HIgister.ui.createList.CreateListActivity;
+import com.iaz.HIgister.ui.listsTutorial.ListsTutorialActivity;
 import com.iaz.HIgister.ui.login.AuthActivity;
 import com.iaz.HIgister.ui.main.MainActivity;
 import com.iaz.HIgister.ui.main.MyListsFragment;
@@ -29,6 +30,8 @@ public interface ActivityComponent {
 //    void inject(TempTempMainActivity tempMainActivity);
 //
     void inject(AuthActivity authActivity);
+
+    void inject(ListsTutorialActivity listsTutorialActivity);
 //
     void inject(ProfileActivity profileActivity);
 //

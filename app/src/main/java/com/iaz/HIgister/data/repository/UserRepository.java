@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.net.Uri;
 import android.util.Log;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -49,6 +51,10 @@ public class UserRepository {
                 .addOnSuccessListener(aVoid -> {
                     Log.d("updateProfile", "DocumentSnapshot successfully written!");
                     addListener(activity, onUpdateProfile);
+
+                    Answers.getInstance().logCustom(new CustomEvent("User Updated")
+                            .putCustomAttribute("User Name", user.getName())
+                            .putCustomAttribute("User Id", FirebaseAuth.getInstance().getCurrentUser().getUid()));
                 })
                 .addOnFailureListener(e -> {
                     Log.w("updateProfile", "Error writing document", e);

@@ -23,10 +23,10 @@ public class Application extends android.app.Application {
 
         ApplicationUtil.setContext(getApplicationContext());
         FirebaseApp.initializeApp(this);
+        Fabric.with(this, new Crashlytics());
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
-            Fabric.with(this, new Crashlytics());
         }
     }
 

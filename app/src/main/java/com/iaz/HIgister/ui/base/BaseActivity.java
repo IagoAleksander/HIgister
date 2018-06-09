@@ -10,6 +10,9 @@ import android.support.v4.util.LongSparseArray;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
+import com.crashlytics.android.answers.CustomEvent;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -113,6 +116,7 @@ public class BaseActivity extends AppCompatActivity {
                                 if (deepLink.getQueryParameter("listId") != null) {
                                     listId = deepLink.getQueryParameter("listId");
                                     Log.d("onSuccess1.b:", listId);
+
                                 } else
                                     Log.d("onSuccess3.b:", deepLink.toString());
 
@@ -140,7 +144,7 @@ public class BaseActivity extends AppCompatActivity {
                     if (listId != null && !listId.isEmpty()) {
                         Intent intent = new Intent(BaseActivity.this, ViewListActivity.class);
                         intent.putExtra("listId", listId);
-                        BaseActivity.this.startActivity(intent);
+                        startActivity(intent);
                     }
                 }
             }

@@ -1,5 +1,7 @@
 package com.iaz.HIgister.ui.main;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.SearchEvent;
 import com.iaz.HIgister.data.DataManager;
 import com.iaz.HIgister.data.model.User;
 import com.iaz.HIgister.data.model.UserList;
@@ -38,6 +40,10 @@ public class MyListsPresenter extends BasePresenter<MyListsMvpView> {
 
     public void search(String filter, ArrayList<Integer> listTypes) {
         if (listTypes == null)  {
+            Answers.getInstance().logSearch(new SearchEvent()
+                    .putQuery("People Search")
+                    .putCustomAttribute("Keyword", filter));
+
             getMvpView().getFragment().userRepository.filterResult(filter, new UserRepository.OnGetUsers() {
                 @Override
                 public void onSuccess(ArrayList<User> peopleList) {
@@ -106,6 +112,9 @@ public class MyListsPresenter extends BasePresenter<MyListsMvpView> {
             });
         }
         else {
+            Answers.getInstance().logSearch(new SearchEvent()
+                    .putQuery("Lists Search")
+                    .putCustomAttribute("Keyword", filter));
             getMvpView().getFragment().listRepository.filterResult(filter, listTypes, new ListRepository.OnUpdateLists() {
                 @Override
                 public void onSuccess(ArrayList<UserList> userLists) {

@@ -78,7 +78,7 @@ public abstract class BaseFlipAdapter extends RecyclerView.Adapter<BaseFlipAdapt
         }
     }
 
-    public abstract View getPage(int position, View convertView, ViewGroup parent, Object item1, Object item2, CloseListener closeListener);
+    public abstract View getPage(int itemPosition, int position, View convertView, ViewGroup parent, Object item1, Object item2, CloseListener closeListener);
 
     public abstract int getPagesCount();
 
@@ -86,12 +86,12 @@ public abstract class BaseFlipAdapter extends RecyclerView.Adapter<BaseFlipAdapt
     private class MergeAdapter extends BaseAdapter implements CloseListener {
         private Object item1;
         private Object item2;
-        private int position;
+        private int position2;
 
         public MergeAdapter(Object item1, Object item2, int position) {
             this.item1 = item1;
             this.item2 = item2;
-            this.position = position;
+            this.position2 = position;
         }
 
         @Override
@@ -111,12 +111,12 @@ public abstract class BaseFlipAdapter extends RecyclerView.Adapter<BaseFlipAdapt
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return getPage(position, convertView, parent, item1, item2, this);
+            return getPage(position2, position, convertView, parent, item1, item2, this);
         }
 
         @Override
         public void onClickClose() {
-            flipViewPagerMap.get(position).flipToPage(1);
+            flipViewPagerMap.get(position2).flipToPage(1);
         }
     }
 

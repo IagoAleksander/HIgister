@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary"
+    android:fillViewport="true"
+    android:scrollbars="none">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/search_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginEnd="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="80dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:text="Your list info was filled but a list without elements is not a list. So, let' add at least one element to our list."
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/search_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/search_header"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_margin="40dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:text="In the next screen you will be presented with two options: \n\nInsert some keyword in the search field and receive results related with it (if your list has a specified type, you will receive only results of that type, otherwise the results of different types will be separated by tabs). Choosing one of this results will pre-populate your item, giving extra info about it (storyline and/or runtime, for example).\n\nOr just skip this search and populate your item manually, from scratch"
+            android:textColor="@color/white" />
+
+
+    </RelativeLayout>
+</ScrollView>

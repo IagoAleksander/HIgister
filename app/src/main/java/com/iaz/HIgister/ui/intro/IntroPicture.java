@@ -1,11 +1,15 @@
 package com.iaz.HIgister.ui.intro;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +23,8 @@ import com.iaz.Higister.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.iaz.HIgister.util.Constants.PERMISSION_WRITE_EXTERNAL;
 
 /**
  * Created by alksander on 27/05/2018.
@@ -42,7 +48,7 @@ public class IntroPicture extends Fragment implements IntroMvpView {
         super.onCreate(savedInstanceState);
 
         activity = (IntroActivity) getActivity();
-        activity.fragmentPicture = this;
+//        activity.fragmentPicture = this;
 //        activity.addSlide(this);
     }
 
@@ -73,16 +79,16 @@ public class IntroPicture extends Fragment implements IntroMvpView {
                 @Override
                 public void onCamera() {
                     // Here, thisActivity is the current activity
-//                    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-//                            || ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//
-//                        photoDialog.dismiss();
-//                        ActivityCompat.requestPermissions(activity,
-//                                new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL);
-//                    } else {
+                    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                            || ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                        photoDialog.dismiss();
+                        ActivityCompat.requestPermissions(activity,
+                                new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_WRITE_EXTERNAL);
+                    } else {
                     activity.mIntroPresenter.getPhoto();
                     photoDialog.dismiss();
-//                    }
+                    }
                 }
             });
             photoDialog.show();

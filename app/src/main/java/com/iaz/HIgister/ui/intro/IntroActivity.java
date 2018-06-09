@@ -1,6 +1,5 @@
 package com.iaz.HIgister.ui.intro;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,42 +7,71 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.paolorotolo.appintro.AppIntro;
-import com.github.paolorotolo.appintro.AppIntroFragment;
-import com.google.firebase.auth.FirebaseAuth;
 import com.iaz.HIgister.data.model.User;
 import com.iaz.HIgister.data.repository.UserRepository;
+import com.iaz.HIgister.ui.base.BaseActivity;
+import com.iaz.HIgister.ui.listsTutorial.ListsTutorialActivity;
 import com.iaz.HIgister.ui.main.MainActivity;
-import com.iaz.HIgister.ui.main.ProfileActivity;
+import com.iaz.HIgister.util.CustomViewPager;
 import com.iaz.HIgister.util.DialogFactory;
 import com.iaz.Higister.R;
 
 import java.util.ArrayList;
 
-public class IntroActivity extends AppIntro {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import me.relex.circleindicator.CircleIndicator;
+
+/**
+ * Created by alksander on 03/06/2018.
+ */
+
+public class IntroActivity extends BaseActivity {
 
     IntroPresenter mIntroPresenter = new IntroPresenter();
-    public FragmentManager fm;
     User user;
-    public static final int CONTENT_VIEW_ID = 10101010;
-    IntroPicture fragmentPicture;
-    IntroInfo fragmentInfo;
-    IntroInterests fragmentInterests;
-    IntroProfile fragmentProfile;
 
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.viewPager)
+    CustomViewPager viewPager;
+    @BindView(R.id.indicator)
+    CircleIndicator circleIndicator;
+    @BindView(R.id.previous_button)
+    TextView previousButton;
+    @BindView(R.id.next_button)
+    TextView nextButton;
+
+    FragmentPagerAdapter adapterViewPager;
+
+    public IntroPicture fragmentPicture;
+    public IntroInfo fragmentInfo;
+    public IntroInterests fragmentInterests;
+    public IntroProfile fragmentProfile;
+
+    int position = 0;
     private Dialog mDialog;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        activityComponent().inject(this);
+//        mViewItemPresenter.setActivity(this);
 
         mIntroPresenter.setActivity(this);
+
+        setContentView(R.layout.activity_intro);
+        ButterKnife.bind(this);
 
         if (getIntent() != null && getIntent().getExtras() != null) {
             user = getIntent().getExtras().getParcelable("user");
@@ -52,90 +80,178 @@ public class IntroActivity extends AppIntro {
         if (user == null) {
             user = new User();
         }
-        // Note here that we DO NOT use setContentView();
 
+        adapterViewPager = new MyPagerAdapter(getSupportFragmentManager(), this);
+        viewPager.setAdapter(adapterViewPager);
+        circleIndicator.setViewPager(viewPager);
 
-        // Add your slide fragments here.
-        // AppIntro will automatically generate the dots indicator and buttons.
-        addSlide(new IntroPicture());
-        askForPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        viewPager.setPagingEnabled(false);
+        viewPager.setOffscreenPageLimit(4);
 
-        addSlide(new IntroInfo());
-        addSlide(new IntroInterests());
-        addSlide(new IntroProfile());
-//        addSlide(SampleSlide.newInstance(R.layout.your_slide_here));
-//        addSlide(SampleSlide.newInstance(R.layout.your_slide_here));
+        setSupportActionBar(mToolbar);
 
-        // Instead of fragments, you can also use our default slide
-        // Just set a title, description, background and image. AppIntro will do the rest.
-//        addSlide(AppIntroFragment.newInstance("test", "testDescription", R.drawable.large_movie_poster, ContextCompat.getColor(IntroActivity.this, R.color.accent)));
-//        addSlide(AppIntroFragment.newInstance("test", "testDescription", R.drawable.large_movie_poster, ContextCompat.getColor(IntroActivity.this, R.color.accent)));
-//        addSlide(AppIntroFragment.newInstance("test", "testDescription", R.drawable.large_movie_poster, ContextCompat.getColor(IntroActivity.this, R.color.accent)));
+        nextButton.setOnClickListener(v -> setNext());
 
-        // OPTIONAL METHODS
-        // Override bar/separator color.
-        setBarColor(ContextCompat.getColor(IntroActivity.this, R.color.primary_light));
-        setSeparatorColor(ContextCompat.getColor(IntroActivity.this, R.color.white));
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-        // Hide Skip/Done button.
-        showSkipButton(false);
-        setProgressButtonEnabled(true);
-
-        setSkipText("Finish");
-        setDoneText("Create list");
-
-        // Turn vibration on and set intensity.
-        // NOTE: you will probably need to ask VIBRATE permission in Manifest.
-//        setVibrate(true);
-//        setVibrateIntensity(30);
-    }
-
-    @Override
-    public void onSkipPressed(Fragment currentFragment) {
-        super.onSkipPressed(currentFragment);
-        // Do something when users tap on Skip button.
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putBoolean("showTutorial", false);
-        editor.apply();
-
-        Intent intent = new Intent(IntroActivity.this, MainActivity.class);
-        IntroActivity.this.startActivity(intent);
-    }
-
-    @Override
-    public void onDonePressed(Fragment currentFragment) {
-        super.onDonePressed(currentFragment);
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putBoolean("showTutorial", false);
-        editor.apply();
-
-        // Do something when users tap on Done button.
-        Intent intent = new Intent(IntroActivity.this, MainActivity.class);
-        intent.putExtra("user", user);
-        IntroActivity.this.startActivity(intent);
-
-    }
-
-    @Override
-    public void onSlideChanged(@Nullable Fragment oldFragment, @Nullable Fragment newFragment) {
-        super.onSlideChanged(oldFragment, newFragment);
-
-        if (oldFragment instanceof IntroPicture && newFragment instanceof IntroInfo) {
-            user.setProfilePictureUri(fragmentPicture.uri);
-        } else if (oldFragment instanceof IntroInfo && newFragment instanceof IntroInterests) {
-            user.setName(fragmentInfo.mNameTextInput.getEditText().getText().toString());
-            user.setBio(fragmentInfo.mDescriptionTextInput.getEditText().getText().toString());
-
-            try {
-                user.setAge(Integer.parseInt(fragmentInfo.mAgeTextInput.getEditText().getText().toString()));
-            } catch (NumberFormatException e) {
-                user.setAge(0);
             }
-        } else if (oldFragment instanceof IntroInterests && newFragment instanceof IntroProfile) {
+
+            @Override
+            public void onPageSelected(int positionT) {
+
+
+                if (positionT == 0) {
+                    previousButton.setVisibility(View.GONE);
+                } else if (positionT == 4) {
+
+                    previousButton.setVisibility(View.VISIBLE);
+                    nextButton.setVisibility(View.VISIBLE);
+
+                    nextButton.setText("Create list");
+                    nextButton.setOnClickListener(v -> {
+
+                        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putBoolean("showIntro", false);
+                        editor.apply();
+
+                        Intent intent = new Intent(IntroActivity.this, ListsTutorialActivity.class);
+                        startActivity(intent);
+                    });
+                    previousButton.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                    previousButton.setText("Finish");
+                    previousButton.setOnClickListener(v -> {
+
+                        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putBoolean("showIntro", false);
+                        editor.apply();
+
+                        Intent intent = new Intent(IntroActivity.this, MainActivity.class);
+                        intent.putExtra("user", user);
+                        startActivity(intent);
+                    });
+                } else {
+
+                    previousButton.setVisibility(View.VISIBLE);
+                    nextButton.setVisibility(View.VISIBLE);
+
+                    previousButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_left, 0, 0, 0);
+                    previousButton.setText("Previous");
+                    previousButton.setOnClickListener(v -> {
+
+                        position--;
+                        viewPager.setCurrentItem(position);
+                    });
+
+                    nextButton.setText("Next");
+                    nextButton.setOnClickListener(v -> {
+
+                        setNext();
+                    });
+                }
+
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case android.R.id.home:
+                finish();
+                overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
+                break;
+            default:
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public static class MyPagerAdapter extends FragmentPagerAdapter {
+
+        IntroActivity activity;
+
+        public MyPagerAdapter(FragmentManager fragmentManager, IntroActivity activity) {
+            super(fragmentManager);
+            this.activity = activity;
+        }
+
+        // Returns total number of pages
+        @Override
+        public int getCount() {
+            return 5;
+        }
+
+        // Returns the fragment to display for that page
+        @Override
+        public Fragment getItem(int position) {
+
+            switch (position) {
+                case 0:
+                    return new IntroWelcome();
+                case 1:
+                    if (activity.fragmentPicture == null)
+                        activity.fragmentPicture = new IntroPicture();
+                    return activity.fragmentPicture;
+                case 2:
+                    if (activity.fragmentInfo == null)
+                        activity.fragmentInfo = new IntroInfo();
+                    return activity.fragmentInfo;
+                case 3:
+                    if (activity.fragmentInterests == null)
+                        activity.fragmentInterests = new IntroInterests();
+                    return activity.fragmentInterests;
+                case 4:
+                    if (activity.fragmentProfile == null)
+                        activity.fragmentProfile = new IntroProfile();
+                    return activity.fragmentProfile;
+                default:
+                    if (activity.fragmentProfile == null)
+                        activity.fragmentProfile = new IntroProfile();
+                    return activity.fragmentProfile;
+            }
+        }
+
+    }
+
+    public void setNext() {
+        if (viewPager.getCurrentItem() == 0) {
+            position++;
+            viewPager.setCurrentItem(position);
+        }
+        else if (viewPager.getCurrentItem() == 1) {
+            user.setProfilePictureUri(fragmentPicture.uri);
+            position++;
+            viewPager.setCurrentItem(position);
+        } else if (viewPager.getCurrentItem() == 2) {
+
+            if (checkInfo()) {
+                user.setName(fragmentInfo.mNameTextInput.getEditText().getText().toString());
+                user.setBio(fragmentInfo.mDescriptionTextInput.getEditText().getText().toString());
+
+                try {
+                    user.setAge(Integer.parseInt(fragmentInfo.mAgeTextInput.getEditText().getText().toString()));
+                } catch (NumberFormatException e) {
+                    user.setAge(0);
+                }
+
+                position++;
+                viewPager.setCurrentItem(position);
+            }
+        } else if (viewPager.getCurrentItem() == 3) {
             ArrayList<String> interests = new ArrayList<>();
             if (fragmentInterests.mCheckBoxMovies.isChecked())
                 interests.add("Movies");
@@ -190,12 +306,16 @@ public class IntroActivity extends AppIntro {
                         public void onSuccess(User userWithId) {
 
 
+                            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putString("userName", user.getName());
+                            editor.apply();
+
                             DialogFactory.finalizeDialogOnClick(mDialog, true, "Profile information saved successfully", () -> {
-//                            Intent intent = new Intent(IntroActivity.this, MainActivity.class);
-//                            intent.putExtra("user", userWithId);
-//                            IntroActivity.this.startActivity(intent);
                                 user = userWithId;
-                                showSkipButton(true);
+                                position++;
+                                viewPager.setCurrentItem(position);
+                                viewPager.setPagingEnabled(false);
                             });
 
                         }
@@ -219,13 +339,15 @@ public class IntroActivity extends AppIntro {
                 @Override
                 public void onSuccess(User userWithId) {
 
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString("userName", user.getName());
+                    editor.apply();
 
                     DialogFactory.finalizeDialogOnClick(mDialog, true, "Profile information saved successfully", () -> {
-//                            Intent intent = new Intent(IntroActivity.this, MainActivity.class);
-//                            intent.putExtra("user", userWithId);
-//                            IntroActivity.this.startActivity(intent);
                         user = userWithId;
-                        showSkipButton(true);
+                        position++;
+                        viewPager.setCurrentItem(position);
                     });
 
                 }
@@ -240,5 +362,24 @@ public class IntroActivity extends AppIntro {
     }
 
     @Override
-    public void onBackPressed() {}
+    public void onBackPressed() {
+        if (position > 0 && position < 3) {
+            position--;
+            viewPager.setCurrentItem(position);
+        }
+    }
+
+    public boolean checkInfo() {
+
+        if (fragmentInfo.mNameTextInput.getEditText().getText().toString().trim().isEmpty()) {
+            fragmentInfo.mNameTextInput.setError("This field is required");
+            fragmentInfo.mNameTextInput.requestFocus();
+            return false;
+        }
+        else
+            fragmentInfo.mNameTextInput.setError(null);
+
+        return true;
+    }
+
 }

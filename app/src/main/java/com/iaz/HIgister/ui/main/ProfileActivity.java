@@ -12,6 +12,8 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -209,6 +211,23 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
         } else {
             completeRegistration();
         }
+
+        mNameTextInput.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                fieldsAreOk();
+            }
+        });
     }
 
     @Override
@@ -506,8 +525,8 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
 
                     if (user != null)
                         if (user.uid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            getApplicationContext().startActivity(intent);
+                            Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                            startActivity(intent);
                             overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
                         }
 
@@ -550,9 +569,6 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
 
     public void saveUser() {
 
-        mDialog = DialogFactory.newDialog(ProfileActivity.this, "Saving user profile information...");
-        mDialog.show();
-
         ArrayList<String> interests = new ArrayList<>();
         if (mCheckBoxMovies.isChecked())
             interests.add("Movies");
@@ -569,99 +585,92 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
         if (mCheckBoxComics.isChecked())
             interests.add("Comics");
 
-        if (uri != null && !uri.toString().contains("http")) {
-            userRepository.saveProfileImageOnStorage(uri.toString(), new UserRepository.OnImageUpload() {
-                @Override
-                public void onSuccess(Uri uri) {
+        if (user == null)
+            user = new User();
 
-                    if (user == null)
-                        user = new User();
+        user.setName(mNameTextInput.getEditText().getText().toString());
+        user.setBio(mDescriptionTextInput.getEditText().getText().toString());
 
-                    user.setName(mNameTextInput.getEditText().getText().toString());
-                    user.setBio(mDescriptionTextInput.getEditText().getText().toString());
+        try {
+            user.setAge(Integer.parseInt(mAgeTextInput.getEditText().getText().toString()));
+        } catch (NumberFormatException e) {
+            user.setAge(0);
+        }
+        user.setInterests(interests);
 
-                    try {
-                        user.setAge(Integer.parseInt(mAgeTextInput.getEditText().getText().toString()));
-                    } catch (NumberFormatException e) {
-                        user.setAge(0);
-                    }
+        if (fieldsAreOk()) {
 
-                    user.setInterests(interests);
-                    user.setProfilePictureUri(uri.toString());
+            mDialog = DialogFactory.newDialog(ProfileActivity.this, "Saving user profile information...");
+            mDialog.show();
 
-                    userRepository.saveProfileInfo(ProfileActivity.this, user, new UserRepository.OnUpdateProfile() {
-                        @Override
-                        public void onSuccess(User userWithId) {
+            if (uri != null && !uri.toString().contains("http")) {
+                userRepository.saveProfileImageOnStorage(uri.toString(), new UserRepository.OnImageUpload() {
+                    @Override
+                    public void onSuccess(Uri uri) {
 
-                            if (newUser) {
-                                DialogFactory.finalizeDialogOnClick(mDialog, true, "Profile information updated with success. Click to proceed", () -> {
-                                    Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
-                                    intent.putExtra("user", userWithId);
-                                    ProfileActivity.this.startActivity(intent);
-                                });
-                            } else {
-                                DialogFactory.finalizeDialogOnClick(mDialog, true, "Profile information updated with success. Click to show", () -> {
-                                    updateData(userWithId);
+                        user.setProfilePictureUri(uri.toString());
+
+                        userRepository.saveProfileInfo(ProfileActivity.this, user, new UserRepository.OnUpdateProfile() {
+                            @Override
+                            public void onSuccess(User userWithId) {
+
+                                if (newUser) {
+                                    DialogFactory.finalizeDialogOnClick(mDialog, true, "Profile information updated with success. Click to proceed", () -> {
+                                        Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                                        intent.putExtra("user", userWithId);
+                                        startActivity(intent);
+                                    });
+                                } else {
+                                    DialogFactory.finalizeDialogOnClick(mDialog, true, "Profile information updated with success. Click to show", () -> {
+                                        updateData(userWithId);
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(String exception) {
+                                DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on saving user profile information", () -> {
                                 });
                             }
-                        }
-
-                        @Override
-                        public void onFailure(String exception) {
-                            DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on saving user profile information", () -> {
-                            });
-                        }
-                    });
-                }
-
-                @Override
-                public void onFailure(String exception) {
-                    DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on saving user profile information", () -> {
-                    });
-                }
-            });
-
-        } else {
-
-            if (user == null)
-                user = new User();
-
-            user.setName(mNameTextInput.getEditText().getText().toString());
-            user.setBio(mDescriptionTextInput.getEditText().getText().toString());
-
-            try {
-                user.setAge(Integer.parseInt(mAgeTextInput.getEditText().getText().toString()));
-            } catch (NumberFormatException e) {
-                user.setAge(0);
-            }
-
-            user.setInterests(interests);
-
-            if (uri != null)
-                user.setProfilePictureUri(uri.toString());
-
-            userRepository.saveProfileInfo(ProfileActivity.this, user, new UserRepository.OnUpdateProfile() {
-                @Override
-                public void onSuccess(User userWithId) {
-                    if (newUser) {
-                        DialogFactory.finalizeDialogOnClick(mDialog, true, "Profile information updated with success. Click to proceed", () -> {
-                            Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
-                            intent.putExtra("user", userWithId);
-                            ProfileActivity.this.startActivity(intent);
-                        });
-                    } else {
-                        DialogFactory.finalizeDialogOnClick(mDialog, true, "Profile information updated with success. Click to show", () -> {
-                            updateData(userWithId);
                         });
                     }
-                }
 
-                @Override
-                public void onFailure(String exception) {
-                    DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on saving user profile information", () -> {
-                    });
-                }
-            });
+                    @Override
+                    public void onFailure(String exception) {
+                        DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on saving user profile information", () -> {
+                        });
+                    }
+                });
+
+            } else {
+
+                if (uri != null)
+                    user.setProfilePictureUri(uri.toString());
+
+                userRepository.saveProfileInfo(ProfileActivity.this, user, new UserRepository.OnUpdateProfile() {
+                    @Override
+                    public void onSuccess(User userWithId) {
+                        if (newUser) {
+                            DialogFactory.finalizeDialogOnClick(mDialog, true, "Profile information updated with success. Click to proceed", () -> {
+                                Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                                intent.putExtra("user", userWithId);
+                                startActivity(intent);
+                            });
+                        } else {
+                            DialogFactory.finalizeDialogOnClick(mDialog, true, "Profile information updated with success. Click to show", () -> {
+                                updateData(userWithId);
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(String exception) {
+                        DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on saving user profile information", () -> {
+                        });
+                    }
+                });
+
+            }
         }
     }
 
@@ -672,8 +681,8 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
 
             if (user != null)
                 if (user.uid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    getApplicationContext().startActivity(intent);
+                    Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                    startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_backward, R.anim.slide_out_backward);
                 }
 
@@ -685,5 +694,18 @@ public class ProfileActivity extends BaseActivity implements ProfileMvpView {
         }
     }
 
+    public boolean fieldsAreOk() {
+        if (mNameTextInput.getEditText().getText().toString().isEmpty()) {
+            mNameTextInput.setError("This field is required");
+            return false;
+        } else if (mNameTextInput.getEditText().getText().toString().length() > 30) {
+            mNameTextInput.setError("The user name cannot have more than 30 characters (it has "
+                    + mNameTextInput.getEditText().getText().toString().length() + " )");
+            return false;
+        }
+
+        mNameTextInput.setError(null);
+        return true;
+    }
 
 }

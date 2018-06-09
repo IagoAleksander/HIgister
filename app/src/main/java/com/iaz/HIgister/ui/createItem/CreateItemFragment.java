@@ -102,6 +102,7 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        activity.mCreateItemPresenter.attachView(this);
 
         if (listItem != null) {
 
@@ -149,6 +150,7 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
             @Override
             public void afterTextChanged(Editable editable) {
                 activity.listItem.setName(editable.toString());
+                activity.fieldsAreOk();
             }
         });
 
@@ -214,6 +216,7 @@ public class CreateItemFragment extends Fragment implements CreateItemMvpView {
 
     @Override
     public void callGlide(Uri uri) {
+        activity.listItem.getBaseItem().imageUrl = uri.toString();
         try {
             Glide.with(CreateItemFragment.this)
                     .load(uri)

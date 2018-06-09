@@ -17,7 +17,7 @@ public class ListItem implements Parcelable{
     private String name;
     private String description;
     private int type;
-    private BaseItem baseItem;
+    private BaseItem baseItem = new BaseItem();
 //    public Bitmap photo;
 
     public ListItem() {}

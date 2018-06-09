@@ -16,6 +16,8 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.LoginEvent;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
@@ -120,6 +122,10 @@ public class LogInFragment extends AuthFragment {
                 Log.d("", "facebook:onCancel");
                 DialogFactory.finalizeDialogOnClick(activity.mAuthPresenter.mDialog, false, "Login canceled", () -> {
                 });
+                Answers.getInstance().logLogin(new LoginEvent()
+                        .putMethod("Facebook")
+                        .putSuccess(false)
+                        .putCustomAttribute("reason", "canceled"));
             }
 
             @Override
@@ -127,6 +133,10 @@ public class LogInFragment extends AuthFragment {
                 Log.d("", "facebook:onError", exception);
                 DialogFactory.finalizeDialogOnClick(activity.mAuthPresenter.mDialog, false, "Sorry, an error occurred on login", () -> {
                 });
+                Answers.getInstance().logLogin(new LoginEvent()
+                        .putMethod("Facebook")
+                        .putSuccess(false)
+                        .putCustomAttribute("reason", "error"));
             }
         });
     }

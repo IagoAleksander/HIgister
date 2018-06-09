@@ -1,15 +1,14 @@
 package com.iaz.HIgister.ui.intro;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.iaz.Higister.R;
 
@@ -38,7 +37,7 @@ public class IntroInfo extends Fragment {
         super.onCreate(savedInstanceState);
 
         activity = (IntroActivity) getActivity();
-        activity.fragmentInfo = this;
+//        activity.fragmentInfo = this;
     }
 
     @Nullable
@@ -57,9 +56,30 @@ public class IntroInfo extends Fragment {
             mNameTextInput.getEditText().setText(activity.user.getName());
 
         if (activity.user.getBio() != null && !activity.user.getBio().isEmpty())
-            mNameTextInput.getEditText().setText(activity.user.getBio());
+            mDescriptionTextInput.getEditText().setText(activity.user.getBio());
 
         if (activity.user.getAge() > 0)
-            mNameTextInput.getEditText().setText(Integer.toString(activity.user.getAge()));
+            mAgeTextInput.getEditText().setText(Integer.toString(activity.user.getAge()));
+
+        mNameTextInput.getEditText().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().isEmpty()) {
+                    mNameTextInput.setError("This field is required");
+                }
+                else {
+                    mNameTextInput.setError(null);
+                }
+            }
+        });
     }
 }

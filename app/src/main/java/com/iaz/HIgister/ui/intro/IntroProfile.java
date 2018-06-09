@@ -3,7 +3,6 @@ package com.iaz.HIgister.ui.intro;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.iaz.HIgister.ui.main.MainActivity;
 import com.iaz.HIgister.ui.main.ProfileActivity;
 import com.iaz.Higister.R;
 
@@ -37,7 +35,7 @@ public class IntroProfile extends Fragment {
         super.onCreate(savedInstanceState);
 
         activity = (IntroActivity) getActivity();
-        activity.fragmentProfile = this;
+//        activity.fragmentProfile = this;
     }
 
     @Nullable

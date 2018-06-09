@@ -113,13 +113,16 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
         }
 
         holder.listItem.setOnClickListener(v -> {
-            Intent intent = new Intent(fragment.getActivity(), ViewListActivity.class);
-            intent.putExtra("list", mLists.get(position));
-            fragment.getActivity().startActivity(intent);
-            fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+            if (canClick) {
+                Intent intent = new Intent(fragment.getActivity(), ViewListActivity.class);
+                intent.putExtra("list", mLists.get(position));
+                fragment.getActivity().startActivity(intent);
+                fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+            }
         });
 
-        if (mLists.get(position).getCreatorName() != null && !mLists.get(position).getCreatorName().isEmpty()) {
+        if (mLists.get(position).getCreatorName() != null && !mLists.get(position).getCreatorName().isEmpty()
+                && mLists.get(position).getCreatorId() != null && !mLists.get(position).getCreatorId().isEmpty()) {
             if (mLists.get(position).getCreatorId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                 holder.creatorNameText.setText("By me");
                 holder.creatorsLayout.setVisibility(View.VISIBLE);
@@ -127,13 +130,13 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
                 holder.creatorNameText.setText(String.format("By %s", mLists.get(position).getCreatorName()));
                 holder.creatorsLayout.setVisibility(View.VISIBLE);
 
-                holder.creatorsLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+                holder.creatorsLayout.setOnClickListener(view -> {
+                    if (canClick) {
                         Intent intent = new Intent(fragment.getActivity(), ViewUserActivity.class);
                         intent.putExtra("userId", mLists.get(position).getCreatorId());
 //                        intent.putStringArrayListExtra("myFavoritedListsId", fragment.activity.favoritedListsId);
                         fragment.getActivity().startActivity(intent);
+                        fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                     }
                 });
             }
@@ -146,10 +149,12 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
             holder.removeButton.setVisibility(View.VISIBLE);
 
             holder.editButton.setOnClickListener(v -> {
-                Intent intent = new Intent(fragment.getActivity(), CreateListActivity.class);
-                intent.putExtra("list", mLists.get(position));
-                fragment.getActivity().startActivity(intent);
-                fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                if (canClick) {
+                    Intent intent = new Intent(fragment.getActivity(), CreateListActivity.class);
+                    intent.putExtra("list", mLists.get(position));
+                    fragment.getActivity().startActivity(intent);
+                    fragment.getActivity().overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
+                }
             });
 
 
@@ -165,7 +170,7 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
                     listRepository.removeList(mLists.get(position), new ListRepository.OnListRemoved() {
                         @Override
                         public void onSuccess(String listUid) {
-                            notifyDataSetChanged();
+//                            notifyDataSetChanged();
                             DialogFactory.finalizeDialogOnClick(mDialog, true, "List removed with success", () -> {
                                 notifyDataSetChanged();
                             });
@@ -197,7 +202,7 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
 //                                if (!fragment.activity.favoritedListsId.contains(listUid))
 //                                    fragment.activity.favoritedListsId.add(listUid);
 
-                                notifyDataSetChanged();
+//                                notifyDataSetChanged();
                             }
 
                             @Override
@@ -225,7 +230,7 @@ public class UserListsAdapter extends RecyclerView.Adapter<UserListsAdapter.List
                                     @Override
                                     public void onSuccess(String listUid) {
                                         canClick = true;
-                                        notifyDataSetChanged();
+//                                        notifyDataSetChanged();
                                     }
 
                                     @Override

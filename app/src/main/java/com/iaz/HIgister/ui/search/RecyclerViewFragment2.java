@@ -25,6 +25,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.SearchEvent;
 import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 import com.iaz.HIgister.data.model.BaseItem;
 import com.iaz.HIgister.util.Constants;
@@ -42,7 +44,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
 
-import static com.iaz.HIgister.util.Constants.*;
+import static com.iaz.HIgister.util.Constants.ANIMES;
+import static com.iaz.HIgister.util.Constants.BOOKS;
+import static com.iaz.HIgister.util.Constants.COMICS;
+import static com.iaz.HIgister.util.Constants.MANGAS;
+import static com.iaz.HIgister.util.Constants.MOVIES;
+import static com.iaz.HIgister.util.Constants.MUSICS;
+import static com.iaz.HIgister.util.Constants.TV_SERIES;
 
 /**
  * Created by florentchampigny on 24/04/15.
@@ -143,6 +151,11 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
                 itemsCollection.clear();
 
                 if (activity.list.getType() == -1 || activity.list.getType() == 0) {
+                    Answers.getInstance().logSearch(new SearchEvent()
+                            .putQuery("Item Search")
+                            .putCustomAttribute("type", "Misc")
+                            .putCustomAttribute("Keyword", activity.editText.getText().toString()));
+
                     mSearchPresenter.loadResults(Constants.MOVIES, activity.editText.getText().toString());
                     mSearchPresenter.loadResults(Constants.TV_SERIES, activity.editText.getText().toString());
                     mSearchPresenter.loadResults(Constants.ANIMES, activity.editText.getText().toString());
@@ -151,6 +164,38 @@ public class RecyclerViewFragment2 extends Fragment implements SearchMvpView {
                     mSearchPresenter.loadResults(Constants.MUSICS, activity.editText.getText().toString());
                     mSearchPresenter.loadResults(Constants.COMICS, activity.editText.getText().toString());
                 } else {
+
+                    String type = "Misc";
+
+                    switch (activity.list.getType()) {
+                        case Constants.MOVIES:
+                            type = "Movies";
+                            break;
+                        case Constants.TV_SERIES:
+                            type = "Tv Series";
+                            break;
+                        case Constants.ANIMES:
+                            type = "Animes";
+                            break;
+                        case Constants.MANGAS:
+                            type = "Mangas";
+                            break;
+                        case Constants.BOOKS:
+                            type = "Books";
+                            break;
+                        case Constants.MUSICS:
+                            type = "Musics";
+                            break;
+                        case Constants.COMICS:
+                            type = "Comics";
+                            break;
+                    }
+
+                    Answers.getInstance().logSearch(new SearchEvent()
+                            .putQuery("Item Search")
+                            .putCustomAttribute("type", type)
+                            .putCustomAttribute("Keyword", activity.editText.getText().toString()));
+
                     mSearchPresenter.loadResults(activity.list.getType(), activity.editText.getText().toString());
                 }
             } else {

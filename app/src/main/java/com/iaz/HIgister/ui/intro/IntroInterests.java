@@ -47,7 +47,7 @@ public class IntroInterests extends Fragment {
         super.onCreate(savedInstanceState);
 
         activity = (IntroActivity) getActivity();
-        activity.fragmentInterests = this;
+//        activity.fragmentInterests = this;
     }
 
     @Nullable
@@ -62,11 +62,20 @@ public class IntroInterests extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
+        mCheckBoxMovies.setChecked(false);
+        mCheckBoxSeries.setChecked(false);
+        mCheckBoxBooks.setChecked(false);
+        mCheckBoxMusic.setChecked(false);
+        mCheckBoxAnimes.setChecked(false);
+        mCheckBoxMangas.setChecked(false);
+        mCheckBoxComics.setChecked(false);
+
         if (activity.user.getInterests() != null && !activity.user.getInterests().isEmpty())
             for (String interest : activity.user.getInterests()) {
                 switch (interest) {
                     case "Movies":
                         mCheckBoxMovies.setChecked(true);
+                        mCheckBoxMovies.setEnabled(true);
                         break;
                     case "TV Series":
                         mCheckBoxSeries.setChecked(true);

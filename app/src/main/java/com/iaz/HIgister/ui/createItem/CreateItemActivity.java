@@ -138,7 +138,7 @@ public class CreateItemActivity extends BaseActivity {
                                 DialogFactory.finalizeDialogOnClick(mDialog, true, "List created with success. Click to proceed", () -> {
                                     Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
                                     intent.putExtra("list", list);
-                                    CreateItemActivity.this.startActivity(intent);
+                                    startActivity(intent);
                                     overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                                 });
                             }
@@ -160,7 +160,7 @@ public class CreateItemActivity extends BaseActivity {
                                 DialogFactory.finalizeDialogOnClick(mDialog, true, "List item created with success. Click to proceed", () -> {
                                     Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
                                     intent.putExtra("list", list);
-                                    CreateItemActivity.this.startActivity(intent);
+                                    startActivity(intent);
                                     overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                                 });
                             }
@@ -183,7 +183,7 @@ public class CreateItemActivity extends BaseActivity {
                             DialogFactory.finalizeDialogOnClick(mDialog, true, "List item updated with success. Click to proceed", () -> {
                                 Intent intent = new Intent(CreateItemActivity.this, ViewListActivity.class);
                                 intent.putExtra("list", list);
-                                CreateItemActivity.this.startActivity(intent);
+                                startActivity(intent);
                                 overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
                             });
                         }
@@ -239,13 +239,20 @@ public class CreateItemActivity extends BaseActivity {
         Fragment fragment = fm.findFragmentById(CONTENT_VIEW_ID);
         if (fragment instanceof CreateItemFragment) {
 
+            if (listItem.getName() == null || (listItem.getName() != null && listItem.getName().isEmpty())) {
+                if (listItem.getBaseItem() == null || (listItem.getBaseItem() != null && listItem.getBaseItem().title == null)
+                        || (listItem.getBaseItem().title != null && listItem.getBaseItem().title.isEmpty())) {
+                    ((CreateItemFragment) fragment).listNameLayout.setError("This field is required");
+                    return false;
+                }
+            }
             if (listItem.getName() != null && listItem.getName().length() > 30) {
-                ((CreateItemFragment)fragment).listNameLayout.setError("The item name cannot have more than 30 characters (it has "
+                ((CreateItemFragment) fragment).listNameLayout.setError("The item name cannot have more than 30 characters (it has "
                         + listItem.getName().length() + " )");
                 return false;
             }
 
-            ((CreateItemFragment)fragment).listNameLayout.setError(null);
+            ((CreateItemFragment) fragment).listNameLayout.setError(null);
         }
         return true;
     }

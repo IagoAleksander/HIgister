@@ -79,7 +79,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.PeopleView
                 Intent intent = new Intent(fragment.getActivity(), ViewUserActivity.class);
                 intent.putExtra("user", currentPerson);
 //                intent.putStringArrayListExtra("myFavoritedListsId", fragment.activity.favoritedListsId);
-                fragment.getActivity().startActivity(intent);
+                fragment.startActivity(intent);
             });
             String createdCounter = "--";
             String favoritedCounter = "--";

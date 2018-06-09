@@ -18,8 +18,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
 import com.iaz.HIgister.data.model.ListItem;
 import com.iaz.HIgister.ui.gallery.GalleryActivity;
+import com.iaz.HIgister.util.Constants;
 import com.iaz.HIgister.util.CustomPhotoPickerDialog;
 import com.iaz.HIgister.util.ViewUtil;
 import com.iaz.Higister.R;
@@ -45,6 +48,8 @@ public class ViewItemFragment extends Fragment implements ViewItemMvpView {
 
     @BindView(R.id.item_title)
     TextView itemTitle;
+    @BindView(R.id.extra_info_layout)
+    LinearLayout extraInfoLayout;
     @BindView(R.id.separator)
     View separator;
     @BindView(R.id.item_extra_info_header)
@@ -104,6 +109,38 @@ public class ViewItemFragment extends Fragment implements ViewItemMvpView {
 
         if (listItem != null) {
 
+            String type = "Misc";
+
+            switch (listItem.getType()) {
+                case Constants.MOVIES:
+                    type = "Movies";
+                    break;
+                case Constants.TV_SERIES:
+                    type = "Tv Series";
+                    break;
+                case Constants.ANIMES:
+                    type = "Animes";
+                    break;
+                case Constants.MANGAS:
+                    type = "Mangas";
+                    break;
+                case Constants.BOOKS:
+                    type = "Books";
+                    break;
+                case Constants.MUSICS:
+                    type = "Musics";
+                    break;
+                case Constants.COMICS:
+                    type = "Comics";
+                    break;
+            }
+
+            Answers.getInstance().logContentView(new ContentViewEvent()
+                    .putContentName(listItem.getName())
+                    .putContentType("List Item")
+                    .putContentId(listItem.uid)
+                    .putCustomAttribute("List Item Type", type));
+
             if (listItem.getBaseItem() != null) {
                 if (listItem.getBaseItem().imageUrl != null) {
                     Glide.with(this)
@@ -125,13 +162,18 @@ public class ViewItemFragment extends Fragment implements ViewItemMvpView {
 
                         goToCarousel.putStringArrayListExtra("photos", listOfPaths);
                         goToCarousel.putExtra("startPosition", 0);
-                        activity.getApplicationContext().startActivity(goToCarousel);
+                        startActivity(goToCarousel);
 
                     });
                 }
 
-                if (listItem.getBaseItem().title != null && !listItem.getBaseItem().title.isEmpty())
+                if (listItem.getBaseItem().title != null && !listItem.getBaseItem().title.isEmpty()) {
                     itemTitle.setText(listItem.getBaseItem().title);
+                    itemTitle.setVisibility(View.VISIBLE);
+                }
+                else {
+                    itemTitle.setVisibility(View.GONE);
+                }
 
                 if (listItem.getBaseItem().description != null && !listItem.getBaseItem().description.isEmpty()) {
 
@@ -163,6 +205,10 @@ public class ViewItemFragment extends Fragment implements ViewItemMvpView {
                 else {
                     itemUrlLayout.setVisibility(View.GONE);
                 }
+                extraInfoLayout.setVisibility(View.VISIBLE);
+            }
+            else {
+                extraInfoLayout.setVisibility(View.GONE);
             }
 
             if (listItem.getName() != null && !listItem.getName().isEmpty())

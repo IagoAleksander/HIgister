@@ -95,7 +95,7 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
 
         createListButton.setOnClickListener(v -> {
             Intent intent = new Intent(activity, CreateListActivity.class);
-            activity.startActivity(intent);
+            startActivity(intent);
             activity.overridePendingTransition(R.anim.slide_in_foward, R.anim.slide_out_forward);
         });
 
@@ -109,31 +109,35 @@ public class MyListsFragment extends Fragment implements MyListsMvpView {
     @Override
     public void updateDataLists(ArrayList<UserList> lists) {
 
-        if (mListAdapter == null) {
-            mListAdapter = new MyListsAdapter(getFragment(), lists, type);
-        } else {
-            mListAdapter.setLists(lists);
-            mListAdapter.notifyDataSetChanged();
-        }
+        if (isAdded()) {
+            if (mListAdapter == null) {
+                mListAdapter = new MyListsAdapter(getFragment(), lists, type);
+            } else {
+                mListAdapter.setLists(lists);
+                mListAdapter.notifyDataSetChanged();
+            }
 
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25,
-                getResources().getDisplayMetrics());
-        mRecyclerView.addItemDecoration(new SpacesItemDecoration(space));
-        mRecyclerView.setAdapter(mListAdapter);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25,
+                    getResources().getDisplayMetrics());
+            mRecyclerView.addItemDecoration(new SpacesItemDecoration(space));
+            mRecyclerView.setAdapter(mListAdapter);
+        }
     }
 
     public void updateDataPeople(ArrayList<User> peopleList) {
 
-        if (mPeopleAdapter == null) {
-            mPeopleAdapter = new PeopleAdapter(this, peopleList);
-        } else {
-            mPeopleAdapter.setPeople(peopleList);
-            mPeopleAdapter.notifyDataSetChanged();
-        }
+        if (isAdded()) {
+            if (mPeopleAdapter == null) {
+                mPeopleAdapter = new PeopleAdapter(this, peopleList);
+            } else {
+                mPeopleAdapter.setPeople(peopleList);
+                mPeopleAdapter.notifyDataSetChanged();
+            }
 
-        mRecyclerView.setAdapter(mPeopleAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            mRecyclerView.setAdapter(mPeopleAdapter);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        }
     }
 
     @Override

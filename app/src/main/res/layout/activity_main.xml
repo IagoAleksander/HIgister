@@ -287,16 +287,24 @@
                     android:id="@+id/list_types"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:paddingEnd="8dp"
-                    android:paddingStart="8dp"
-                    android:weightSum="3">
+                    android:paddingStart="8dp">
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:orientation="horizontal"
+                        android:layout_gravity="center"
+                        android:gravity="center">
+
+                        <CheckBox
+                            android:id="@+id/checkbox_misc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Misc"
+                            android:textColor="@color/white"
+                            android:checked="true"/>
 
                         <CheckBox
                             android:id="@+id/checkbox_movies"
@@ -304,25 +312,8 @@
                             android:layout_height="wrap_content"
                             android:text="Movies"
                             android:textColor="@color/white"
-                            android:checked="true"/>
-
-                        <CheckBox
-                            android:id="@+id/checkbox_mangas"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Mangas"
-                            android:textColor="@color/white"
-                            android:checked="true"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical">
+                            android:checked="true"
+                            android:layout_marginStart="8dp"/>
 
                         <CheckBox
                             android:id="@+id/checkbox_series"
@@ -330,13 +321,33 @@
                             android:layout_height="wrap_content"
                             android:text="TV series"
                             android:textColor="@color/white"
+                            android:checked="true"
+                            android:layout_marginStart="8dp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:layout_gravity="center"
+                        android:gravity="center">
+
+                        <CheckBox
+                            android:id="@+id/checkbox_music"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="Music"
+                            android:textColor="@color/white"
                             android:checked="true"/>
 
                         <CheckBox
                             android:id="@+id/checkbox_books"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginStart="8dp"
                             android:text="Books"
                             android:textColor="@color/white"
                             android:checked="true"/>
@@ -345,19 +356,19 @@
                             android:id="@+id/checkbox_comics"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginStart="8dp"
                             android:text="Comics"
                             android:textColor="@color/white"
                             android:checked="true"/>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_weight="1"
-                        android:gravity="end"
-                        android:orientation="vertical">
+                        android:orientation="horizontal"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:layout_marginTop="8dp">
 
                         <CheckBox
                             android:id="@+id/checkbox_animes"
@@ -368,11 +379,11 @@
                             android:checked="true"/>
 
                         <CheckBox
-                            android:id="@+id/checkbox_music"
+                            android:id="@+id/checkbox_mangas"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Music"
+                            android:layout_marginStart="8dp"
+                            android:text="Mangas"
                             android:textColor="@color/white"
                             android:checked="true"/>
                     </LinearLayout>

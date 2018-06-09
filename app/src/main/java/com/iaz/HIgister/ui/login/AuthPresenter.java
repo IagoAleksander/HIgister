@@ -7,6 +7,9 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.LoginEvent;
+import com.crashlytics.android.answers.SignUpEvent;
 import com.facebook.AccessToken;
 import com.facebook.Profile;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,7 +26,6 @@ import com.iaz.HIgister.injection.ConfigPersistent;
 import com.iaz.HIgister.ui.base.BasePresenter;
 import com.iaz.HIgister.ui.intro.IntroActivity;
 import com.iaz.HIgister.ui.main.MainActivity;
-import com.iaz.HIgister.ui.main.ProfileActivity;
 import com.iaz.HIgister.ui.viewList.ViewListActivity;
 import com.iaz.HIgister.util.DialogFactory;
 
@@ -78,7 +80,7 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                         } else {
                             DialogFactory.finalizeDialog(mDialog, true, "Logged in", () -> {
                                 SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getMvpView().getActivity());
-                                Boolean showTutorial = sharedPref.getBoolean("showTutorial", true);
+                                Boolean showTutorial = sharedPref.getBoolean("showIntro", true);
 
                                 if (showTutorial) {
                                     Intent intent = new Intent(getMvpView().getActivity(), IntroActivity.class);
@@ -99,7 +101,7 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                         Log.d("auth", "onCheckUser: user does not exist");
 
                         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getMvpView().getActivity());
-                        Boolean showTutorial = sharedPref.getBoolean("showTutorial", true);
+                        Boolean showTutorial = sharedPref.getBoolean("showIntro", true);
 
                         if (showTutorial) {
                             Intent intent = new Intent(getMvpView().getActivity(), IntroActivity.class);
@@ -143,6 +145,14 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                         if (!task.isSuccessful()) {
                             DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on create account", () -> {
                             });
+                            Answers.getInstance().logSignUp(new SignUpEvent()
+                                    .putMethod("Email")
+                                    .putSuccess(false));
+                        }
+                        else {
+                            Answers.getInstance().logSignUp(new SignUpEvent()
+                                    .putMethod("Email")
+                                    .putSuccess(true));
                         }
                     }
                 });
@@ -162,6 +172,14 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
 //                            Log.w(TAG, "signInWithEmail:failed", task.getException());
                             DialogFactory.finalizeDialogOnClick(mDialog, false, "Sorry, an error occurred on login", () -> {
                             });
+                            Answers.getInstance().logLogin(new LoginEvent()
+                                    .putMethod("Email")
+                                    .putSuccess(false));
+                        }
+                        else {
+                            Answers.getInstance().logLogin(new LoginEvent()
+                                    .putMethod("Email")
+                                    .putSuccess(true));
                         }
                     }
                 });
@@ -178,13 +196,16 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("", "signInWithCredential:success");
+                            Answers.getInstance().logLogin(new LoginEvent()
+                                    .putMethod("Facebook")
+                                    .putSuccess(true));
 
                             userRepository.receiveProfileInfo(FirebaseAuth.getInstance().getCurrentUser().getUid(), new UserRepository.OnUpdateProfile() {
                                 @Override
                                 public void onSuccess(User user) {
 
                                     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getMvpView().getActivity());
-                                    Boolean showTutorial = sharedPref.getBoolean("showTutorial", true);
+                                    Boolean showTutorial = sharedPref.getBoolean("showIntro", true);
 
                                     if (showTutorial) {
                                         Intent intent = new Intent(getMvpView().getActivity(), IntroActivity.class);
@@ -215,7 +236,7 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                                             public void onSuccess(User user) {
 
                                                 SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getMvpView().getActivity());
-                                                Boolean showTutorial = sharedPref.getBoolean("showTutorial", true);
+                                                Boolean showTutorial = sharedPref.getBoolean("showIntro", true);
 
                                                 if (showTutorial) {
                                                     Intent intent = new Intent(getMvpView().getActivity(), IntroActivity.class);
@@ -243,6 +264,10 @@ public class AuthPresenter extends BasePresenter<AuthMvpView> {
                             Toast.makeText(getMvpView().getActivity(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
 //                            updateUI(null);
+                            Answers.getInstance().logLogin(new LoginEvent()
+                                    .putMethod("Facebook")
+                                    .putSuccess(false)
+                                    .putCustomAttribute("reason", "authentication failed"));
                         }
                     }
                 });

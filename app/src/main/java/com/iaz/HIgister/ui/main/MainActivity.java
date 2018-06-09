@@ -60,6 +60,7 @@ import static com.iaz.HIgister.util.Constants.FAVOURITES_TAB_INDEX;
 import static com.iaz.HIgister.util.Constants.FEED_TAB_INDEX;
 import static com.iaz.HIgister.util.Constants.LISTS_TAB_INDEX;
 import static com.iaz.HIgister.util.Constants.MANGAS;
+import static com.iaz.HIgister.util.Constants.MISC;
 import static com.iaz.HIgister.util.Constants.MOVIES;
 import static com.iaz.HIgister.util.Constants.MUSICS;
 import static com.iaz.HIgister.util.Constants.PROFILE_TAB_INDEX;
@@ -113,6 +114,9 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 
     @BindView(R.id.list_types)
     LinearLayout listTypes;
+
+    @BindView(R.id.checkbox_misc)
+    CheckBox checkboxMisc;
 
     @BindView(R.id.checkbox_movies)
     CheckBox checkboxMovies;
@@ -342,11 +346,6 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
             getSupportActionBar().setTitle(user.getName());
         }
         logUserToCrashlitics();
-
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("userName", user.getName());
-        editor.apply();
     }
 
     public void setFab(int position) {
@@ -499,6 +498,9 @@ public class MainActivity extends BaseActivity implements SmartTabLayout.TabProv
 
         ArrayList<Integer> typesSelected = new ArrayList<>();
 
+        if (checkboxMisc.isChecked()) {
+            typesSelected.add(MISC);
+        }
         if (checkboxMovies.isChecked()) {
             typesSelected.add(MOVIES);
         }

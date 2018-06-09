@@ -392,10 +392,10 @@
             android:id="@+id/creators_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_centerInParent="true"
-            android:gravity="center"
             android:layout_margin="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
             android:padding="8dp"
             android:visibility="gone">
 
@@ -413,12 +413,12 @@
                 android:id="@+id/creator_name_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:textColor="@color/white"
-                android:textSize="14sp"
                 android:maxLines="1"
-                android:ellipsize="end"/>
+                android:textColor="@color/white"
+                android:textSize="14sp" />
         </LinearLayout>
 
         <TextView
@@ -436,7 +436,7 @@
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="14sp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </RelativeLayout>
 
